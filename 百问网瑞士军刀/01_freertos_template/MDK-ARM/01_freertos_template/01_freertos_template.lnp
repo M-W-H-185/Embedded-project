@@ -12,6 +12,7 @@
 "01_freertos_template\stm32f1xx_it.o"
 "01_freertos_template\stm32f1xx_hal_msp.o"
 "01_freertos_template\stm32f1xx_hal_timebase_tim.o"
+"01_freertos_template\music.o"
 "01_freertos_template\stm32f1xx_hal_gpio_ex.o"
 "01_freertos_template\stm32f1xx_hal_adc.o"
 "01_freertos_template\stm32f1xx_hal_adc_ex.o"

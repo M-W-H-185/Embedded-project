@@ -58,8 +58,14 @@
 
 /* USER CODE END PD */
 
-/* Private macro -------------------------------------------------------------*/
+/* Private macro 私有的全局变量 -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+static StackType_t    g_puxLedStackBuffer[128]; // 静态分配的栈
+static StaticTask_t   g_pxLedTaskBuffer;		// 静态分配任务的结构体 用它操作任务
+
+static StackType_t    g_puxRGBStackBuffer[128]; // 静态分配的栈
+static StaticTask_t   g_pxRGBTaskBuffer;		// 静态分配任务的结构体 用它操作任务
+
 
 /* USER CODE END PM */
 
@@ -77,14 +83,41 @@ const osThreadAttr_t defaultTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+struct TaskPrintInfo{
+	uint8_t x;
+	uint8_t y;
+	char name[16];
+};
+static struct TaskPrintInfo tpi1 = {0,0,"task1"};
+static struct TaskPrintInfo tpi2 = {0,3,"task2"};
+static struct TaskPrintInfo tpi3 = {0,6,"task3"};
+static uint8_t isLcd = 1; // 简易互斥
+void LCD_PrintTask(void *parame)
+{
+	struct TaskPrintInfo *tpi = parame;
+	uint8_t len = 0;
+	uint32_t count = 0;
+	while(1)
+	{
+		if(isLcd)
+		{
+			isLcd = 0;
+			len = LCD_PrintString(tpi->x, tpi->y, tpi->name);
+			len += LCD_PrintString(len, tpi->y, ":");
+			LCD_PrintSignedVal(len, tpi->y, count++);
+			isLcd = 1;
+		}
+		mdelay(100);
+	}
+	
+}
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 // 一个测试的任务
-void MyTask(void *argument){
+void vMusicTask(void *argument){
 	Led_Test();
 }
 /**
@@ -94,6 +127,9 @@ void MyTask(void *argument){
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
+  LCD_Init();
+  LCD_Clear();
+ 
 
   /* USER CODE END Init */
 
@@ -115,10 +151,26 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the thread(s) */
   /* creation of defaultTask */
+  // 5的课程
   // 默认创建的任务
-  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
-  //      任务函数  任务的名称    栈的深度  任务参数  优先级    句柄
-  xTaskCreate(MyTask,"mytestTask", 128, NULL, osPriorityNormal, NULL);
+//  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+//  //      任务函数  任务的名称    栈的深度  任务参数  优先级    句柄
+//  // 声音 动态分配的任务
+//  extern void PlayMusic(void *params);
+//  xTaskCreate(PlayMusic,"PlayMusic", 128, NULL, osPriorityNormal, NULL);
+//  // led 灯任务 静态分配的
+//  xTaskCreateStatic(Led_Test,"ledTestTask",128,NULL,osPriorityNormal,g_puxLedStackBuffer,&g_pxLedTaskBuffer);
+//  // rgb 灯任务 静态分配的
+//  xTaskCreateStatic(ColorLED_Test,"rgbTestTask",128,NULL,osPriorityNormal,g_puxRGBStackBuffer,&g_pxRGBTaskBuffer);
+  // 5的课程
+
+// 6 的课程
+	xTaskCreate(LCD_PrintTask,"LCD_PrintTask1", 128, &tpi1, osPriorityNormal, NULL);
+	xTaskCreate(LCD_PrintTask,"LCD_PrintTask2", 128, &tpi2, osPriorityNormal, NULL);
+	xTaskCreate(LCD_PrintTask,"LCD_PrintTask3", 128, &tpi3, osPriorityNormal, NULL);
+
+// 6 的课程
+  
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */

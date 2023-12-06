@@ -22,33 +22,25 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 G:\GItStore\private\Embedded-project\百问网瑞士军刀\01_freertos_template\MDK-ARM\01_freertos_template.uvprojx
-Project File Date:  12/05/2023
+Project File Date:  12/06/2023
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5_ARM\ARM\ARM_Compiler_5.06u7\Bin'
 Build target '01_freertos_template'
-compiling driver_oled.c...
-..\Drivers\DshanMCU-F103\driver_oled.c(155): warning:  #177-D: function "OLED_WriteData"  was declared but never referenced
-  static int OLED_WriteData(uint8_t data)
-..\Drivers\DshanMCU-F103\driver_oled.c(203): warning:  #177-D: function "OLED_H_Scroll"  was declared but never referenced
-  static void OLED_H_Scroll(H_SCROLL_DIR dir, uint8_t start, uint8_t fr_time, uint8_t end)
-..\Drivers\DshanMCU-F103\driver_oled.c(227): warning:  #177-D: function "OLED_HV_Scroll"  was declared but never referenced
-  static void OLED_HV_Scroll(HV_SCROLL_DIR dir, uint8_t start, uint8_t fr_time, uint8_t end, uint8_t offset)
-..\Drivers\DshanMCU-F103\driver_oled.c(247): warning:  #177-D: function "OLED_SetVScrollArea"  was declared but never referenced
-  static void OLED_SetVScrollArea(uint8_t area, uint8_t row_num)
-..\Drivers\DshanMCU-F103\driver_oled.c(296): warning:  #177-D: function "OLED_SetColAddr_HV"  was declared but never referenced
-  static void OLED_SetColAddr_HV(uint8_t start, uint8_t end)
-..\Drivers\DshanMCU-F103\driver_oled.c(313): warning:  #177-D: function "OLED_SetPageAddr_HV"  was declared but never referenced
-  static void OLED_SetPageAddr_HV(uint8_t start, uint8_t end)
-..\Drivers\DshanMCU-F103\driver_oled.c(419): warning:  #177-D: function "OLED_SetPreChargePeriod"  was declared but never referenced
-  static void OLED_SetPreChargePeriod(uint8_t phase1, uint8_t phase2)
-..\Drivers\DshanMCU-F103\driver_oled.c(433): warning:  #177-D: function "OLED_SetVcomhLevel"  was declared but never referenced
-  static void OLED_SetVcomhLevel(VCOMH_LEVEL level)
-..\Drivers\DshanMCU-F103\driver_oled.c: 8 warnings, 0 errors
+compiling freertos.c...
+../Core/Src/freertos.c(63): warning:  #177-D: variable "g_puxLedStackBuffer"  was declared but never referenced
+  static StackType_t    g_puxLedStackBuffer[128]; // 静态分配的栈
+../Core/Src/freertos.c(64): warning:  #177-D: variable "g_pxLedTaskBuffer"  was declared but never referenced
+  static StaticTask_t   g_pxLedTaskBuffer;		// 静态分配任务的结构体 用它操作任务
+../Core/Src/freertos.c(66): warning:  #177-D: variable "g_puxRGBStackBuffer"  was declared but never referenced
+  static StackType_t    g_puxRGBStackBuffer[128]; // 静态分配的栈
+../Core/Src/freertos.c(67): warning:  #177-D: variable "g_pxRGBTaskBuffer"  was declared but never referenced
+  static StaticTask_t   g_pxRGBTaskBuffer;		// 静态分配任务的结构体 用它操作任务
+../Core/Src/freertos.c: 4 warnings, 0 errors
 linking...
-Program Size: Code=17868 RO-data=2408 RW-data=200 ZI-data=9384  
+Program Size: Code=17588 RO-data=2360 RW-data=248 ZI-data=9384  
 FromELF: creating hex file...
-"01_freertos_template\01_freertos_template.axf" - 0 Error(s), 8 Warning(s).
+"01_freertos_template\01_freertos_template.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
