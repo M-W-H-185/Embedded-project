@@ -97,8 +97,12 @@ void LCD_PrintTask(void *parame)
 	struct TaskPrintInfo *tpi = parame;
 	uint8_t len = 0;
 	uint32_t count = 0;
+	TickType_t preTime = 0;
+	uint64_t t1, t2;
 	while(1)
 	{
+		preTime = xTaskGetTickCount();
+
 		if(isLcd)
 		{
 			isLcd = 0;
@@ -106,8 +110,13 @@ void LCD_PrintTask(void *parame)
 			len += LCD_PrintString(len, tpi->y, ":");
 			LCD_PrintSignedVal(len, tpi->y, count++);
 			isLcd = 1;
+			mdelay(100+count);	// 
 		}
-		mdelay(100);
+		t1 = system_get_ns();
+		// vTaskDelay(500);
+		vTaskDelayUntil(&preTime ,500);
+		t2 = system_get_ns();
+		LCD_PrintSignedVal(tpi->x, tpi->y+2, (t2-t1));
 	}
 	
 }
@@ -153,7 +162,7 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   // 5的课程
   // 默认创建的任务
-//  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 //  //      任务函数  任务的名称    栈的深度  任务参数  优先级    句柄
 //  // 声音 动态分配的任务
 //  extern void PlayMusic(void *params);
@@ -165,9 +174,9 @@ void MX_FREERTOS_Init(void) {
   // 5的课程
 
 // 6 的课程
-	xTaskCreate(LCD_PrintTask,"LCD_PrintTask1", 128, &tpi1, osPriorityNormal, NULL);
-	xTaskCreate(LCD_PrintTask,"LCD_PrintTask2", 128, &tpi2, osPriorityNormal, NULL);
-	xTaskCreate(LCD_PrintTask,"LCD_PrintTask3", 128, &tpi3, osPriorityNormal, NULL);
+xTaskCreate(LCD_PrintTask,"LCD_PrintTask1", 128, &tpi1, osPriorityNormal, NULL);
+//xTaskCreate(LCD_PrintTask,"LCD_PrintTask2", 128, &tpi2, osPriorityNormal, NULL);
+//xTaskCreate(LCD_PrintTask,"LCD_PrintTask3", 128, &tpi3, osPriorityNormal, NULL);
 
 // 6 的课程
   
@@ -191,33 +200,65 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* USER CODE BEGIN StartDefaultTask */
-  /* Infinite loop */
-  LCD_Init();
-  LCD_Clear();
-  
-  for(;;)
-  {
-    //Led_Test();
-    LCD_Test();
-	//MPU6050_Test(); 
-	//DS18B20_Test();
-	//DHT11_Test();
-	//ActiveBuzzer_Test();
-	//PassiveBuzzer_Test();
-	//ColorLED_Test();
-	//IRReceiver_Test();
-	//IRSender_Test();
-	//LightSensor_Test();
-	//IRObstacle_Test();
-	//SR04_Test();
-	//W25Q64_Test();
-	//RotaryEncoder_Test();
-	//Motor_Test();
-	//Key_Test();
-	//UART_Test();
-  }
-  /* USER CODE END StartDefaultTask */
+	/* USER CODE BEGIN StartDefaultTask */
+	TaskHandle_t musicTaskHandle = NULL;
+	uint8_t devID , devDate = 0;
+	uint8_t is_runing = 0;
+	/* Infinite loop */
+	LCD_Init();
+	LCD_Clear();
+	IRReceiver_Init();
+	// 5-3
+	LCD_PrintString(0, 0, "Waiting control");
+
+	while(1)
+	{
+        if (!IRReceiver_Read(&devID, &devDate))
+		{
+			if(devDate == 0xa8) // 播放、暂停音乐
+			{
+				if(musicTaskHandle == NULL)
+				{
+					LCD_ClearLine(0, 0);
+					LCD_PrintString(0, 0, "Create Task");
+					extern void PlayMusic(void *params);
+					xTaskCreate(PlayMusic,"PlayMusic", 128, NULL, osPriorityNormal, &musicTaskHandle); // 创建一个任务
+					vTaskDelay(2);	// 阻塞状态
+				}
+				if(is_runing == 0) //让音乐开始
+				{
+					is_runing = 1;
+					vTaskResume(musicTaskHandle);// 让任务进入就绪状态
+					LCD_ClearLine(0, 0);
+					LCD_PrintString(0, 0, "Resume Task");
+				}
+				else //让音乐暂停
+				{
+					is_runing = 0;
+					vTaskSuspend(musicTaskHandle); // 让任务进入暂停状态 
+					PassiveBuzzer_Control(0);
+					LCD_ClearLine(0, 0);
+					LCD_PrintString(0, 0, "Suspend Task");
+				}
+			}
+			else if(devDate == 0xa2) // 删除音乐任务
+			{
+				if(musicTaskHandle != NULL)
+				{					
+					LCD_ClearLine(0, 0);
+					LCD_PrintString(0, 0, "Delete Task");
+					vTaskDelete(musicTaskHandle); // 删除任务
+					PassiveBuzzer_Control(0);
+
+					musicTaskHandle = NULL;        
+
+				}
+			}
+		}
+	
+	}
+		// 5-3
+	
 }
 
 /* Private application code --------------------------------------------------*/
