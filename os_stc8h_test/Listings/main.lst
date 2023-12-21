@@ -1,10 +1,10 @@
-C51 COMPILER V9.59.0.0   MAIN                                                              12/20/2023 22:50:10 PAGE 1   
+C51 COMPILER V9.59.0.0   MAIN                                                              12/21/2023 21:58:46 PAGE 1   
 
 
 C51 COMPILER V9.59.0.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: D:\Keil_v5_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND 
-                    -PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: D:\Keil_v5_C51\C51\BIN\C51.EXE main.c ROM(SMALL) OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OB
+                    -JECTEXTEND PRINT(.\Listings\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
 
 line level    source
 
@@ -48,61 +48,100 @@ line level    source
   38   2          Delay1ms();
   39   2        }
   40   1      }
-  41          os_uint8_t ti0_cut = 0;
-  42          void Timer0_Isr(void) interrupt 1
-  43          {
-  44   1        ti0_cut++;
-  45   1        if(ti0_cut == 253)
-  46   1        {
-  47   2          LED_Y = !LED_Y;
-  48   2          ti0_cut = 0;
-  49   2        }
-  50   1      
-  51   1      }
-  52          
-  53          /* 定时器T0初始化为1ms产生中断 @35MHz */
-  54          void Timer0Init(void)   
-C51 COMPILER V9.59.0.0   MAIN                                                              12/20/2023 22:50:10 PAGE 2   
+  41          
+  42           
+  43          #define MAX_TASKS 2       /*任务槽个数.必须和实际任务数一至*/
+  44          #define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
+  45          unsigned char idata task_stack[MAX_TASKS][MAX_TASK_DEP];/*任务堆栈.*/
+  46          unsigned int task_id;    /*当前活动任务号*/
+  47          unsigned int max_task = 0;
+  48           
+  49          unsigned char idata task_sp[MAX_TASKS];
+  50           
+  51          void task_switch()
+  52          {
+  53   1          task_sp[task_id] = SP;
+  54   1          task_id++;
+C51 COMPILER V9.59.0.0   MAIN                                                              12/21/2023 21:58:46 PAGE 2   
 
-  55          {
-  56   1        AUXR |= 0x80;   //定时器时钟1T模式
-  57   1        TMOD &= 0xF0;   //设置定时器模式
-  58   1        TL0 = 0x48;   //设置定时初值 65536-35*1000
-  59   1        TH0 = 0x77;   //设置定时初值
-  60   1        TF0 = 0;    //清除TF0标志
-  61   1        TR0 = 1;    //定时器0开始计时
-  62   1        ET0 = 1;    //允许定时器T0溢出中断
-  63   1        EA = 1;     // 打开总中断
-  64   1      }
-  65          
-  66          /* 主函数 */
-  67          void main()
-  68          {
-  69   1        P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
-  70   1        P0M1 = 0x00;
-  71   1        Timer0Init()  ;
-  72   1        EA = 1;
-  73   1        
-  74   1      
-  75   1        
-  76   1        
-  77   1        while(1)
-  78   1        {
-  79   2      
-  80   2        }
-  81   1      }
-  82          
-  83          
-  84          
+  55   1          if(task_id == max_task)
+  56   1          {
+  57   2            task_id = 0;
+  58   2          }
+  59   1          SP = task_sp[task_id];
+  60   1      }
+  61           
+  62          void task_load(unsigned int fn, int tid)
+  63          {
+  64   1          task_sp[tid] = task_stack[tid]+1;
+  65   1          task_stack[tid][0] = (unsigned int)fn & 0xff;
+  66   1          task_stack[tid][1] = (unsigned int)fn >> 8;
+  67   1          ++max_task;
+  68   1      }
+  69           
+  70          void task1()
+  71          {
+  72   1          static unsigned char i;
+  73   1          while(1)
+  74   1          {
+  75   2            i++;
+  76   2            LED_R = !LED_R;
+  77   2            delay_ms(100);
+  78   2            task_switch();
+  79   2          }
+  80   1      }
+  81           
+  82          void task2()
+  83          {
+  84   1          static unsigned char j;
+  85   1          while(1)
+  86   1          {
+  87   2            j+=2;
+  88   2            LED_Y = !LED_Y;
+  89   2            delay_ms(100);
+  90   2            task_switch();
+  91   2          }
+  92   1      }
+  93           
+  94          void switch_to(unsigned int tid)
+  95          {
+  96   1          task_id = tid;
+  97   1          SP = task_sp[tid];
+  98   1          return;
+  99   1      }
+ 100          
+ 101          
+ 102          /* 主函数 */
+ 103          void main()
+ 104          {
+ 105   1        P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+ 106   1        P0M1 = 0x00;
+ 107   1        LED_Y = 0;
+ 108   1        task_load(task1, 0);//将task1函数装入0号槽
+ 109   1        task_load(task2, 1);//将task2函数装入1号槽
+ 110   1        switch_to(0);
+ 111   1      
+ 112   1          while(1)
+ 113   1        {
+ 114   2      
+ 115   2        }
+ 116   1        
+C51 COMPILER V9.59.0.0   MAIN                                                              12/21/2023 21:58:46 PAGE 3   
+
+ 117   1      
+ 118   1      }
+ 119          
+ 120          
+ 121          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     81    ----
+   CODE SIZE        =    185    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      1    ----
-   IDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =     42    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 

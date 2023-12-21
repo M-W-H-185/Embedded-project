@@ -38,46 +38,83 @@ void delay_ms(unsigned int ms)
 		Delay1ms();
 	}
 }
-os_uint8_t ti0_cut = 0;
-void Timer0_Isr(void) interrupt 1
-{
-	ti0_cut++;
-	if(ti0_cut == 253)
-	{
-		LED_Y = !LED_Y;
-		ti0_cut = 0;
-	}
 
+ 
+#define MAX_TASKS 2       /*任务槽个数.必须和实际任务数一至*/
+#define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
+unsigned char idata task_stack[MAX_TASKS][MAX_TASK_DEP];/*任务堆栈.*/
+unsigned int task_id;    /*当前活动任务号*/
+unsigned int max_task = 0;
+ 
+unsigned char idata task_sp[MAX_TASKS];
+ 
+void task_switch()
+{
+    task_sp[task_id] = SP;
+		task_id++;
+    if(task_id == max_task)
+		{
+			task_id = 0;
+		}
+    SP = task_sp[task_id];
+}
+ 
+void task_load(unsigned int fn, int tid)
+{
+    task_sp[tid] = task_stack[tid]+1;
+    task_stack[tid][0] = (unsigned int)fn & 0xff;
+    task_stack[tid][1] = (unsigned int)fn >> 8;
+    ++max_task;
+}
+ 
+void task1()
+{
+    static unsigned char i;
+    while(1)
+    {
+			i++;
+			LED_R = !LED_R;
+			delay_ms(100);
+			task_switch();
+    }
+}
+ 
+void task2()
+{
+    static unsigned char j;
+    while(1)
+    {
+			j+=2;
+			LED_Y = !LED_Y;
+			delay_ms(100);
+			task_switch();
+    }
+}
+ 
+void switch_to(unsigned int tid)
+{
+    task_id = tid;
+    SP = task_sp[tid];
+    return;
 }
 
-/* 定时器T0初始化为1ms产生中断 @35MHz */
-void Timer0Init(void)		
-{
-	AUXR |= 0x80;		//定时器时钟1T模式
-	TMOD &= 0xF0;		//设置定时器模式
-	TL0 = 0x48;		//设置定时初值 65536-35*1000
-	TH0 = 0x77;		//设置定时初值
-	TF0 = 0;		//清除TF0标志
-	TR0 = 1;		//定时器0开始计时
-	ET0 = 1;    //允许定时器T0溢出中断
-	EA = 1;     // 打开总中断
-}
 
 /* 主函数 */
 void main()
 {
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
-	Timer0Init()	;
-	EA = 1;
-	
+	LED_Y = 0;
+	task_load(task1, 0);//将task1函数装入0号槽
+	task_load(task2, 1);//将task2函数装入1号槽
+	switch_to(0);
 
-	
-	
-	while(1)
+		while(1)
 	{
 
 	}
+	
+
 }
 
 
