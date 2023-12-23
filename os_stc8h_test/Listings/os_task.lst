@@ -1,10 +1,10 @@
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/21/2023 21:36:30 PAGE 1   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/23/2023 17:29:46 PAGE 1   
 
 
-C51 COMPILER V9.59.0.0, COMPILATION OF MODULE OS_TASK
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE OS_TASK
 OBJECT MODULE PLACED IN .\Objects\os_task.obj
-COMPILER INVOKED BY: D:\Keil_v5_C51\C51\BIN\C51.EXE XmRTOS\os_task.c ROM(SMALL) OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS
-                    -) DEBUG OBJECTEXTEND PRINT(.\Listings\os_task.lst) TABS(2) OBJECT(.\Objects\os_task.obj)
+COMPILER INVOKED BY: C:\Keil_v5_c51\C51\BIN\C51.EXE XmRTOS\os_task.c ROM(COMPACT) OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRT
+                    -OS) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_task.lst) TABS(2) OBJECT(.\Objects\os_task.obj)
 
 line level    source
 
@@ -43,6 +43,49 @@ line level    source
   33   1        return ;
   34   1      }
   35          
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/23/2023 17:29:46 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION os_task_start_scheduler (BEGIN)
+                                           ; SOURCE LINE # 3
+                                           ; SOURCE LINE # 4
+                                           ; SOURCE LINE # 6
+0000 22                RET     
+             ; FUNCTION os_task_start_scheduler (END)
+
+             ; FUNCTION os_task_create (BEGIN)
+                                           ; SOURCE LINE # 9
+                                           ; SOURCE LINE # 10
+                                           ; SOURCE LINE # 12
+0000 22                RET     
+             ; FUNCTION os_task_create (END)
+
+             ; FUNCTION os_task_delete (BEGIN)
+                                           ; SOURCE LINE # 16
+                                           ; SOURCE LINE # 17
+                                           ; SOURCE LINE # 19
+0000 22                RET     
+             ; FUNCTION os_task_delete (END)
+
+             ; FUNCTION os_task_suspend (BEGIN)
+                                           ; SOURCE LINE # 23
+                                           ; SOURCE LINE # 24
+                                           ; SOURCE LINE # 26
+0000 22                RET     
+             ; FUNCTION os_task_suspend (END)
+
+             ; FUNCTION _os_task_delay (BEGIN)
+                                           ; SOURCE LINE # 30
+0000 8E00        R     MOV     ticks,R6
+0002 8F00        R     MOV     ticks+01H,R7
+                                           ; SOURCE LINE # 31
+                                           ; SOURCE LINE # 32
+                                           ; SOURCE LINE # 34
+0004 22                RET     
+             ; FUNCTION _os_task_delay (END)
+
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
