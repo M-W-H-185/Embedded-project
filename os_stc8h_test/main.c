@@ -43,93 +43,96 @@ void delay_ms(unsigned int ms)
  
 #define MAX_TASKS 2       /*任务槽个数.必须和实际任务数一至*/
 #define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
-unsigned char idata task_stack[MAX_TASKS][MAX_TASK_DEP];/*任务堆栈.*/
+os_uint8_t idata task_stack1[MAX_TASK_DEP];/*任务堆栈.*/
+os_uint8_t idata task_stack2[MAX_TASK_DEP];/*任务堆栈.*/
 unsigned int task_id;    /*当前活动任务号*/
 unsigned int max_task = 0;
  
-unsigned char idata task_sp[MAX_TASKS];
- 
+os_uint8_t idata task_sp[MAX_TASKS];
+
 void task_switch()
 {
-		EA = 0;
-	
-    task_sp[task_id] = SP;
+
+		task_sp[task_id] = SP;
 		task_id++;
     if(task_id == max_task)
 		{
 			task_id = 0;
 		}
-    SP = (unsigned int)task_sp[task_id];
 
-		EA = 1;
+    SP = task_sp[task_id];
+
 }
  
-void task_load(unsigned int fn, int tid)
+void task_load(void(*task)(void) ,os_uint8_t *tstack,int tid)
 {
-    task_sp[tid] = (unsigned char)task_stack[tid]+1;
-    task_stack[tid][0] = (unsigned int)fn & 0xff;
-    task_stack[tid][1] = (unsigned int)fn >> 8;
-    ++max_task;
+
+	tstack[0] = (unsigned int)task & 0xff;
+	tstack[1] = (unsigned int)task >> 8;
+
+	task_sp[tid] = tstack+1;
+
+	++max_task;
 }
 
 void task1()
 {
+		unsigned int task1_i = 0;
+
     while(1)
     {
 			LED_R = !LED_R;
-
-			delay_ms(1000);
-
+			task1_i ++;
+			task1_i / 120;
+			delay_ms(500);
 			task_switch();
     }
 }
 
 void task2()
 {
-    while(1)
-    {
-			LED_Y = !LED_Y;
 
-			delay_ms(1000);
+	unsigned int task2_i = 0;
 
-			task_switch();
-    }
+	while(1)
+	{
+
+		LED_Y = !LED_Y;
+		task2_i ++;
+		task2_i / 120;
+		task2_i * 120;
+		task2_i % 120;
+
+		delay_ms(500);
+		task_switch();
+	}
 }
- 
-void switch_to(unsigned int tid)
+
+void os_Start()
 {
-    task_id = tid;
-    SP = (unsigned int)task_sp[tid];
-    return;
+	task_id = 0;
+	SP = task_sp[task_id];  
+	return;
 }
 
 unsigned int cut = 0;
 
 void Timer0_Isr(void) interrupt 1
 {
+unsigned int c1ut = 0;
+unsigned int c32ut = 0;
+unsigned int c2342ut = 0;
+
 	cut++;
-			printf("Timer0_Isr=%d\n",cut);
 
 	if(cut == 500)
 	{
 		cut = 0;
 		LED_G = !LED_G;
-
 	}
-
 	
 }
-// 串口初始化函数 可以使用printf
-void Uart1Init(void)  //115200bps@35MHz
-{
-	SCON = 0x50;		//8位数据,可变波特率
-	AUXR |= 0x01;		//串口1选择定时器2为波特率发生器
-	AUXR |= 0x04;		//定时器时钟1T模式
-	T2L = 0xE8;			//设置定时初始值
-	T2H = 0xFF;			//设置定时初始值
-	AUXR |= 0x10;		//定时器2开始计时
- TI = 1; // 加这句话可以使用printf
-}
+
 void Timer0_Init(void)		//1毫秒@11.0592MHz
 {
 	AUXR |= 0x80;			//定时器时钟1T模式
@@ -147,17 +150,14 @@ void main()
 {
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
-	LED_Y = 0;
 	Timer0_Init();
-	Uart1Init();
-	EA = 0;
-
-	task_load(task1, 0);//将task1函数装入0号槽
-	task_load(task2, 1);//将task2函数装入1号槽
 	EA = 1;
+	P_SW2 |= (1<<7);
+	task_load(task1, &task_stack1, 0);//将task1函数装入0号槽
+	task_load(task2, &task_stack2, 1);//将task2函数装入1号槽
+	os_Start();
 
-	switch_to(0);
-	
+
 	while(1)
 	{
 

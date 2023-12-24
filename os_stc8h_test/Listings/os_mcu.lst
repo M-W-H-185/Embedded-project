@@ -1,0 +1,37 @@
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/24/2023 22:27:02 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\os_mcu.obj
+ASSEMBLER INVOKED BY: D:\Keil_v5_C51\C51\BIN\A51.EXE XmRTOS\os_mcu.asm SET(LARGE) DEBUG PRINT(.\Listings\os_mcu.lst) OBJ
+                      ECT(.\Objects\os_mcu.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;NAME   OS_CPU_A_ASM
+                       2     
+                       3     
+                       4     ;?PR?Isp_RET?OS_CPU_A                     SEGMENT CODE ;INBLOCK 
+                       5     ;PUBLIC Isp_RET
+                       6     ;RSEG  ?PR?Isp_RET?OS_CPU_A
+                       7     ;Isp_RET:
+                       8             ;USING  0
+                       9     
+                      10     ;RET    ; RET 会提前跳出中断的
+                      11     
+                      12     ;END
+*** WARNING #A41 IN 12 (XmRTOS\os_mcu.asm, LINE 12): MISSING 'END' STATEMENT
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/24/2023 22:27:02 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  1 WARNING(S), 0 ERROR(S)

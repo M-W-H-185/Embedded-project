@@ -125,7 +125,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -137,7 +137,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -149,7 +149,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Target>
           <RunDebugAfterBuild>0</RunDebugAfterBuild>
-          <TargetSelection>12</TargetSelection>
+          <TargetSelection>10</TargetSelection>
           <SimDlls>
             <CpuDll></CpuDll>
             <CpuDllArguments></CpuDllArguments>
@@ -186,9 +186,9 @@
         </Utilities>
         <Target51>
           <Target51Misc>
-            <MemoryModel>0</MemoryModel>
+            <MemoryModel>2</MemoryModel>
             <RTOS>0</RTOS>
-            <RomSize>1</RomSize>
+            <RomSize>2</RomSize>
             <DataHold>0</DataHold>
             <XDataHold>0</XDataHold>
             <UseOnchipRom>0</UseOnchipRom>
@@ -392,34 +392,9 @@
           <GroupName>XmRTOS</GroupName>
           <Files>
             <File>
-              <FileName>os_port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\XmRTOS\os_port.c</FilePath>
-            </File>
-            <File>
-              <FileName>os_port.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\XmRTOS\os_port.h</FilePath>
-            </File>
-            <File>
-              <FileName>os_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\XmRTOS\os_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>os_task.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\XmRTOS\os_task.h</FilePath>
-            </File>
-            <File>
               <FileName>os_typedef.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\XmRTOS\os_typedef.h</FilePath>
-            </File>
-            <File>
-              <FileName>os_config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\XmRTOS\os_config.h</FilePath>
             </File>
           </Files>
         </Group>
