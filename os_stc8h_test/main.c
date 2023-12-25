@@ -15,6 +15,7 @@ sbit LED_R = P0^5;    // 红色LED
 sbit LED_Y = P0^6;    // 黄色LED
 sbit LED_G = P0^7;    // 绿色LED
 
+
 typedef     unsigned char    os_uint8_t;	//  8 bits 
 
 typedef     unsigned int     os_uint16_t;	// 16 bits 
@@ -45,6 +46,7 @@ unsigned int max_task = 0;
  
 
  
+extern void test(void);
  
 
 // 任务控制列表
@@ -78,7 +80,6 @@ void OSCtxSw()
 		task_id = 0;
 	}
 
-    SP = tcb_list[task_id].sp;
 
 }
  
@@ -117,12 +118,13 @@ void os_delay(os_uint32_t tasks)
 	OSCtxSw();
 	
 }
+os_uint8_t idle_cut = 0;
 // 空闲函数
 void os_idle_task(void)
 {
 	while(1)
 	{
-		OSCtxSw();
+		idle_cut = 1 + 1;
 	}
 }
 
@@ -158,7 +160,8 @@ void task2()
 
 unsigned int cut = 0;
 
-void Timer0_Isr(void) interrupt 1
+void time0_handle(void)large reentrant
+//void time0_handle(void)interrupt 1
 {
 	os_uint8_t ti = 0;
 	cut++;
@@ -169,23 +172,24 @@ void Timer0_Isr(void) interrupt 1
 		LED_G = !LED_G;
 	}
 	// 在这里处理遍历延时
-	for(ti = 0; ti<max_task; ti++)
-	{
-		if(tcb_list[ti].os_status_type != OS_BLOCKED)
-		{
-			continue;
-		}
-		// 设置延时滴答数
-		if((tcb_list[ti].delay_tick - 1) == 0)
-		{
-			tcb_list[ti].delay_tick = 0;
-			// 将任务设置为阻塞态
-			tcb_list[ti].os_status_type = OS_READY;
-			continue;
-		}
-		tcb_list[ti].delay_tick--;
-	}
+//	for(ti = 0; ti < max_task; ti++)
+//	{
+//		if(tcb_list[ti].os_status_type != OS_BLOCKED)
+//		{
+//			continue;
+//		}
+//		// 设置延时滴答数
+//		if((tcb_list[ti].delay_tick - 1) == 0)
+//		{
+//			tcb_list[ti].delay_tick = 0;
+//			// 将任务设置为阻塞态
+//			tcb_list[ti].os_status_type = OS_READY;
+//			continue;
+//		}
+//		tcb_list[ti].delay_tick--;
+//	}
 
+	ti = 0;
 	
 }
 
