@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    12/25/2023  11:11:58  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    12/25/2023  13:32:05  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -43,26 +43,24 @@ LINK MAP OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
                     000EH     07F2H                  *** GAP ***
             CODE    0800H     0101H     UNIT         ?PR?TIMER0_ISR?MAIN
             CODE    0901H     008CH     UNIT         ?C_C51STARTUP
-            CODE    098DH     0076H     UNIT         ?C?LIB_CODE
-            CODE    0A03H     0064H     UNIT         ?PR?_OS_TASK_CREATE?MAIN
-            CODE    0A67H     0060H     UNIT         ?PR?OSCTXSW?MAIN
-            CODE    0AC7H     004AH     UNIT         ?PR?MAIN?MAIN
-            CODE    0B11H     0032H     UNIT         ?PR?OS_START?MAIN
-            CODE    0B43H     0025H     UNIT         ?PR?_OS_DELAY?MAIN
-            CODE    0B68H     0024H     UNIT         ?PR?TASK1?MAIN
-            CODE    0B8CH     0023H     UNIT         ?PR?TASK2?MAIN
-            CODE    0BAFH     0014H     UNIT         ?PR?_DELAY_MS?MAIN
-            CODE    0BC3H     0013H     UNIT         ?PR?TIMER0_INIT?MAIN
-            CODE    0BD6H     000BH     UNIT         ?PR?DELAY1MS?MAIN
-            CODE    0BE1H     000BH     UNIT         ?C_INITSEG
-            CODE    0BECH     0005H     UNIT         ?PR?OS_IDLE_TASK?MAIN
+            CODE    098DH     0077H     UNIT         ?PR?OSCTXSW?MAIN
+            CODE    0A04H     0076H     UNIT         ?C?LIB_CODE
+            CODE    0A7AH     0064H     UNIT         ?PR?_OS_TASK_CREATE?MAIN
+            CODE    0ADEH     004AH     UNIT         ?PR?MAIN?MAIN
+            CODE    0B28H     0032H     UNIT         ?PR?OS_START?MAIN
+            CODE    0B5AH     0027H     UNIT         ?PR?_OS_DELAY?MAIN
+            CODE    0B81H     0014H     UNIT         ?PR?TASK2?MAIN
+            CODE    0B95H     0013H     UNIT         ?PR?TIMER0_INIT?MAIN
+            CODE    0BA8H     000DH     UNIT         ?PR?TASK1?MAIN
+            CODE    0BB5H     000BH     UNIT         ?C_INITSEG
+            CODE    0BC0H     0005H     UNIT         ?PR?OS_IDLE_TASK?MAIN
 
-
-
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 2
 
 
 OVERLAY MAP OF MODULE:   .\Objects\ºôÎüµÆpwm (?C_STARTUP)
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  13:32:05  PAGE 2
+
 
 
 SEGMENT                            XDATA_GROUP
@@ -79,18 +77,16 @@ SEGMENT                            XDATA_GROUP
   +--> ?PR?TASK2?MAIN
   +--> ?PR?OS_START?MAIN
 
-?PR?TASK1?MAIN                   0000H    0002H
+?PR?TASK1?MAIN                   -----    -----
   +--> ?PR?_OS_DELAY?MAIN
-  +--> ?PR?OSCTXSW?MAIN
 
 ?PR?_OS_DELAY?MAIN               -----    -----
   +--> ?PR?OSCTXSW?MAIN
 
 ?PR?_OS_TASK_CREATE?MAIN         0000H    0008H
 
-?PR?TASK2?MAIN                   0000H    0002H
+?PR?TASK2?MAIN                   -----    -----
   +--> ?PR?_OS_DELAY?MAIN
-  +--> ?PR?OSCTXSW?MAIN
 
 ?PR?OS_START?MAIN                -----    -----
   +--> ?PR?OS_IDLE_TASK?MAIN
@@ -119,13 +115,13 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:0083H         SYMBOL        DPH
   D:0082H         SYMBOL        DPL
   N:0000H         SYMBOL        IBPSTACK
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 3
-
-
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
   C:0904H         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  13:32:05  PAGE 3
+
+
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
   N:0000H         SYMBOL        PDATASTART
@@ -155,7 +151,6 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
   D:00C0H         PUBLIC        P4
-  C:0BD6H         PUBLIC        Delay1ms
   D:00C8H         PUBLIC        P5
   D:00E8H         PUBLIC        P6
   B:00A8H.7       PUBLIC        EA
@@ -165,11 +160,11 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:00A8H         PUBLIC        IE
   B:0080H.6       PUBLIC        LED_Y
   D:00B8H         PUBLIC        IP
-  C:0A67H         PUBLIC        OSCtxSw
+  C:098DH         PUBLIC        OSCtxSw
   D:0081H         PUBLIC        SP
   D:00D8H         PUBLIC        CCON
-  C:0AC7H         PUBLIC        main
-  C:0BC3H         PUBLIC        Timer0_Init
+  C:0ADEH         PUBLIC        main
+  C:0B95H         PUBLIC        Timer0_Init
   I:0008H         PUBLIC        task_idle_stack
   D:0098H         PUBLIC        SCON
   D:0089H         PUBLIC        TMOD
@@ -179,252 +174,221 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   B:00A8H.1       PUBLIC        ET0
   B:0088H.5       PUBLIC        TF0
   D:008CH         PUBLIC        TH0
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 4
-
-
   X:0009H         PUBLIC        cut
   D:008AH         PUBLIC        TL0
-  C:0A03H         PUBLIC        _os_task_create
-  C:0BAFH         PUBLIC        _delay_ms
-  C:0B4BH         PUBLIC        _os_delay
+  C:0A7AH         PUBLIC        _os_task_create
+  C:0B64H         PUBLIC        _os_delay
   B:0088H.4       PUBLIC        TR0
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  13:32:05  PAGE 4
+
+
   I:001CH         PUBLIC        tcb_list
   X:000BH         PUBLIC        max_task
   I:003AH         PUBLIC        task_stack1
   I:004EH         PUBLIC        task_stack2
   X:000DH         PUBLIC        task_id
-  C:0B68H         PUBLIC        task1
-  C:0B8CH         PUBLIC        task2
-  C:0B11H         PUBLIC        os_start
-  C:0BECH         PUBLIC        os_idle_task
+  C:0BA8H         PUBLIC        task1
+  C:0B81H         PUBLIC        task2
+  C:0B28H         PUBLIC        os_start
+  C:0BC0H         PUBLIC        os_idle_task
   D:00D0H         PUBLIC        PSW
   B:0080H.7       PUBLIC        LED_G
   D:0094H         PUBLIC        P0M0
-  -------         PROC          DELAY1MS
-  -------         DO            
-  D:0007H         SYMBOL        i
-  D:0006H         SYMBOL        j
-  -------         ENDDO         
-  C:0BD6H         LINE#         20
-  C:0BD6H         LINE#         21
-  C:0BD6H         LINE#         24
-  C:0BD7H         LINE#         25
-  C:0BD8H         LINE#         26
-  C:0BDAH         LINE#         27
-  C:0BDCH         LINE#         29
-  C:0BDCH         LINE#         30
-  C:0BDEH         LINE#         31
-  C:0BE0H         LINE#         32
-  -------         ENDPROC       DELAY1MS
-  -------         PROC          _DELAY_MS
-  D:0004H         SYMBOL        ms
-  C:0BAFH         LINE#         35
-  C:0BB3H         LINE#         36
-  C:0BB3H         LINE#         37
-  C:0BBDH         LINE#         38
-  C:0BBDH         LINE#         39
-  C:0BC0H         LINE#         40
-  C:0BC2H         LINE#         41
-  -------         ENDPROC       _DELAY_MS
   -------         PROC          OSCTXSW
   -------         DO            
   D:0007H         SYMBOL        ost_i
   -------         ENDDO         
-  C:0A67H         LINE#         58
-  C:0A67H         LINE#         59
-  C:0A67H         LINE#         60
-  C:0A69H         LINE#         61
-  C:0A77H         LINE#         63
-  C:0A87H         LINE#         64
-  C:0A87H         LINE#         65
-  C:0A93H         LINE#         66
-  C:0A93H         LINE#         67
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 5
-
-
-  C:0A9BH         LINE#         68
-  C:0A9BH         LINE#         70
-  C:0A9BH         LINE#         71
-  C:0A9EH         LINE#         74
-  C:0AB0H         LINE#         75
-  C:0AB0H         LINE#         76
-  C:0AB7H         LINE#         77
-  C:0AB7H         LINE#         79
-  C:0AC6H         LINE#         81
+  C:098DH         LINE#         59
+  C:098DH         LINE#         60
+  C:098DH         LINE#         61
+  C:098DH         LINE#         62
+  C:0994H         LINE#         63
+  C:0994H         LINE#         64
+  C:0994H         LINE#         65
+  C:0996H         LINE#         66
+  C:099DH         LINE#         67
+  C:099DH         LINE#         68
+  C:099DH         LINE#         69
+  C:099FH         LINE#         70
+  C:09A4H         LINE#         71
+  C:09A4H         LINE#         72
+  C:09A4H         LINE#         73
+  C:09A4H         LINE#         75
+  C:09B2H         LINE#         77
+  C:09C4H         LINE#         78
+  C:09C4H         LINE#         79
+  C:09D0H         LINE#         80
+  C:09D0H         LINE#         81
+  C:09D8H         LINE#         82
+  C:09D8H         LINE#         84
+  C:09D8H         LINE#         85
+  C:09DBH         LINE#         88
+  C:09EDH         LINE#         89
+  C:09EDH         LINE#         90
+  C:09F4H         LINE#         91
+  C:09F4H         LINE#         93
+  C:0A03H         LINE#         95
   -------         ENDPROC       OSCTXSW
   -------         PROC          _OS_TASK_CREATE
   X:0000H         SYMBOL        task
   X:0003H         SYMBOL        tstack
   X:0006H         SYMBOL        tid
-  C:0A03H         LINE#         83
-  C:0A0EH         LINE#         84
-  C:0A0EH         LINE#         86
-  C:0A22H         LINE#         87
-  C:0A3BH         LINE#         89
-  C:0A4EH         LINE#         90
-  C:0A58H         LINE#         92
-  C:0A66H         LINE#         93
+  C:0A7AH         LINE#         97
+  C:0A85H         LINE#         98
+  C:0A85H         LINE#         100
+  C:0A99H         LINE#         101
+  C:0AB2H         LINE#         103
+  C:0AC5H         LINE#         104
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  13:32:05  PAGE 5
+
+
+  C:0ACFH         LINE#         106
+  C:0ADDH         LINE#         107
   -------         ENDPROC       _OS_TASK_CREATE
   -------         PROC          OS_START
-  C:0B11H         LINE#         96
-  C:0B11H         LINE#         97
-  C:0B11H         LINE#         99
-  C:0B2CH         LINE#         101
-  C:0B33H         LINE#         102
-  C:0B42H         LINE#         104
+  C:0B28H         LINE#         110
+  C:0B28H         LINE#         111
+  C:0B28H         LINE#         113
+  C:0B43H         LINE#         115
+  C:0B4AH         LINE#         116
+  C:0B59H         LINE#         118
   -------         ENDPROC       OS_START
-  C:0B47H         SYMBOL        L?0047
-  -------         PROC          L?0046
-  -------         ENDPROC       L?0046
-  C:0B47H         SYMBOL        L?0047
+  C:0B5CH         SYMBOL        L?0040
+  C:0B60H         SYMBOL        L?0041
+  -------         PROC          L?0039
+  -------         ENDPROC       L?0039
+  C:0B5CH         SYMBOL        L?0040
+  C:0B60H         SYMBOL        L?0041
   -------         PROC          _OS_DELAY
   D:0004H         SYMBOL        tasks
-  C:0B4BH         LINE#         107
-  C:0B4BH         LINE#         108
-  C:0B4BH         LINE#         111
-  C:0B5BH         LINE#         113
-  C:0B65H         LINE#         115
+  C:0B64H         LINE#         121
+  C:0B64H         LINE#         122
+  C:0B64H         LINE#         125
+  C:0B74H         LINE#         127
+  C:0B7EH         LINE#         129
   -------         ENDPROC       _OS_DELAY
   -------         PROC          OS_IDLE_TASK
-  C:0BECH         LINE#         119
-  C:0BECH         LINE#         120
-  C:0BECH         LINE#         121
-  C:0BECH         LINE#         122
-  C:0BECH         LINE#         123
-  C:0BEFH         LINE#         124
+  C:0BC0H         LINE#         133
+  C:0BC0H         LINE#         134
+  C:0BC0H         LINE#         135
+  C:0BC0H         LINE#         136
+  C:0BC0H         LINE#         137
+  C:0BC3H         LINE#         138
   -------         ENDPROC       OS_IDLE_TASK
   -------         PROC          TASK1
-  -------         DO            
-  X:0000H         SYMBOL        task1_i
-  -------         ENDDO         
-  C:0B68H         LINE#         127
-  C:0B68H         LINE#         128
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 6
-
-
-  C:0B68H         LINE#         129
-  C:0B6FH         LINE#         131
-  C:0B6FH         LINE#         132
-  C:0B6FH         LINE#         133
-  C:0B71H         LINE#         134
-  C:0B74H         LINE#         136
-  C:0B76H         LINE#         137
-  C:0B79H         LINE#         139
-  C:0B87H         LINE#         140
-  C:0B87H         LINE#         141
-  C:0B8AH         LINE#         142
+  C:0BA8H         LINE#         141
+  C:0BA8H         LINE#         142
+  C:0BA8H         LINE#         143
+  C:0BA8H         LINE#         144
+  C:0BA8H         LINE#         145
+  C:0BA8H         LINE#         146
+  C:0BABH         LINE#         148
+  C:0BADH         LINE#         149
+  C:0BB0H         LINE#         151
+  C:0BB0H         LINE#         152
+  C:0BB3H         LINE#         154
   -------         ENDPROC       TASK1
   -------         PROC          TASK2
-  -------         DO            
-  X:0000H         SYMBOL        task2_i
-  -------         ENDDO         
-  C:0B8CH         LINE#         145
-  C:0B8CH         LINE#         146
-  C:0B8CH         LINE#         148
-  C:0B93H         LINE#         150
-  C:0B93H         LINE#         151
-  C:0B93H         LINE#         153
-  C:0B95H         LINE#         154
-  C:0BA3H         LINE#         155
-  C:0BA3H         LINE#         156
-  C:0BA3H         LINE#         157
-  C:0BA3H         LINE#         159
-  C:0BAAH         LINE#         160
-  C:0BADH         LINE#         161
+  C:0B81H         LINE#         157
+  C:0B81H         LINE#         158
+  C:0B81H         LINE#         160
+  C:0B81H         LINE#         161
+  C:0B81H         LINE#         162
+  C:0B83H         LINE#         163
+  C:0B8AH         LINE#         165
+  C:0B8CH         LINE#         166
+  C:0B93H         LINE#         167
   -------         ENDPROC       TASK2
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  13:32:05  PAGE 6
+
+
   -------         PROC          TIMER0_ISR
   -------         DO            
   X:0008H         SYMBOL        ti
   -------         ENDDO         
-  C:0800H         LINE#         167
-  C:081DH         LINE#         169
-  C:0822H         LINE#         170
-  C:0830H         LINE#         172
-  C:083CH         LINE#         173
-  C:083CH         LINE#         174
-  C:0843H         LINE#         175
-  C:0845H         LINE#         176
-  C:0845H         LINE#         178
-  C:0861H         LINE#         179
-  C:0861H         LINE#         180
-  C:086EH         LINE#         181
-  C:086EH         LINE#         182
-  C:086EH         LINE#         183
-  C:086EH         LINE#         185
-  C:089AH         LINE#         186
-  C:089AH         LINE#         187
-  C:08AAH         LINE#         189
-  C:08B4H         LINE#         190
-  C:08B6H         LINE#         191
-  C:08B6H         LINE#         192
-  C:08DDH         LINE#         193
-  C:08E6H         LINE#         194
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 7
-
-
+  C:0800H         LINE#         173
+  C:081DH         LINE#         175
+  C:0822H         LINE#         176
+  C:0830H         LINE#         178
+  C:083CH         LINE#         179
+  C:083CH         LINE#         180
+  C:0843H         LINE#         181
+  C:0845H         LINE#         182
+  C:0845H         LINE#         184
+  C:0861H         LINE#         185
+  C:0861H         LINE#         186
+  C:086EH         LINE#         187
+  C:086EH         LINE#         188
+  C:086EH         LINE#         189
+  C:086EH         LINE#         191
+  C:089AH         LINE#         192
+  C:089AH         LINE#         193
+  C:08AAH         LINE#         195
+  C:08B4H         LINE#         196
+  C:08B6H         LINE#         197
+  C:08B6H         LINE#         198
+  C:08DDH         LINE#         199
+  C:08E6H         LINE#         202
   -------         ENDPROC       TIMER0_ISR
   -------         PROC          TIMER0_INIT
-  C:0BC3H         LINE#         196
-  C:0BC3H         LINE#         197
-  C:0BC3H         LINE#         198
-  C:0BC6H         LINE#         199
-  C:0BC9H         LINE#         200
-  C:0BCCH         LINE#         201
-  C:0BCFH         LINE#         202
-  C:0BD1H         LINE#         203
-  C:0BD3H         LINE#         204
-  C:0BD5H         LINE#         205
+  C:0B95H         LINE#         204
+  C:0B95H         LINE#         205
+  C:0B95H         LINE#         206
+  C:0B98H         LINE#         207
+  C:0B9BH         LINE#         208
+  C:0B9EH         LINE#         209
+  C:0BA1H         LINE#         210
+  C:0BA3H         LINE#         211
+  C:0BA5H         LINE#         212
+  C:0BA7H         LINE#         213
   -------         ENDPROC       TIMER0_INIT
   -------         PROC          MAIN
-  C:0AC7H         LINE#         209
-  C:0AC7H         LINE#         210
-  C:0AC7H         LINE#         211
-  C:0ACAH         LINE#         212
-  C:0ACCH         LINE#         213
-  C:0ACFH         LINE#         214
-  C:0AD1H         LINE#         215
-  C:0AD4H         LINE#         218
-  C:0AEFH         LINE#         219
-  C:0B0CH         LINE#         220
-  C:0B0FH         LINE#         223
-  C:0B0FH         LINE#         224
-  C:0B0FH         LINE#         226
+  C:0ADEH         LINE#         216
+  C:0ADEH         LINE#         217
+  C:0ADEH         LINE#         218
+  C:0AE1H         LINE#         219
+  C:0AE3H         LINE#         220
+  C:0AE6H         LINE#         221
+  C:0AE8H         LINE#         222
+  C:0AEBH         LINE#         225
+  C:0B06H         LINE#         226
+  C:0B23H         LINE#         227
+  C:0B26H         LINE#         230
+  C:0B26H         LINE#         231
+  C:0B26H         LINE#         233
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  13:32:05  PAGE 7
+
+
   -------         MODULE        ?C?CSTPTR
-  C:098DH         PUBLIC        ?C?CSTPTR
+  C:0A04H         PUBLIC        ?C?CSTPTR
   -------         ENDMOD        ?C?CSTPTR
 
   -------         MODULE        ?C?CSTOPTR
-  C:099FH         PUBLIC        ?C?CSTOPTR
+  C:0A16H         PUBLIC        ?C?CSTOPTR
   -------         ENDMOD        ?C?CSTOPTR
 
   -------         MODULE        ?C?ULCMP
-  C:09C1H         PUBLIC        ?C?ULCMP
+  C:0A38H         PUBLIC        ?C?ULCMP
   -------         ENDMOD        ?C?ULCMP
 
   -------         MODULE        ?C?LLDIDATA
-  C:09D2H         PUBLIC        ?C?LLDIDATA
+  C:0A49H         PUBLIC        ?C?LLDIDATA
   -------         ENDMOD        ?C?LLDIDATA
 
   -------         MODULE        ?C?LSTIDATA
-  C:09DEH         PUBLIC        ?C?LSTIDATA
+  C:0A55H         PUBLIC        ?C?LSTIDATA
   -------         ENDMOD        ?C?LSTIDATA
 
   -------         MODULE        ?C?LSTKIDATA
-  C:09EAH         PUBLIC        ?C?LSTKIDATA
+  C:0A61H         PUBLIC        ?C?LSTKIDATA
   -------         ENDMOD        ?C?LSTKIDATA
 
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_DELAY_MS?MAIN
-
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/25/2023  11:11:58  PAGE 8
-
-
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0300H BYTE (37%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 02D4H BYTE (35%) *
 ******************************************************************************
 
-Program Size: data=99.0 xdata=15 code=1015
-LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+Program Size: data=99.0 xdata=15 code=971
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

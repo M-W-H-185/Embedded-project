@@ -388,16 +388,6 @@
             </File>
           </Files>
         </Group>
-        <Group>
-          <GroupName>XmRTOS</GroupName>
-          <Files>
-            <File>
-              <FileName>os_typedef.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\XmRTOS\os_typedef.h</FilePath>
-            </File>
-          </Files>
-        </Group>
       </Groups>
     </Target>
   </Targets>
