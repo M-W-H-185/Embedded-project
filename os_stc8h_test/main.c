@@ -20,7 +20,7 @@ sbit LED_G = P0^7;    // 绿色LED
 void Delay1ms()		//@35MHz 
 {
 	unsigned char i, j;
-
+	
 	_nop_();
 	_nop_();
 	i = 46;
@@ -41,52 +41,105 @@ void delay_ms(unsigned int ms)
 }
 
  
-#define MAX_TASKS 2       /*任务槽个数.必须和实际任务数一至*/
+#define MAX_TASKS 5       /*任务槽个数.必须和实际任务数一至*/
 #define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
-os_uint8_t idata task_stack1[MAX_TASK_DEP];/*任务堆栈.*/
-os_uint8_t idata task_stack2[MAX_TASK_DEP];/*任务堆栈.*/
 unsigned int task_id;    /*当前活动任务号*/
 unsigned int max_task = 0;
  
-os_uint8_t idata task_sp[MAX_TASKS];
+// 任务控制列表
+struct os_tcb_t idata tcb_list[MAX_TASKS];
 
-void task_switch()
+os_uint8_t idata task_idle_stack[MAX_TASK_DEP];		/*空闲任务堆栈.*/
+
+os_uint8_t idata task_stack1[MAX_TASK_DEP];			/*任务1堆栈.*/
+os_uint8_t idata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
+
+// 任务切换函数
+void OSCtxSw()
 {
-
-		task_sp[task_id] = SP;
-		task_id++;
-    if(task_id == max_task)
+	os_uint8_t  ost_i = 0;
+	tcb_list[task_id].sp = SP;
+	// 找出就绪态的一个id
+	for(ost_i = 0; ost_i < max_task; ost_i++)
+	{
+		if(tcb_list[ost_i].os_status_type == OS_READY)
 		{
-			task_id = 0;
-		}
+			task_id = ost_i;
+			continue;
 
-    SP = task_sp[task_id];
+		}
+	}
+	
+	
+    if(task_id == max_task)
+	{
+		task_id = 0;
+	}
+
+    SP = tcb_list[task_id].sp;
 
 }
  
-void task_load(void(*task)(void) ,os_uint8_t *tstack,int tid)
+void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 {
 
 	tstack[0] = (unsigned int)task & 0xff;
 	tstack[1] = (unsigned int)task >> 8;
 
-	task_sp[tid] = tstack+1;
+	tcb_list[tid].sp 				= tstack+1;
+	tcb_list[tid].os_status_type 	= OS_READY;
 
 	++max_task;
+}
+void os_idle_task(void);
+
+void os_start()
+{
+	// 装载空闲任务
+	os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
+
+	task_id = 0;
+	SP = tcb_list[task_id].sp;  
+	return;
+}
+
+// 任务延时函数
+void os_delay(os_uint32_t tasks)
+{	
+	
+	// 设置延时滴答数
+	tcb_list[task_id].delay_tick 	 = 	tasks;
+	// 将任务设置为阻塞态
+	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
+	// 只要任务延时了，就马上切换出去
+	OSCtxSw();
+	
+}
+// 空闲函数
+void os_idle_task(void)
+{
+	while(1)
+	{
+		OSCtxSw();
+	}
 }
 
 void task1()
 {
-		unsigned int task1_i = 0;
+	unsigned int task1_i = 0;
 
-    while(1)
-    {
-			LED_R = !LED_R;
-			task1_i ++;
-			task1_i / 120;
-			delay_ms(500);
-			task_switch();
-    }
+	while(1)
+	{
+		LED_R = 1;
+		os_delay(500);
+
+		LED_R = 0;
+		os_delay(500);
+
+		task1_i ++;
+		task1_i / 120;
+		OSCtxSw();
+	}
 }
 
 void task2()
@@ -103,26 +156,17 @@ void task2()
 		task2_i * 120;
 		task2_i % 120;
 
-		delay_ms(500);
-		task_switch();
+		os_delay(5000);
+		OSCtxSw();
 	}
 }
 
-void os_Start()
-{
-	task_id = 0;
-	SP = task_sp[task_id];  
-	return;
-}
 
 unsigned int cut = 0;
 
 void Timer0_Isr(void) interrupt 1
 {
-unsigned int c1ut = 0;
-unsigned int c32ut = 0;
-unsigned int c2342ut = 0;
-
+	os_uint8_t ti = 0;
 	cut++;
 
 	if(cut == 500)
@@ -130,7 +174,23 @@ unsigned int c2342ut = 0;
 		cut = 0;
 		LED_G = !LED_G;
 	}
-	
+	// 在这里处理遍历延时
+	for(ti = 0; ti<max_task; ti++)
+	{
+		if(tcb_list[ti].os_status_type != OS_BLOCKED)
+		{
+			continue;
+		}
+		// 设置延时滴答数
+		if((tcb_list[ti].delay_tick - 1) == 0)
+		{
+			tcb_list[ti].delay_tick = 0;
+			// 将任务设置为阻塞态
+			tcb_list[ti].os_status_type = OS_READY;
+			continue;
+		}
+		tcb_list[ti].delay_tick--;
+	}
 }
 
 void Timer0_Init(void)		//1毫秒@11.0592MHz
@@ -153,9 +213,11 @@ void main()
 	Timer0_Init();
 	EA = 1;
 	P_SW2 |= (1<<7);
-	task_load(task1, &task_stack1, 0);//将task1函数装入0号槽
-	task_load(task2, &task_stack2, 1);//将task2函数装入1号槽
-	os_Start();
+	
+	
+	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
+	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+	os_start();
 
 
 	while(1)
