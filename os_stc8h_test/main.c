@@ -54,19 +54,21 @@ typedef struct os_tcb_t
     os_uint8_t  sp;              // sp 堆栈指针存储
     os_uint32_t delay_tick;      // 延时滴答数
     os_uint8_t  os_status_type;  // 任务状态
-    os_uint8_t  test_value;      // 测试变量
 } os_tcb_t;
-
+// 任务控制块的结构体大小
+const os_uint8_t data OS_TCB_SIZE = sizeof(struct os_tcb_t);	// 1 + 4 + 1 = 6个字节
  
 #define MAX_TASKS 5       /*任务槽个数.必须和实际任务数一至*/
 #define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
-unsigned int task_id;    /*当前活动任务号*/
-unsigned int max_task = 0;
- 
+os_uint8_t data task_id = 0;    /*当前活动任务号*/
+os_uint8_t max_task = 0;
+
 
  
 extern void test(void);
- 
+// 任务主动放弃cpu资源
+extern void OSCtxSw(void);
+
 
 // 任务控制列表
 struct os_tcb_t idata tcb_list[MAX_TASKS];
@@ -76,31 +78,39 @@ os_uint8_t idata task_stack1[MAX_TASK_DEP];			/*任务1堆栈.*/
 os_uint8_t idata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
 // 任务堆栈区
 
-// 任务切换函数
-void OSCtxSw()
+
+
+/************************************************************************* 	
+*				 	获取轮询任务id 无优先级
+*************************************************************************/
+void OSGetPollTask(void)	
 {
 	os_uint8_t  ost_i = 0;
 
-	tcb_list[task_id].sp = SP;
 	// 找出就绪态的一个id
-	for(ost_i = 0; ost_i < max_task; ost_i++)
-	{
-		if(tcb_list[ost_i].os_status_type == OS_READY)
-		{
-			task_id = ost_i;
-			continue;
-
-		}
-	}
-	
-	
-  if(task_id == max_task)
+	task_id ++;
+	if(task_id > max_task)
 	{
 		task_id = 0;
 	}
+	// task_id++ 的任务不是就绪态 进入循环找一个就绪态的出来
+	if(tcb_list[task_id].os_status_type != OS_READY)
+	{
+		for(ost_i = 0; ost_i < MAX_TASKS; ost_i++)
+		{
+			if(tcb_list[ost_i].os_status_type == OS_READY)
+			{
+				task_id = ost_i;
+				
+			}
+	
+		}	
+	}
 
-
+	
 }
+
+
  
 void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 {
@@ -118,9 +128,9 @@ void os_idle_task(void);
 void os_start()
 {
 	// 装载空闲任务
-	os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
+	os_task_create(os_idle_task, &task_idle_stack, MAX_TASKS - 1);//将task1函数装入 号槽
 
-	task_id = 0;
+	task_id = MAX_TASKS - 1;
 	SP = tcb_list[task_id].sp;  
 	return;
 }
@@ -128,14 +138,14 @@ void os_start()
 // 任务延时函数
 void os_delay(os_uint32_t tasks)
 {	
-	if(tasks > 0)
+	if(tasks > 0 && tcb_list[task_id].os_status_type != OS_BLOCKED)
 	{
 		// 设置延时滴答数
 		tcb_list[task_id].delay_tick 	 = 	tasks;
 		// 将任务设置为阻塞态
 		tcb_list[task_id].os_status_type = 	OS_BLOCKED;
-		// 只要任务延时了，就马上切换出去
-		OSCtxSw();	
+		
+		return;
 	}
 
 	
@@ -144,16 +154,15 @@ os_uint8_t idle_cut = 0;
 // 空闲函数
 void os_idle_task(void)
 {
-	LED_R = 1;
 
 	while(1)
 	{
-		idle_cut = 1 + 1;
-		LED_R = 0;
-		Delay500ms();
+//		idle_cut = 1 + 1;
+//		LED_R = 0;
+//		Delay500ms();
 
-		LED_R = 1;
-		Delay500ms();
+//		LED_R = 1;
+//		Delay500ms();
 
 	}
 }
@@ -162,14 +171,15 @@ void task1()
 {
 	while(1)
 	{
-//		LED_R = 1;
-//		os_delay(100);
+		LED_R = 1;
 
-//		LED_R = 0;
-//		os_delay(100);
-//		
-//		LED_R = 1;
-//		os_delay(100);
+		os_delay(500);
+
+		LED_R = 0;
+		os_delay(500);
+		
+		LED_R = 1;
+		os_delay(500);
 
 	}
 }
@@ -179,11 +189,11 @@ void task2()
 
 	while(1)
 	{
-//		LED_Y = 1;
-//		os_delay(1000);
-//		
-//		LED_Y = 0;
-//		os_delay(1000);
+		LED_Y = 1;
+		os_delay(500);
+		
+		LED_Y = 0;
+		os_delay(500);
 	}
 }
 
@@ -219,8 +229,9 @@ void time0_handle(void)large reentrant
 		tcb_list[ti].delay_tick--;
 	}
 
-	ti = 0;
 	
+	OSGetPollTask();	// 找一个就绪的任务出来
+	// 汇编处理任务切换....
 }
 
 void Timer0_Init(void)		//1毫秒@11.0592MHz
@@ -233,22 +244,25 @@ void Timer0_Init(void)		//1毫秒@11.0592MHz
 	TR0 = 1;				//定时器0开始计时
 	ET0 = 1;				//使能定时器0中断
 }
+	volatile  os_uint8_t aaaa = 0;
 
 /* 主函数 */
 void main()
 {
+
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
 	Timer0_Init();
 	EA = 1;
 	//	P_SW2 |= (1<<7);
 	tcb_list[0].sp = 0x01;
+
 	test();
 
 
 	
-	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
-	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+	os_task_create(task1, &task_stack1, 0);//将task1函数装入0号槽
+	os_task_create(task2, &task_stack2, 1);//将task2函数装入1号槽
 	
 
 	

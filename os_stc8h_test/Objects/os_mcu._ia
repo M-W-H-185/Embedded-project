@@ -1,1 +1,0 @@
-"XmRTOS\os_mcu.asm" SET (LARGE) DEBUG PRINT(.\Listings\os_mcu.lst) OBJECT(.\Objects\os_mcu.obj) EP
