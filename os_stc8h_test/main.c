@@ -14,25 +14,6 @@
 sbit LED_R = P0^5;    // 红色LED
 sbit LED_Y = P0^6;    // 黄色LED
 sbit LED_G = P0^7;    // 绿色LED
-void Delay500ms(void)	//@11.0592MHz
-{
-	unsigned char data i, j, k;
-
-	_nop_();
-	_nop_();
-	i = 22;
-	j = 3;
-	k = 227;
-	do
-	{
-		do
-		{
-			while (--k);
-		} while (--j);
-	} while (--i);
-}
-
-
 
 typedef     unsigned char    os_uint8_t;	//  8 bits 
 
@@ -48,13 +29,13 @@ enum OS_TASK_STATUS_TYPE
 
 };
 
-// 任务控制块
-typedef struct os_tcb_t
-{
-    os_uint8_t  sp;              // sp 堆栈指针存储
-    os_uint32_t delay_tick;      // 延时滴答数
-    os_uint8_t  os_status_type;  // 任务状态
-} os_tcb_t;
+	// 任务控制块
+	typedef struct os_tcb_t
+	{
+		os_uint8_t 			sp;					// sp 堆栈指针存储
+		os_uint32_t 		delay_tick;			// 延时滴答数
+		os_uint8_t 			os_status_type;		// 任务状态
+	};
 // 任务控制块的结构体大小
 const os_uint8_t data OS_TCB_SIZE = sizeof(struct os_tcb_t);	// 1 + 4 + 1 = 6个字节
  
@@ -66,8 +47,8 @@ os_uint8_t max_task = 0;
 
  
 extern void test(void);
-// 任务主动放弃cpu资源
-extern void OSCtxSw(void);
+//// 任务主动放弃cpu资源
+//extern void OSCtxSw(void);
 
 
 // 任务控制列表
@@ -79,38 +60,41 @@ os_uint8_t idata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
 // 任务堆栈区
 
 
+// 获取下一个任务id
+void os_getNextTaskId(void)
+{
+	
+//	
+//	
+//	
 
-/************************************************************************* 	
-*				 	获取轮询任务id 无优先级
-*************************************************************************/
-void OSGetPollTask(void)	
+}
+// 任务切换函数
+void OSCtxSw()
 {
 	os_uint8_t  ost_i = 0;
 
-	// 找出就绪态的一个id
-	task_id ++;
-	if(task_id > max_task)
+	tcb_list[task_id].sp = SP;
+
+// 找出就绪态的一个id
+	for(ost_i = 0; ost_i < max_task; ost_i++)
+	{
+		if(tcb_list[ost_i].os_status_type == OS_READY)
+		{
+			task_id = ost_i;
+			continue;
+
+		}
+	}
+	
+	
+  if(task_id == max_task)
 	{
 		task_id = 0;
 	}
-	// task_id++ 的任务不是就绪态 进入循环找一个就绪态的出来
-	if(tcb_list[task_id].os_status_type != OS_READY)
-	{
-		for(ost_i = 0; ost_i < MAX_TASKS; ost_i++)
-		{
-			if(tcb_list[ost_i].os_status_type == OS_READY)
-			{
-				task_id = ost_i;
-				
-			}
-	
-		}	
-	}
+    SP = tcb_list[task_id].sp;
 
-	
 }
-
-
  
 void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 {
@@ -128,9 +112,9 @@ void os_idle_task(void);
 void os_start()
 {
 	// 装载空闲任务
-	os_task_create(os_idle_task, &task_idle_stack, MAX_TASKS - 1);//将task1函数装入 号槽
+	os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
 
-	task_id = MAX_TASKS - 1;
+	task_id = 0;
 	SP = tcb_list[task_id].sp;  
 	return;
 }
@@ -138,32 +122,21 @@ void os_start()
 // 任务延时函数
 void os_delay(os_uint32_t tasks)
 {	
-	if(tasks > 0 && tcb_list[task_id].os_status_type != OS_BLOCKED)
-	{
-		// 设置延时滴答数
-		tcb_list[task_id].delay_tick 	 = 	tasks;
-		// 将任务设置为阻塞态
-		tcb_list[task_id].os_status_type = 	OS_BLOCKED;
-		
-		return;
-	}
-
 	
+	// 设置延时滴答数
+	tcb_list[task_id].delay_tick 	 = 	tasks;
+	// 将任务设置为阻塞态
+	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
+	// 只要任务延时了，就马上切换出去
+OSCtxSw();
+//	
 }
-os_uint8_t idle_cut = 0;
 // 空闲函数
 void os_idle_task(void)
 {
-
 	while(1)
 	{
-//		idle_cut = 1 + 1;
-//		LED_R = 0;
-//		Delay500ms();
-
-//		LED_R = 1;
-//		Delay500ms();
-
+OSCtxSw();
 	}
 }
 
@@ -172,7 +145,6 @@ void task1()
 	while(1)
 	{
 		LED_R = 1;
-
 		os_delay(500);
 
 		LED_R = 0;
@@ -180,6 +152,7 @@ void task1()
 		
 		LED_R = 1;
 		os_delay(500);
+OSCtxSw();
 
 	}
 }
@@ -190,18 +163,20 @@ void task2()
 	while(1)
 	{
 		LED_Y = 1;
-		os_delay(500);
+		os_delay(1000);
 		
 		LED_Y = 0;
-		os_delay(500);
+		os_delay(1000);
+		OSCtxSw();
+
 	}
 }
 
 
 unsigned int cut = 0;
 
-void time0_handle(void)large reentrant
-//void time0_handle(void)interrupt 1
+//void time0_handle(void)large reentrant
+void time0_handle(void)interrupt 1
 {
 	os_uint8_t ti = 0;
 	cut++;
@@ -212,7 +187,7 @@ void time0_handle(void)large reentrant
 		LED_G = !LED_G;
 	}
 	// 在这里处理遍历延时
-	for(ti = 0; ti < max_task; ti++)
+	for(ti = 0; ti<max_task; ti++)
 	{
 		if(tcb_list[ti].os_status_type != OS_BLOCKED)
 		{
@@ -228,10 +203,6 @@ void time0_handle(void)large reentrant
 		}
 		tcb_list[ti].delay_tick--;
 	}
-
-	
-	OSGetPollTask();	// 找一个就绪的任务出来
-	// 汇编处理任务切换....
 }
 
 void Timer0_Init(void)		//1毫秒@11.0592MHz
@@ -244,28 +215,18 @@ void Timer0_Init(void)		//1毫秒@11.0592MHz
 	TR0 = 1;				//定时器0开始计时
 	ET0 = 1;				//使能定时器0中断
 }
-	volatile  os_uint8_t aaaa = 0;
 
 /* 主函数 */
 void main()
 {
-
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
 	Timer0_Init();
 	EA = 1;
-	//	P_SW2 |= (1<<7);
-	tcb_list[0].sp = 0x01;
+	P_SW2 |= (1<<7);
 
-	test();
-
-
-	
-	os_task_create(task1, &task_stack1, 0);//将task1函数装入0号槽
-	os_task_create(task2, &task_stack2, 1);//将task2函数装入1号槽
-	
-
-	
+	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
+	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
 	os_start();
 
 
@@ -276,6 +237,3 @@ void main()
 	
 
 }
-
-
-
