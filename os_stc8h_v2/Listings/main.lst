@@ -1,0 +1,185 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              12/27/2023 16:12:58 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c LARGE OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+*** WARNING C500 IN LINE 1 OF main.c: LICENSE ERROR (R207(3): REGISTRY READ ERROR)
+
+   1          // 默认变量存入xdata
+   2          
+   3          #include "stc8g.h"
+   4          #include "intrins.h"
+   5          #include "stdio.h"
+   6          
+   7          /* 发光二极管定义 */
+   8          sbit LED_R = P0^5;    // 红色LED
+   9          sbit LED_Y = P0^6;    // 黄色LED
+  10          sbit LED_G = P0^7;    // 绿色LED
+  11          
+  12          typedef     unsigned char    os_uint8_t;        // 8 bits 
+  13          typedef     unsigned int     os_uint16_t;       // 16 bits 
+  14          typedef     unsigned long    os_uint32_t;       // 32 bits 
+  15          
+  16          typedef unsigned char   OS_STK;                 /* 定义堆栈入口宽度为8位                                        */
+  17          
+  18          
+  19          
+  20          enum OS_TASK_STATUS_TYPE
+  21          {
+  22                  OS_READY      = 1,      // 就绪态
+  23                  OS_RUNING     = 2,      // 运行态
+  24                  OS_BLOCKED    = 3,      // 阻塞态
+  25                  OS_SUSPENDED  = 4       // 停止态
+  26          
+  27          };
+  28          
+  29          // 任务控制块
+  30          typedef struct os_tcb
+  31          {    
+  32                  OS_STK                  *OSTCBStkBase;  // 指向任务堆栈开始部分的指针
+  33                  os_uint32_t             delay_tick;             // 延时滴答数
+  34                  os_uint8_t                      os_status;              // 任务状态
+  35          
+  36          } OS_TCB;
+  37          
+  38          #define MAX_TASK_COUNT_NUM      5                       // 最大任务数
+  39          #define MAX_STK_SIZE            30                      // 任务最大堆栈
+  40          
+  41          os_uint8_t      xdata   this_taskId = 0;                                // 当前运行的任务id
+  42          OS_TCB          xdata   tcb_List[MAX_TASK_COUNT_NUM];   // 存放TCB任务控制列表
+  43          
+  44          OS_TCB          xdata   *tcb_Runing;                                            // 当前运行的任务控制指针
+  45          
+  46          
+  47          // 用户堆栈
+  48          OS_STK xdata task_stk_idle[MAX_STK_SIZE] = {0};
+  49          OS_STK xdata task_stk_1[MAX_STK_SIZE] = {0};
+  50          OS_STK xdata task_stk_2[MAX_STK_SIZE] = {0};
+  51          // 用户堆栈
+  52          
+  53          // 创建任务函数
+C51 COMPILER V9.60.7.0   MAIN                                                              12/27/2023 16:12:58 PAGE 2   
+
+  54          // *task : 任务函数
+  55          // *p_arg: 任务函数的传参
+  56          // *task_stack : 任务堆栈数组
+  57          // tid : 任务的id 在存入任务列表的第几位
+  58          void os_task_create(
+  59                                                          void     (*task)(void *p_arg),
+  60                                                          void     *p_arg,
+  61                                                          OS_STK *task_stack, 
+  62                                                          os_uint8_t tid
+  63                                                  )
+  64          {
+  65   1              OS_STK *stk;
+  66   1              p_arg = p_arg;
+  67   1              
+  68   1              stk       =(OS_STK *)task_stack;                        /* 任务堆栈最低有效地址                                                                 */
+  69   1              *stk++=15;                                                              /* 任务堆栈长度                                                                                 */
+  70   1              *stk++=(os_uint16_t)task & 0xFF;                /* 任务代码地址低8位                                                            */
+  71   1              *stk++=(os_uint16_t)task >> 8;                  /* 任务代码地址高8位                                                            */
+  72   1              /* 处理器是按特定的顺序将寄存器存入堆栈的，所以用户在将寄存器存入堆栈的时候也要依照这一顺序     */
+  73   1              *stk++=0x00;                                                    /* PSW                                                                                          */
+  74   1              *stk++=0x0A;                                                    /* ACC                                                                                          */
+  75   1              *stk++=0x0B;                                                    /* B                                                                                            */
+  76   1              *stk++=0x00;                                                    /* DPL                                                                                          */
+  77   1              *stk++=0x00;                                                    /* DPH                                                                                          */
+  78   1              *stk++=0x00;                                                    /* R0                                                                                           */
+  79   1              *stk++=0x01;                                                    /* R1                                                                                           */
+  80   1              *stk++=0x02;                                                    /* R2                                                                                           */
+  81   1              *stk++=0x03;                                                    /* R3                                                                                           */      
+  82   1              *stk++=0x04;                                                    /* R4                                                                                           */
+  83   1              *stk++=0x05;                                                    /* R5                                                                                           */
+  84   1              *stk++=0x06;                                                    /* R6                                                                                           */
+  85   1              *stk++=0x07;                                                    /* R7                                                                                           */
+  86   1              /* 不用保存SP，任务切换时根据用户堆栈长度计算得出                                                               */
+  87   1              *stk++=(os_uint16_t)(task_stack + MAX_STK_SIZE) >> 8;   /* ?C_XBP 仿真堆栈指针高8位             */
+  88   1              *stk++=(os_uint16_t)(task_stack + MAX_STK_SIZE) & 0xFF; /* ?C_XBP 仿真堆栈低8位                         */
+  89   1              
+  90   1              tcb_List[tid].OSTCBStkBase = task_stack;
+  91   1              tcb_List[tid].os_status = OS_READY;
+  92   1              tcb_List[tid].delay_tick = 0;
+  93   1      }
+  94          extern void OSStartHighRdy(void);
+  95          os_uint8_t test = 0;
+  96          // 启动 OS
+  97          void  os_start (void) large reentrant
+  98          {
+  99   1              tcb_Runing = &tcb_List[1];
+ 100   1      //      // 以下汇编启动!!!
+ 101   1              OSStartHighRdy();
+ 102   1      
+ 103   1      }
+ 104          
+ 105          void task_idle(void *p_arg ) large reentrant
+ 106          {
+ 107   1              // 互相等于一下 驯服编译器
+ 108   1              p_arg = p_arg;
+ 109   1              while(1)
+ 110   1              {
+ 111   2              
+ 112   2                      
+ 113   2              }
+ 114   1      }
+ 115          
+C51 COMPILER V9.60.7.0   MAIN                                                              12/27/2023 16:12:58 PAGE 3   
+
+ 116          void task_1(void *p_arg ) large reentrant
+ 117          {
+ 118   1              p_arg = p_arg;
+ 119   1      
+ 120   1              while(1)
+ 121   1              {
+ 122   2              
+ 123   2                      
+ 124   2              }
+ 125   1      }
+ 126          
+ 127          void task_2(void *p_arg ) large reentrant
+ 128          {
+ 129   1              p_arg = p_arg;
+ 130   1      
+ 131   1              while(1)
+ 132   1              {
+ 133   2              
+ 134   2                      
+ 135   2              }
+ 136   1      }
+ 137          
+ 138          void main(void)
+ 139          {
+ 140   1      task_stk_idle[2] =5;
+ 141   1      task_stk_1[0] = 5;
+ 142   1      task_stk_2[0] = 5;
+ 143   1              os_task_create(task_idle,NULL,&task_stk_idle,0);
+ 144   1              os_task_create(task_1,   NULL,&task_stk_1,   1);
+ 145   1              os_task_create(task_2,   NULL,&task_stk_2,   2);
+ 146   1              os_start();
+ 147   1              while(1)
+ 148   1              {
+ 149   2                      
+ 150   2              }
+ 151   1      }
+ 152          
+*** WARNING C294 IN LINE 114 OF main.c: unreachable code
+*** WARNING C294 IN LINE 125 OF main.c: unreachable code
+*** WARNING C294 IN LINE 136 OF main.c: unreachable code
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    774    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =    134      13
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  4 WARNING(S),  0 ERROR(S)

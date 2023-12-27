@@ -1,0 +1,5 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj",
+".\Objects\os_mcu_a.obj" 
+TO ".\Objects\os_stc8h_v2" 
+PRINT(".\Listings\os_stc8h_v2.m51") RAMSIZE(256) 

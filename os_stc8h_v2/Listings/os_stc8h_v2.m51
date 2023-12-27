@@ -1,0 +1,277 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    12/27/2023  16:12:58  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj, .\Objects\os_mcu_a.obj TO .\Objects\os_stc8h_v2 P
+>> RINT (.\Listings\os_stc8h_v2.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: LARGE
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\STARTUP.obj (?C_STARTUP)
+  .\Objects\main.obj (MAIN)
+  .\Objects\os_mcu_a.obj (OS_MCU_A_ASM)
+  C:\KEIL_V5\C51\LIB\C51L.LIB (?C_INIT)
+  C:\KEIL_V5\C51\LIB\C51L.LIB (?C?CSTPTR)
+  C:\KEIL_V5\C51\LIB\C51L.LIB (?C?ILDIX)
+  C:\KEIL_V5\C51\LIB\C51L.LIB (?C?LSTKXDATA)
+  C:\KEIL_V5\C51\LIB\C51L.LIB (?C_XBP)
+  C:\KEIL_V5\C51\LIB\C51L.LIB (?C?ADDXBP)
+
+
+LINK MAP OF MODULE:  .\Objects\os_stc8h_v2 (?C_STARTUP)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0002H     UNIT         ?C?LIB_DATA
+            IDATA   000AH     0041H     UNIT         ?STACK
+
+            * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
+            XDATA   0000H     0086H     UNIT         ?XD?MAIN
+            XDATA   0086H     000DH     UNIT         _XDATA_GROUP_
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     0203H     UNIT         ?PR?_OS_TASK_CREATE?MAIN
+            CODE    0A03H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0A8FH     007DH     UNIT         ?C?LIB_CODE
+            CODE    0B0CH     0075H     UNIT         ?PR?MAIN?MAIN
+            CODE    0B81H     006CH     UNIT         ?C_INITSEG
+            CODE    0BEDH     002BH     UNIT         ?PR?_?TASK_IDLE?MAIN
+            CODE    0C18H     002BH     UNIT         ?PR?_?TASK_1?MAIN
+            CODE    0C43H     002BH     UNIT         ?PR?_?TASK_2?MAIN
+            CODE    0C6EH     000DH     UNIT         ?PR?_?OS_START?MAIN
+            CODE    0C7BH     0006H     UNIT         ?PR?OSSTARTHIGHRDY?OS_MCU_A_ASM
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\os_stc8h_v2 (?C_STARTUP)
+
+
+SEGMENT                                   XDATA_GROUP
+  +--> CALLED SEGMENT                   START    LENGTH
+-------------------------------------------------------
+?C_C51STARTUP                           -----    -----
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/27/2023  16:12:58  PAGE 2
+
+
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                           -----    -----
+  +--> ?PR?_?TASK_IDLE?MAIN
+  +--> ?PR?_OS_TASK_CREATE?MAIN
+  +--> ?PR?_?TASK_1?MAIN
+  +--> ?PR?_?TASK_2?MAIN
+  +--> ?PR?_?OS_START?MAIN
+
+?PR?_OS_TASK_CREATE?MAIN                0086H    000DH
+
+?PR?_?OS_START?MAIN                     -----    -----
+  +--> ?PR?OSSTARTHIGHRDY?OS_MCU_A_ASM
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\os_stc8h_v2 (?C_STARTUP)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        ?C_STARTUP
+  C:0A03H         SEGMENT       ?C_C51STARTUP
+  I:000AH         SEGMENT       ?STACK
+  C:0000H         PUBLIC        ?C_STARTUP
+  D:00E0H         SYMBOL        ACC
+  D:00F0H         SYMBOL        B
+  D:0083H         SYMBOL        DPH
+  D:0082H         SYMBOL        DPL
+  N:0000H         SYMBOL        IBPSTACK
+  N:0100H         SYMBOL        IBPSTACKTOP
+  N:0080H         SYMBOL        IDATALEN
+  C:0A06H         SYMBOL        IDATALOOP
+  N:0000H         SYMBOL        PBPSTACK
+  N:0100H         SYMBOL        PBPSTACKTOP
+  N:0000H         SYMBOL        PDATALEN
+  N:0000H         SYMBOL        PDATASTART
+  N:0000H         SYMBOL        PPAGE
+  N:0000H         SYMBOL        PPAGEENABLE
+  D:00A0H         SYMBOL        PPAGE_SFR
+  D:0081H         SYMBOL        SP
+  C:0A03H         SYMBOL        STARTUP1
+  N:0000H         SYMBOL        XBPSTACK
+  N:0000H         SYMBOL        XBPSTACKTOP
+  N:0000H         SYMBOL        XDATALEN
+  N:0000H         SYMBOL        XDATASTART
+  C:0000H         LINE#         126
+  C:0A03H         LINE#         133
+  C:0A05H         LINE#         134
+  C:0A06H         LINE#         135
+  C:0A07H         LINE#         136
+  C:0A09H         LINE#         185
+  C:0A0CH         LINE#         196
+  -------         ENDMOD        ?C_STARTUP
+
+  -------         MODULE        MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/27/2023  16:12:58  PAGE 3
+
+
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  X:0000H         PUBLIC        this_taskId
+  D:0080H         PUBLIC        P0
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  D:00C0H         PUBLIC        P4
+  D:00C8H         PUBLIC        P5
+  D:00E8H         PUBLIC        P6
+  D:00F8H         PUBLIC        P7
+  D:00A8H         PUBLIC        IE
+  X:0001H         PUBLIC        tcb_Runing
+  D:00B8H         PUBLIC        IP
+  D:00D8H         PUBLIC        CCON
+  C:0B0CH         PUBLIC        main
+  D:0098H         PUBLIC        SCON
+  D:0088H         PUBLIC        TCON
+  C:0BEDH         PUBLIC        _?task_idle
+  X:0003H         PUBLIC        tcb_List
+  X:002BH         PUBLIC        test
+  C:0C18H         PUBLIC        _?task_1
+  C:0C43H         PUBLIC        _?task_2
+  C:0800H         PUBLIC        _os_task_create
+  X:002CH         PUBLIC        task_stk_idle
+  C:0C6EH         PUBLIC        _?os_start
+  X:004AH         PUBLIC        task_stk_1
+  D:00D0H         PUBLIC        PSW
+  X:0068H         PUBLIC        task_stk_2
+  -------         PROC          _OS_TASK_CREATE
+  X:0086H         SYMBOL        task
+  X:0089H         SYMBOL        p_arg
+  X:008CH         SYMBOL        task_stack
+  X:008FH         SYMBOL        tid
+  -------         DO            
+  X:0090H         SYMBOL        stk
+  -------         ENDDO         
+  C:0800H         LINE#         58
+  C:080BH         LINE#         64
+  C:080BH         LINE#         66
+  C:080BH         LINE#         68
+  C:0820H         LINE#         69
+  C:0835H         LINE#         70
+  C:0850H         LINE#         71
+  C:086CH         LINE#         73
+  C:0880H         LINE#         74
+  C:0895H         LINE#         75
+  C:08AAH         LINE#         76
+  C:08BEH         LINE#         77
+  C:08D2H         LINE#         78
+  C:08E6H         LINE#         79
+  C:08FBH         LINE#         80
+  C:0910H         LINE#         81
+  C:0925H         LINE#         82
+  C:093AH         LINE#         83
+  C:094FH         LINE#         84
+  C:0964H         LINE#         85
+  C:0979H         LINE#         87
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/27/2023  16:12:58  PAGE 4
+
+
+  C:099AH         LINE#         88
+  C:09B9H         LINE#         90
+  C:09DCH         LINE#         91
+  C:09EDH         LINE#         92
+  C:0A02H         LINE#         93
+  -------         ENDPROC       _OS_TASK_CREATE
+  -------         PROC          _?OS_START
+  C:0C6EH         LINE#         97
+  C:0C6EH         LINE#         99
+  C:0C78H         LINE#         101
+  -------         ENDPROC       _?OS_START
+  -------         PROC          _?TASK_IDLE
+  x:0000H         SYMBOL        p_arg
+  C:0BEDH         LINE#         105
+  C:0BFBH         LINE#         108
+  C:0C16H         LINE#         109
+  C:0C16H         LINE#         110
+  C:0C16H         LINE#         113
+  -------         ENDPROC       _?TASK_IDLE
+  -------         PROC          _?TASK_1
+  x:0000H         SYMBOL        p_arg
+  C:0C18H         LINE#         116
+  C:0C26H         LINE#         118
+  C:0C41H         LINE#         120
+  C:0C41H         LINE#         121
+  C:0C41H         LINE#         124
+  -------         ENDPROC       _?TASK_1
+  -------         PROC          _?TASK_2
+  x:0000H         SYMBOL        p_arg
+  C:0C43H         LINE#         127
+  C:0C51H         LINE#         129
+  C:0C6CH         LINE#         131
+  C:0C6CH         LINE#         132
+  C:0C6CH         LINE#         135
+  -------         ENDPROC       _?TASK_2
+  -------         PROC          MAIN
+  C:0B0CH         LINE#         138
+  C:0B0CH         LINE#         139
+  C:0B0CH         LINE#         140
+  C:0B12H         LINE#         141
+  C:0B16H         LINE#         142
+  C:0B1AH         LINE#         143
+  C:0B3AH         LINE#         144
+  C:0B5BH         LINE#         145
+  C:0B7CH         LINE#         146
+  C:0B7FH         LINE#         147
+  C:0B7FH         LINE#         148
+  C:0B7FH         LINE#         150
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        OS_MCU_A_ASM
+  C:0C7BH         SEGMENT       ?PR?OSSTARTHIGHRDY?OS_MCU_A_ASM
+  I:000AH         SEGMENT       ?STACK
+  C:0C7BH         PUBLIC        OSSTARTHIGHRDY
+  I:000BH         SYMBOL        OSSTACK
+  I:000AH         SYMBOL        OSSTKSTART
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/27/2023  16:12:58  PAGE 5
+
+
+  N:0000H         SYMBOL        OS_MCU_A_ASM
+  C:0C7BH         LINE#         87
+  C:0C7EH         LINE#         88
+  C:0C7FH         LINE#         89
+  C:0C80H         LINE#         134
+  -------         ENDMOD        OS_MCU_A_ASM
+
+  -------         MODULE        ?C?CSTPTR
+  C:0A8FH         PUBLIC        ?C?CSTPTR
+  -------         ENDMOD        ?C?CSTPTR
+
+  -------         MODULE        ?C?ILDIX
+  C:0AA1H         PUBLIC        ?C?ILDIX
+  -------         ENDMOD        ?C?ILDIX
+
+  -------         MODULE        ?C?LSTKXDATA
+  C:0AB7H         PUBLIC        ?C?LSTKXDATA
+  -------         ENDMOD        ?C?LSTKXDATA
+
+  -------         MODULE        ?C_XBP
+  D:0008H         PUBLIC        ?C_XBP
+  -------         ENDMOD        ?C_XBP
+
+  -------         MODULE        ?C?ADDXBP
+  C:0AE8H         PUBLIC        ?C?ADDXBP
+  -------         ENDMOD        ?C?ADDXBP
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0386H BYTE (44%) *
+******************************************************************************
+
+Program Size: data=75.0 xdata=147 code=1156
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

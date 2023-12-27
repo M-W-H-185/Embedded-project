@@ -73,7 +73,7 @@ void os_getNextTaskId(void)
 void OSCtxSw()
 {
 	os_uint8_t  ost_i = 0;
-
+	
 	tcb_list[task_id].sp = SP;
 
 // 找出就绪态的一个id
@@ -87,11 +87,12 @@ void OSCtxSw()
 		}
 	}
 	
-	
-  if(task_id == max_task)
+
+	if(task_id == max_task)
 	{
 		task_id = 0;
 	}
+	
     SP = tcb_list[task_id].sp;
 
 }
@@ -102,7 +103,7 @@ void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 	tstack[0] = (unsigned int)task & 0xff;
 	tstack[1] = (unsigned int)task >> 8;
 
-	tcb_list[tid].sp 				= tstack+1;
+	tcb_list[tid].sp 				= tstack + 1;
 	tcb_list[tid].os_status_type 	= OS_READY;
 
 	max_task++;
@@ -128,15 +129,15 @@ void os_delay(os_uint32_t tasks)
 	// 将任务设置为阻塞态
 	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
 	// 只要任务延时了，就马上切换出去
-OSCtxSw();
-//	
+	OSCtxSw();
+	//	
 }
 // 空闲函数
 void os_idle_task(void)
 {
 	while(1)
 	{
-OSCtxSw();
+		OSCtxSw();
 	}
 }
 
@@ -152,7 +153,7 @@ void task1()
 		
 		LED_R = 1;
 		os_delay(500);
-OSCtxSw();
+		OSCtxSw();
 
 	}
 }

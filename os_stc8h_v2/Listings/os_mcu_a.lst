@@ -1,0 +1,198 @@
+A51 MACRO ASSEMBLER  OS_MCU_A                                                             12/27/2023 16:12:58 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\os_mcu_a.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE os_mcu_a.a51 SET(LARGE) DEBUG PRINT(.\Listings\os_mcu_a.lst) OBJECT(.\O
+                      bjects\os_mcu_a.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     NAME    OS_MCU_A_ASM    ; ∂®“Â“ª∏ˆ√˚≥∆Œ™ °∞OS_MCU_A_ASM°±ª„±‡∂Œ
+                       2     
+                       3     ?PR?OSStartHighRdy?OS_MCU_A_ASM SEGMENT CODE ; ’‚æ‰”¶∏√ « ‘⁄ OS_CPU_A_ASM∂À¿Ô√Ê”–“ª∏ˆOSStar
+                             tHighRdy∫Ø £¨∑≈‘⁄¡Àcode«¯”Ú
+                       4             
+                       5     PUBLIC OSStartHighRdy   ; π´ø™’‚∏ˆ∫Ø 
+                       6     EXTRN DATA  (?C_XBP)    ;∑¬’Ê∂—’ª÷∏’Î”√”⁄ø…÷ÿ»Îæ÷≤ø±‰¡ø±£¥Ê
+                       7     
+                       8     EXTRN XDATA (tcb_Runing)        
+                       9     EXTRN XDATA (task_stk_idle)     
+                      10             
+                      11     ; ---------------- ≥ˆ»Î’ª∫Í∂®“Â ----------------
+                      12     ;∂®“Â—π’ª≥ˆ’ª∫Í
+                      13     PUSHALL    MACRO
+                      14             PUSH PSW
+                      15             PUSH ACC
+                      16             PUSH B
+                      17             PUSH DPL
+                      18             PUSH DPH
+                      19             MOV  A,R0       ;R0~R7»Î’ª
+                      20             PUSH ACC
+                      21             MOV  A,R1
+                      22             PUSH ACC
+                      23             MOV  A,R2
+                      24             PUSH ACC
+                      25             MOV  A,R3
+                      26             PUSH ACC
+                      27             MOV  A,R4
+                      28             PUSH ACC
+                      29             MOV  A,R5
+                      30             PUSH ACC
+                      31             MOV  A,R6
+                      32             PUSH ACC
+                      33             MOV  A,R7
+                      34             PUSH ACC
+                      35             ;PUSH SP        ;≤ª±ÿ±£¥ÊSP£¨»ŒŒÒ«–ªª ±”…œ‡”¶≥Ã–Úµ˜’˚
+                      36             ENDM
+                      37         
+                      38     POPALL    MACRO
+                      39             ;POP  ACC       ;≤ª±ÿ±£¥ÊSP£¨»ŒŒÒ«–ªª ±”…œ‡”¶≥Ã–Úµ˜’˚
+                      40             POP  ACC        ;R0~R7≥ˆ’ª
+                      41             MOV  R7,A
+                      42             POP  ACC
+                      43             MOV  R6,A
+                      44             POP  ACC
+                      45             MOV  R5,A
+                      46             POP  ACC
+                      47             MOV  R4,A
+                      48             POP  ACC
+                      49             MOV  R3,A
+                      50             POP  ACC
+                      51             MOV  R2,A
+                      52             POP  ACC
+                      53             MOV  R1,A
+                      54             POP  ACC
+                      55             MOV  R0,A
+                      56             POP  DPH
+A51 MACRO ASSEMBLER  OS_MCU_A                                                             12/27/2023 16:12:58 PAGE     2
+
+                      57             POP  DPL
+                      58             POP  B
+                      59             POP  ACC
+                      60             POP  PSW
+                      61             ENDM
+                      62     ; ---------------- ≥ˆ»Î’ª∫Í∂®“Â ----------------
+                      63     
+                      64     
+                      65     ;---------------- ∑÷≈‰∂—’ªø’º‰ ----------------
+                      66     ;∑÷≈‰∂—’ªø’º‰°£÷ªπÿ–ƒ¥Û–°£¨∂—’ª∆µ„”…keilæˆ∂®£¨Õ®π±Í∫≈ø…“‘ªÒµ√keil∑÷≈‰µƒSP∆µ„
+                      67     ?STACK SEGMENT IDATA
+----                  68             RSEG ?STACK
+                      69     
+0000                  70     OSStack:
+                      71                     ;DS n£∫±£¡Ùn∏ˆ¥Ê¥¢µ•‘™
+0000                  72             DS 40H          ;∑÷≈‰”≤º˛∂—’ªµƒ¥Û–°
+                      73     
+  FFFF                74     OSStkStart IDATA OSStack-1
+                      75     ;---------------- ∑÷≈‰∂—’ªø’º‰ ----------------
+                      76     
+                      77     
+                      78             
+                      79     ; ---------------- OSStartHighRdy() ----------------
+----                  80     RSEG  ?PR?OSStartHighRdy?OS_MCU_A_ASM
+0000                  81     OSStartHighRdy:
+                      82     
+                      83             USING 0         ;…œµÁ∫Û51◊‘∂Øπÿ÷–∂œ£¨¥À¥¶≤ª±ÿ”√CLR EA÷∏¡Ó£¨“ÚŒ™µΩ¥À¥¶ªπŒ¥ø™÷–∂œ£¨±æ
+                             ≥Ã–ÚÕÀ≥ˆ∫Û£¨ø™÷–∂œ
+                      84     
+                      85                     ; ----- ÷ÿ–¥ -----
+                      86                     
+0000 900000   F       87                     MOV  DPTR, #task_stk_idle + 0   ; ÷∏œÚtask_stk_idle[0] 
+0003 E0               88                     MOVX A,@DPTR                                    ; Ω´task_stk_idle[0]µƒ÷µ¥Ê»
+                             ÎA(∂—’ª≥§∂»)
+0004 FD               89                     MOV  R5,A               ;R5=”√ªß∂—’ª≥§∂»
+                      90     
+                      91     
+                      92                     ; ----- ÷ÿ–¥ -----
+                      93        
+                      94        
+                      95        
+                      96        
+                      97        
+                      98                     
+                      99     ;               ; 1°¢∂—’ª÷∏’Îƒ√≥ˆ¿¥ ∑≈µΩ¡ÀR0
+                     100     ;               MOV DPTR,#tcb_Runing
+                     101     ;               MOVX  A,  @DPTR
+                     102     ;               MOV   R0, A
+                     103     ;               INC   DPTR
+                     104     ;               MOVX  A,  @DPTR
+                     105     ;               MOV   DPL, A
+                     106     ;               MOV   DPH, R0
+                     107     ;               ; 2°¢»ŒŒÒ∂—’ª≥§∂»ƒ√≥ˆ¿¥(∆‰ µæÕ «∂—’ª ◊Èµƒµ⁄0∏ˆ‘™Àÿ)
+                     108     ;               ;*UserStkPtr ==> R5 ”√ªß∂—’ª∆ ºµÿ÷∑ƒ⁄»›(º¥”√ªß∂—’ª≥§∂»∑≈‘⁄¥À¥¶)   
+                     109     ;        MOVX A,@DPTR   ;”√ªß∂—’ª÷– «unsigned char¿‡–Õ æ›
+                     110     ;        MOV  R5,A              ;R5=”√ªß∂—’ª≥§∂»
+                     111     ;               ; 3°¢ª÷∏¥œ÷≥°∂—’ªƒ⁄»›
+                     112     ;               MOV  R0,#OSStkStart
+                     113     ;               ; 4°¢ª÷∏¥∂—’ª÷∏’ÎSP
+                     114     ;restore_stack:
+                     115     ;        INC  DPTR
+                     116     ;        INC  R0
+                     117     ;        MOVX A,@DPTR
+                     118     ;        MOV  @R0,A
+                     119     ;        DJNZ R5,restore_stack
+                     120     ;        MOV  SP,R0
+A51 MACRO ASSEMBLER  OS_MCU_A                                                             12/27/2023 16:12:58 PAGE     3
+
+                     121     ;               
+                     122     ;               ; 5°¢ª÷∏¥∑¬’Ê∂—’ª÷∏’Î?C_XBP  
+                     123     ;        INC  DPTR
+                     124     ;        MOVX A,@DPTR
+                     125     ;        MOV  ?C_XBP,A  ;?C_XBP ∑¬’Ê∂—’ª÷∏’Î∏ﬂ8Œª
+                     126     ;        INC  DPTR
+                     127     ;        MOVX A,@DPTR
+                     128     ;        MOV  ?C_XBP+1,A        ;?C_XBP ∑¬’Ê∂—’ª÷∏’ÎµÕ8Œª               
+                     129     ;               ; 6°¢µØ≥ˆ’ª
+                     130     
+                     131     ;        POPALL
+                     132     ;               ; 7°¢ø™÷–∂œ
+                     133     ;               SETB EA         ;ø™÷–∂œ
+0005 32              134     RETI
+                     135     ; ---------------- OSStartHighRdy() ----------------
+                     136     
+                     137     
+                     138     ;               MOV  DPTR, #task_stk_idle + 0   ; ÷∏œÚtask_stk_idle[0] 
+                     139     ;               MOVX A,@DPTR                                    ; Ω´task_stk_idle[0]µƒ÷µ¥Ê»
+                             ÎA
+                     140     ;               MOV A,#0X55                                             ; »ª∫Û∏¯A∏≥÷µ“ªœ¬
+                     141     ;               MOVX @DPTR,A                                    ; ∞—Aµƒ÷µ¥Ê»Îtask_stc_idle[
+                             0]÷–
+                     142     
+                     143     
+                     144     
+                     145     ;MOV DPTR,#tcb_Runing
+                     146     ;MOVX  A,  @DPTR
+                     147     ;MOV   R0, A
+                     148     ;INC   DPTR
+                     149     ;MOVX  A,  @DPTR
+                     150     ;MOV   DPL, A
+                     151     ;MOV   DPH, R0
+                     152     ;;-- “‘…œæÕƒ√µΩ¡Àtcb_Runingµƒµÿ÷∑
+                     153     
+                     154     ;-----------------
+                     155     END
+                             ;-----------------
+A51 MACRO ASSEMBLER  OS_MCU_A                                                             12/27/2023 16:12:58 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                          T Y P E  V A L U E   ATTRIBUTES
+
+?C_XBP. . . . . . . . . . . . .  D ADDR   -----       EXT
+?PR?OSSTARTHIGHRDY?OS_MCU_A_ASM  C SEG    0006H       REL=UNIT
+?STACK. . . . . . . . . . . . .  I SEG    0040H       REL=UNIT
+OSSTACK . . . . . . . . . . . .  I ADDR   0000H   R   SEG=?STACK
+OSSTARTHIGHRDY. . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OSSTARTHIGHRDY?OS_MCU_A_ASM
+OSSTKSTART. . . . . . . . . . .  I ADDR   FFFFH   R   SEG=?STACK
+OS_MCU_A_ASM. . . . . . . . . .  N NUMB   -----       
+TASK_STK_IDLE . . . . . . . . .  X ADDR   -----       EXT
+TCB_RUNING. . . . . . . . . . .  X ADDR   -----       EXT
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
