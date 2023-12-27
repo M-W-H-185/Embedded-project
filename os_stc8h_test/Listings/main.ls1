@@ -1,16 +1,16 @@
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     1
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
 OBJECT MODULE PLACED IN .\Objects\main.OBJ
-ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE .\Objects\main.src PR(.\Listings\main.ls1) EP DEBUG
+ASSEMBLER INVOKED BY: D:\Keil_v5_C51\C51\BIN\A51.EXE .\Objects\main.src PR(.\Listings\main.ls1) EP DEBUG
 
 LOC  OBJ            LINE     SOURCE
 
                        1     ; .\Objects\main.SRC generated from: main.c
                        2     ; COMPILER INVOKED BY:
-                       3     ;        C:\Keil_v5\C51\BIN\C51.EXE main.c LARGE OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) 
-                             DEBUG OBJECTEXTEND CODE PRINT(.\Listings\main.lst) SRC(.\Objects\main.SRC)
+                       3     ;        D:\Keil_v5_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DE
+                             BUG OBJECTEXTEND CODE PRINT(.\Listings\main.lst) TABS(2) SRC(.\Objects\main.SRC)
                        4     
                        5     $nomod51 
                        6     
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
   00BD                55     ADC_RES DATA    0BDH
   00B6                56     IP2H    DATA    0B6H
   00EE                57     IP3H    DATA    0EEH
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     2
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     2
 
   00EA                58     CCAP0L  DATA    0EAH
   00DE                59     CR      BIT     0D8H.6
@@ -133,7 +133,7 @@ LOC  OBJ            LINE     SOURCE
   00E8               121     P60     BIT     0E8H.0
   00C9               122     P51     BIT     0C8H.1
   00C2               123     P42     BIT     0C0H.2
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     3
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     3
 
   00B3               124     P33     BIT     0B0H.3
   00A4               125     P24     BIT     0A0H.4
@@ -201,7 +201,7 @@ LOC  OBJ            LINE     SOURCE
   009B               187     TB8     BIT     098H.3
   008A               188     IT1     BIT     088H.2
   00D4               189     TH3     DATA    0D4H
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     4
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     4
 
   00D4               190     T3H     DATA    0D4H
   00D0               191     P       BIT     0D0H.0
@@ -263,1267 +263,1208 @@ LOC  OBJ            LINE     SOURCE
   00D9               247     CCF1    BIT     0D8H.1
   00CF               248     SPDAT   DATA    0CFH
   0094               249     P0M0    DATA    094H
-                     250     ?PR?os_getNextTaskId?MAIN                SEGMENT CODE 
-                     251     ?PR?OSCtxSw?MAIN     SEGMENT CODE 
-                     252     ?PR?_os_task_create?MAIN                 SEGMENT CODE 
-                     253     ?XD?_os_task_create?MAIN                 SEGMENT XDATA OVERLAYABLE 
-                     254     ?PR?os_start?MAIN    SEGMENT CODE 
+                     250     ?PR?OSCtxSw?MAIN     SEGMENT CODE 
+                     251     ?PR?_os_task_create?MAIN                 SEGMENT CODE 
+                     252     ?DT?_os_task_create?MAIN                 SEGMENT DATA OVERLAYABLE 
+                     253     ?PR?os_start?MAIN    SEGMENT CODE 
+                     254     ?PR?Delay500ms?MAIN  SEGMENT CODE 
                      255     ?PR?_os_delay?MAIN   SEGMENT CODE 
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     5
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     5
 
                      256     ?PR?os_idle_task?MAIN                    SEGMENT CODE 
                      257     ?PR?task1?MAIN       SEGMENT CODE 
                      258     ?PR?task2?MAIN       SEGMENT CODE 
                      259     ?PR?time0_handle?MAIN                    SEGMENT CODE 
-                     260     ?XD?time0_handle?MAIN                    SEGMENT XDATA OVERLAYABLE 
+                     260     ?DT?time0_handle?MAIN                    SEGMENT DATA OVERLAYABLE 
                      261     ?PR?Timer0_Init?MAIN SEGMENT CODE 
                      262     ?PR?main?MAIN        SEGMENT CODE 
                      263     ?C_INITSEG           SEGMENT CODE 
                      264     ?ID?MAIN             SEGMENT IDATA 
-                     265     ?XD?MAIN             SEGMENT XDATA 
-                     266     ?DT?MAIN             SEGMENT DATA 
-                     267             EXTRN   CODE (?C?CSTPTR)
-                     268             EXTRN   CODE (?C?CSTOPTR)
-                     269             EXTRN   CODE (?C?LSTIDATA)
-                     270             EXTRN   CODE (?C?LLDIDATA)
-                     271             EXTRN   CODE (?C?ULCMP)
-                     272             EXTRN   CODE (?C?LSTKIDATA)
-                     273             EXTRN   CODE (?C_STARTUP)
-                     274             PUBLIC  OS_TCB_SIZE
-                     275             PUBLIC  task_id
-                     276             PUBLIC  task_stack2
-                     277             PUBLIC  task_stack1
-                     278             PUBLIC  max_task
-                     279             PUBLIC  tcb_list
-                     280             PUBLIC  cut
-                     281             PUBLIC  task_idle_stack
-                     282             PUBLIC  main
-                     283             PUBLIC  Timer0_Init
-                     284             PUBLIC  time0_handle
-                     285             PUBLIC  task2
-                     286             PUBLIC  task1
-                     287             PUBLIC  os_idle_task
-                     288             PUBLIC  _os_delay
+                     265     ?DT?MAIN             SEGMENT DATA 
+                     266             EXTRN   CODE (?C?CSTPTR)
+                     267             EXTRN   CODE (?C?CSTOPTR)
+                     268             EXTRN   CODE (?C?LLDIDATA)
+                     269             EXTRN   CODE (?C?ULCMP)
+                     270             EXTRN   CODE (?C?LSTKIDATA)
+                     271             EXTRN   CODE (?C?LSTIDATA)
+                     272             EXTRN   CODE (?C_STARTUP)
+                     273             PUBLIC  OS_TCB_SIZE
+                     274             PUBLIC  task_id
+                     275             PUBLIC  task_stack2
+                     276             PUBLIC  task_stack1
+                     277             PUBLIC  max_task
+                     278             PUBLIC  tcb_list
+                     279             PUBLIC  cut
+                     280             PUBLIC  task_idle_stack
+                     281             PUBLIC  main
+                     282             PUBLIC  Timer0_Init
+                     283             PUBLIC  time0_handle
+                     284             PUBLIC  task2
+                     285             PUBLIC  task1
+                     286             PUBLIC  os_idle_task
+                     287             PUBLIC  _os_delay
+                     288             PUBLIC  Delay500ms
                      289             PUBLIC  os_start
                      290             PUBLIC  ?_os_task_create?BYTE
                      291             PUBLIC  _os_task_create
                      292             PUBLIC  OSCtxSw
-                     293             PUBLIC  os_getNextTaskId
-                     294     
-----                 295             RSEG  ?XD?time0_handle?MAIN
-0000                 296     ?time0_handle?BYTE:
-0000                 297              ti?845:   DS   1
-                     298     
-----                 299             RSEG  ?XD?_os_task_create?MAIN
-0000                 300     ?_os_task_create?BYTE:
-0000                 301            task?241:   DS   3
-0003                 302             ORG  3
-0003                 303          tstack?242:   DS   3
-0006                 304             ORG  6
-0006                 305             tid?243:   DS   2
-                     306     
-----                 307             RSEG  ?ID?MAIN
-0000                 308     task_idle_stack:   DS   20
-0014                 309            tcb_list:   DS   30
-0032                 310         task_stack1:   DS   20
-0046                 311         task_stack2:   DS   20
-                     312     
-----                 313             RSEG  ?XD?MAIN
-0000                 314                 cut:   DS   2
-0002                 315            max_task:   DS   1
-                     316     
-----                 317             RSEG  ?DT?MAIN
-0000                 318             task_id:   DS   1
-0001                 319         OS_TCB_SIZE:   DS   1
-                     320     
-----                 321             RSEG  ?C_INITSEG
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     6
+                     293     
+----                 294             RSEG  ?DT?time0_handle?MAIN
+0000                 295     ?time0_handle?BYTE:
+0000                 296              ti?848:   DS   1
+                     297     
+----                 298             RSEG  ?DT?_os_task_create?MAIN
+0000                 299     ?_os_task_create?BYTE:
+0000                 300            task?141:   DS   3
+0003                 301             ORG  3
+0003                 302          tstack?142:   DS   3
+0006                 303             ORG  6
+0006                 304             tid?143:   DS   2
+                     305     
+----                 306             RSEG  ?ID?MAIN
+0000                 307     task_idle_stack:   DS   20
+0014                 308            tcb_list:   DS   30
+0032                 309         task_stack1:   DS   20
+0046                 310         task_stack2:   DS   20
+                     311     
+----                 312             RSEG  ?DT?MAIN
+0000                 313                 cut:   DS   2
+0002                 314            max_task:   DS   1
+0003                 315             task_id:   DS   1
+0004                 316         OS_TCB_SIZE:   DS   1
+                     317     
+----                 318             RSEG  ?C_INITSEG
+0000 01              319             DB      001H
+0001 00       F      320             DB      OS_TCB_SIZE
+0002 06              321             DB      006H
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     6
 
-0000 01              322             DB      001H
-0001 00       F      323             DB      OS_TCB_SIZE
-0002 06              324             DB      006H
-                     325     
-0003 01              326             DB      001H
-0004 00       F      327             DB      task_id
-0005 00              328             DB      000H
-                     329     
-0006 41              330             DB      041H
-0007 0000     F      331             DW      max_task
-0009 00              332             DB      000H
-                     333     
-000A 42              334             DB      042H
-000B 0000     F      335             DW      cut
-000D 0000            336             DW      00000H
-                     337     
-                     338     ; /*
-                     339     ; ±êÌâ£ºLEDºìÂÌµÆÏµÍ³
-                     340     ; Ö÷Æµ£º35MHz
-                     341     ; ÓÃÓÚ£º51µ¥Æ¬»úÑ§Ï°»ú-Ñ§µç 
-                     342     ; ×ÊÁÏ£ºhttps://rationmcu.com
-                     343     ; */
-                     344     ; 
-                     345     ; #include "stc8g.h"
-                     346     ; #include "intrins.h"
-                     347     ; #include "stdio.h"
-                     348     ; 
-                     349     ; 
-                     350     ; /* ·¢¹â¶þ¼«¹Ü¶¨Òå */
-                     351     ; sbit LED_R = P0^5;    // ºìÉ«LED
-                     352     ; sbit LED_Y = P0^6;    // »ÆÉ«LED
-                     353     ; sbit LED_G = P0^7;    // ÂÌÉ«LED
-                     354     ; 
-                     355     ; typedef     unsigned char    os_uint8_t;      //  8 bits 
-                     356     ; 
-                     357     ; typedef     unsigned int     os_uint16_t;     // 16 bits 
-                     358     ; 
-                     359     ; typedef     unsigned long    os_uint32_t;     // 32 bits 
-                     360     ; enum OS_TASK_STATUS_TYPE
-                     361     ; {
-                     362     ;       OS_READY      = 1,      // ¾ÍÐ÷Ì¬
-                     363     ;       OS_RUNING     = 2,      // ÔËÐÐÌ¬
-                     364     ;       OS_BLOCKED    = 3,      // ×èÈûÌ¬
-                     365     ;       OS_SUSPENDED  = 4       // Í£Ö¹Ì¬
-                     366     ; 
-                     367     ; };
-                     368     ; 
-                     369     ;       // ÈÎÎñ¿ØÖÆ¿é
-                     370     ;       typedef struct os_tcb_t
-                     371     ;       {
-                     372     ;               os_uint8_t                      sp;                                     // 
+                     322     
+0003 01              323             DB      001H
+0004 00       F      324             DB      task_id
+0005 00              325             DB      000H
+                     326     
+0006 01              327             DB      001H
+0007 00       F      328             DB      max_task
+0008 00              329             DB      000H
+                     330     
+0009 02              331             DB      002H
+000A 00       F      332             DB      cut
+000B 0000            333             DW      00000H
+                     334     
+                     335     ; /*
+                     336     ; ±êÌâ£ºLEDºìÂÌµÆÏµÍ³
+                     337     ; Ö÷Æµ£º35MHz
+                     338     ; ÓÃÓÚ£º51µ¥Æ¬»úÑ§Ï°»ú-Ñ§µç 
+                     339     ; ×ÊÁÏ£ºhttps://rationmcu.com
+                     340     ; */
+                     341     ; 
+                     342     ; #include "stc8g.h"
+                     343     ; #include "intrins.h"
+                     344     ; #include "stdio.h"
+                     345     ; 
+                     346     ; 
+                     347     ; /* ·¢¹â¶þ¼«¹Ü¶¨Òå */
+                     348     ; sbit LED_R = P0^5;    // ºìÉ«LED
+                     349     ; sbit LED_Y = P0^6;    // »ÆÉ«LED
+                     350     ; sbit LED_G = P0^7;    // ÂÌÉ«LED
+                     351     ; 
+                     352     ; typedef     unsigned char    os_uint8_t;      //  8 bits 
+                     353     ; 
+                     354     ; typedef     unsigned int     os_uint16_t;     // 16 bits 
+                     355     ; 
+                     356     ; typedef     unsigned long    os_uint32_t;     // 32 bits 
+                     357     ; enum OS_TASK_STATUS_TYPE
+                     358     ; {
+                     359     ;       OS_READY      = 1,      // ¾ÍÐ÷Ì¬
+                     360     ;       OS_RUNING     = 2,      // ÔËÐÐÌ¬
+                     361     ;       OS_BLOCKED    = 3,      // ×èÈûÌ¬
+                     362     ;       OS_SUSPENDED  = 4       // Í£Ö¹Ì¬
+                     363     ; 
+                     364     ; };
+                     365     ; 
+                     366     ;       // ÈÎÎñ¿ØÖÆ¿é
+                     367     ;       typedef struct os_tcb_t
+                     368     ;       {
+                     369     ;               os_uint8_t                      sp;                                     // 
                              sp ¶ÑÕ»Ö¸Õë´æ´¢
-                     373     ;               os_uint32_t             delay_tick;                     // ÑÓÊ±µÎ´ðÊ
-                     374     ;               os_uint8_t                      os_status_type;         // ÈÎÎñ×´Ì¬
-                     375     ;       };
-                     376     ; // ÈÎÎñ¿ØÖÆ¿éµÄ½á¹¹Ìå´óÐ¡
-                     377     ; const os_uint8_t data OS_TCB_SIZE = sizeof(struct os_tcb_t);  // 1 + 4 + 1 = 6¸ö×Ö½Ú
-                     378     ;  
-                     379     ; #define MAX_TASKS 5       /*ÈÎÎñ²Û¸öÊ.±ØÐëºÍÊµ¼ÊÈÎÎñÊÒ»ÖÁ*/
-                     380     ; #define MAX_TASK_DEP 20   /*×î´óÕ»Éî.×îµÍ²»µÃÉÙÓÚ2¸ö,±£ÊØÖµÎª12*/
-                     381     ; os_uint8_t data task_id = 0;    /*µ±Ç°»î¶¯ÈÎÎñºÅ*/
-                     382     ; os_uint8_t max_task = 0;
-                     383     ; 
-                     384     ; 
-                     385     ;  
-                     386     ; extern void test(void);
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     7
+                     370     ;               os_uint32_t             delay_tick;                     // ÑÓÊ±µÎ´ðÊ
+                     371     ;               os_uint8_t                      os_status_type;         // ÈÎÎñ×´Ì¬
+                     372     ;       };
+                     373     ; // ÈÎÎñ¿ØÖÆ¿éµÄ½á¹¹Ìå´óÐ¡
+                     374     ; const os_uint8_t data OS_TCB_SIZE = sizeof(struct os_tcb_t);  // 1 + 4 + 1 = 6¸ö×Ö½Ú
+                     375     ;  
+                     376     ; #define MAX_TASKS 5       /*ÈÎÎñ²Û¸öÊ.±ØÐëºÍÊµ¼ÊÈÎÎñÊÒ»ÖÁ*/
+                     377     ; #define MAX_TASK_DEP 20   /*×î´óÕ»Éî.×îµÍ²»µÃÉÙÓÚ2¸ö,±£ÊØÖµÎª12*/
+                     378     ; os_uint8_t data task_id = 0;    /*µ±Ç°»î¶¯ÈÎÎñºÅ*/
+                     379     ; os_uint8_t max_task = 0;
+                     380     ; 
+                     381     ; 
+                     382     ;  
+                     383     ; extern void test(void);
+                     384     ; //// ÈÎÎñÖ÷¶¯·ÅÆúcpu×ÊÔ´
+                     385     ; //extern void OSCtxSw(void);
+                     386     ; extern void PUSH_ALL_STACK(void);
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     7
 
-                     387     ; //// ÈÎÎñÖ÷¶¯·ÅÆúcpu×ÊÔ´
-                     388     ; //extern void OSCtxSw(void);
-                     389     ; 
-                     390     ; 
-                     391     ; // ÈÎÎñ¿ØÖÆÁÐ±í
-                     392     ; struct os_tcb_t idata tcb_list[MAX_TASKS];
-                     393     ; // ÈÎÎñ¶ÑÕ»Çø
-                     394     ; os_uint8_t idata task_idle_stack[MAX_TASK_DEP];               /*¿ÕÏÐÈÎÎñ¶ÑÕ».*/
-                     395     ; os_uint8_t idata task_stack1[MAX_TASK_DEP];                   /*ÈÎÎñ1¶ÑÕ».*/
-                     396     ; os_uint8_t idata task_stack2[MAX_TASK_DEP];                   /*ÈÎÎñ2¶ÑÕ».*/
-                     397     ; // ÈÎÎñ¶ÑÕ»Çø
-                     398     ; 
-                     399     ; 
-                     400     ; // »ñÈ¡ÏÂÒ»¸öÈÎÎñid
-                     401     ; void os_getNextTaskId(void)
-                     402     
-----                 403             RSEG  ?PR?os_getNextTaskId?MAIN
-0000                 404     os_getNextTaskId:
-                     405                             ; SOURCE LINE # 64
-                     406     ; {
-                     407                             ; SOURCE LINE # 65
-                     408     ;       
-                     409     ; //    
-                     410     ; //    
-                     411     ; //    
-                     412     ; 
-                     413     ; }
-                     414                             ; SOURCE LINE # 71
-0000 22              415             RET     
-                     416     ; END OF os_getNextTaskId
-                     417     
-                     418     ; // ÈÎÎñÇÐ»»º¯Ê
-                     419     ; void OSCtxSw()
-                     420     
-----                 421             RSEG  ?PR?OSCtxSw?MAIN
-0000                 422     OSCtxSw:
-                     423             USING   0
-                     424                             ; SOURCE LINE # 73
-                     425     ; {
-                     426                             ; SOURCE LINE # 74
-                     427     ;       os_uint8_t  ost_i = 0;
-                     428                             ; SOURCE LINE # 75
-                     429     ;---- Variable 'ost_i?140' assigned to Register 'R7' ----
-0000 E4              430             CLR     A
-0001 FF              431             MOV     R7,A
-                     432     ;       
-                     433     ;       tcb_list[task_id].sp = SP;
-                     434                             ; SOURCE LINE # 77
-0002 E500     F      435             MOV     A,task_id
-0004 75F006          436             MOV     B,#06H
-0007 A4              437             MUL     AB
-0008 2400     F      438             ADD     A,#LOW (tcb_list)
-000A F8              439             MOV     R0,A
-000B A681            440             MOV     @R0,SP
-                     441     ; 
-                     442     ; // ÕÒ³ö¾ÍÐ÷Ì¬µÄÒ»¸öid
-                     443     ;       for(ost_i = 0; ost_i < max_task; ost_i++)
-                     444                             ; SOURCE LINE # 80
-000D                 445     ?C0002:
-000D 900000   F      446             MOV     DPTR,#max_task
-0010 E0              447             MOVX    A,@DPTR
-0011 FE              448             MOV     R6,A
-0012 EF              449             MOV     A,R7
-0013 C3              450             CLR     C
-0014 9E              451             SUBB    A,R6
-0015 5011            452             JNC     ?C0003
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     8
+                     387     ; extern void POP_ALL_STACK(void);
+                     388     ; 
+                     389     ; // ÈÎÎñ¿ØÖÆÁÐ±í
+                     390     ; struct os_tcb_t idata tcb_list[MAX_TASKS];
+                     391     ; // ÈÎÎñ¶ÑÕ»Çø
+                     392     ; os_uint8_t idata task_idle_stack[MAX_TASK_DEP];               /*¿ÕÏÐÈÎÎñ¶ÑÕ».*/
+                     393     ; os_uint8_t idata task_stack1[MAX_TASK_DEP];                   /*ÈÎÎñ1¶ÑÕ».*/
+                     394     ; os_uint8_t idata task_stack2[MAX_TASK_DEP];                   /*ÈÎÎñ2¶ÑÕ».*/
+                     395     ; // ÈÎÎñ¶ÑÕ»Çø
+                     396     ; 
+                     397     ; 
+                     398     ; //// »ñÈ¡ÏÂÒ»¸öÈÎÎñid
+                     399     ; //void os_getNextTaskId(void)
+                     400     ; //{
+                     401     ; //    
+                     402     ; ////  
+                     403     ; ////  
+                     404     ; ////  
+                     405     ; 
+                     406     ; //}
+                     407     ; // ÈÎÎñÇÐ»»º¯Ê
+                     408     ; void OSCtxSw()
+                     409     
+----                 410             RSEG  ?PR?OSCtxSw?MAIN
+0000                 411     OSCtxSw:
+                     412             USING   0
+                     413                             ; SOURCE LINE # 74
+                     414     ; {
+                     415                             ; SOURCE LINE # 75
+                     416     ;       os_uint8_t  ost_i = 0;
+                     417                             ; SOURCE LINE # 76
+                     418     ;---- Variable 'ost_i?040' assigned to Register 'R7' ----
+0000 E4              419             CLR     A
+0001 FF              420             MOV     R7,A
+                     421     ; //    PUSH_ALL_STACK();
+                     422     ;       
+                     423     ;       
+                     424     ;       tcb_list[task_id].sp = SP;
+                     425                             ; SOURCE LINE # 80
+0002 E500     F      426             MOV     A,task_id
+0004 75F006          427             MOV     B,#06H
+0007 A4              428             MUL     AB
+0008 2400     F      429             ADD     A,#LOW (tcb_list)
+000A F8              430             MOV     R0,A
+000B A681            431             MOV     @R0,SP
+                     432     ; 
+                     433     ; // ÕÒ³ö¾ÍÐ÷Ì¬µÄÒ»¸öid
+                     434     ;       for(ost_i = 0; ost_i < max_task; ost_i++)
+                     435                             ; SOURCE LINE # 83
+000D                 436     ?C0001:
+000D EF              437             MOV     A,R7
+000E C3              438             CLR     C
+000F 9500     F      439             SUBB    A,max_task
+0011 5012            440             JNC     ?C0002
+                     441     ;       {
+                     442                             ; SOURCE LINE # 84
+                     443     ;               if(tcb_list[ost_i].os_status_type == OS_READY)
+                     444                             ; SOURCE LINE # 85
+0013 EF              445             MOV     A,R7
+0014 75F006          446             MOV     B,#06H
+0017 A4              447             MUL     AB
+0018 2400     F      448             ADD     A,#LOW (tcb_list+05H)
+001A F8              449             MOV     R0,A
+001B E6              450             MOV     A,@R0
+001C 6401            451             XRL     A,#01H
+001E 7002            452             JNZ     ?C0003
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     8
 
-                     453     ;       {
-                     454                             ; SOURCE LINE # 81
-                     455     ;               if(tcb_list[ost_i].os_status_type == OS_READY)
-                     456                             ; SOURCE LINE # 82
-0017 EF              457             MOV     A,R7
-0018 75F006          458             MOV     B,#06H
-001B A4              459             MUL     AB
-001C 2400     F      460             ADD     A,#LOW (tcb_list+05H)
-001E F8              461             MOV     R0,A
-001F E6              462             MOV     A,@R0
-0020 B40102          463             CJNE    A,#01H,?C0004
-                     464     ;               {
-                     465                             ; SOURCE LINE # 83
-                     466     ;                       task_id = ost_i;
-                     467                             ; SOURCE LINE # 84
-0023 8F00     F      468             MOV     task_id,R7
-                     469     ;                       continue;
-                     470                             ; SOURCE LINE # 85
-                     471     ; 
-                     472     ;               }
-                     473                             ; SOURCE LINE # 87
-                     474     ;       }
-                     475                             ; SOURCE LINE # 88
-0025                 476     ?C0004:
-0025 0F              477             INC     R7
-0026 80E5            478             SJMP    ?C0002
-0028                 479     ?C0003:
-                     480     ;       
-                     481     ; 
-                     482     ;       if(task_id == max_task)
-                     483                             ; SOURCE LINE # 91
-0028 E500     F      484             MOV     A,task_id
-002A B50603          485             CJNE    A,AR6,?C0006
-                     486     ;       {
-                     487                             ; SOURCE LINE # 92
-                     488     ;               task_id = 0;
-                     489                             ; SOURCE LINE # 93
-002D E4              490             CLR     A
-002E F500     F      491             MOV     task_id,A
-                     492     ;       }
-                     493                             ; SOURCE LINE # 94
-0030                 494     ?C0006:
-                     495     ;       #pragma asm
-                     496     ; 
-                     497               
-                     498     ;     #pragma endasm
-                     499     ;     SP = tcb_list[task_id].sp;
-                     500                             ; SOURCE LINE # 98
-0030 E500     F      501             MOV     A,task_id
-0032 75F006          502             MOV     B,#06H
-0035 A4              503             MUL     AB
-0036 2400     F      504             ADD     A,#LOW (tcb_list)
-0038 F8              505             MOV     R0,A
-0039 E6              506             MOV     A,@R0
-003A F581            507             MOV     SP,A
-                     508     ; 
-                     509     ; }
-                     510                             ; SOURCE LINE # 100
-003C 22              511             RET     
-                     512     ; END OF OSCtxSw
-                     513     
-                     514     ;  
-                     515     ; void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
-                     516     
-----                 517             RSEG  ?PR?_os_task_create?MAIN
-0000                 518     _os_task_create:
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE     9
+                     453     ;               {
+                     454                             ; SOURCE LINE # 86
+                     455     ;                       task_id = ost_i;
+                     456                             ; SOURCE LINE # 87
+0020 8F00     F      457             MOV     task_id,R7
+                     458     ;                       continue;
+                     459                             ; SOURCE LINE # 88
+                     460     ; 
+                     461     ;               }
+                     462                             ; SOURCE LINE # 90
+                     463     ;       }
+                     464                             ; SOURCE LINE # 91
+0022                 465     ?C0003:
+0022 0F              466             INC     R7
+0023 80E8            467             SJMP    ?C0001
+0025                 468     ?C0002:
+                     469     ;       
+                     470     ; 
+                     471     ;       if(task_id == max_task)
+                     472                             ; SOURCE LINE # 94
+0025 E500     F      473             MOV     A,task_id
+0027 B50003   F      474             CJNE    A,max_task,?C0005
+                     475     ;       {
+                     476                             ; SOURCE LINE # 95
+                     477     ;               task_id = 0;
+                     478                             ; SOURCE LINE # 96
+002A E4              479             CLR     A
+002B F500     F      480             MOV     task_id,A
+                     481     ;       }
+                     482                             ; SOURCE LINE # 97
+002D                 483     ?C0005:
+                     484     ;       
+                     485     ;     SP = tcb_list[task_id].sp;
+                     486                             ; SOURCE LINE # 99
+002D E500     F      487             MOV     A,task_id
+002F 75F006          488             MOV     B,#06H
+0032 A4              489             MUL     AB
+0033 2400     F      490             ADD     A,#LOW (tcb_list)
+0035 F8              491             MOV     R0,A
+0036 E6              492             MOV     A,@R0
+0037 F581            493             MOV     SP,A
+                     494     ;       
+                     495     ;       
+                     496     ; //POP_ALL_STACK();
+                     497     ; }
+                     498                             ; SOURCE LINE # 103
+0039 22              499             RET     
+                     500     ; END OF OSCtxSw
+                     501     
+                     502     ;  
+                     503     ; void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
+                     504     
+----                 505             RSEG  ?PR?_os_task_create?MAIN
+0000                 506     _os_task_create:
+                     507             USING   0
+                     508                             ; SOURCE LINE # 105
+0000 8B00     F      509             MOV     task?141,R3
+0002 8A00     F      510             MOV     task?141+01H,R2
+0004 8900     F      511             MOV     task?141+02H,R1
+                     512     ; {
+                     513                             ; SOURCE LINE # 106
+                     514     ; 
+                     515     ;       tstack[0] = (unsigned int)task & 0xff;
+                     516                             ; SOURCE LINE # 108
+0006 AF01            517             MOV     R7,AR1
+0008 EF              518             MOV     A,R7
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE     9
 
-                     519             USING   0
-                     520                             ; SOURCE LINE # 102
-0000 900000   F      521             MOV     DPTR,#task?241
-0003 EB              522             MOV     A,R3
-0004 F0              523             MOVX    @DPTR,A
-0005 A3              524             INC     DPTR
-0006 EA              525             MOV     A,R2
-0007 F0              526             MOVX    @DPTR,A
-0008 A3              527             INC     DPTR
-0009 E9              528             MOV     A,R1
-000A F0              529             MOVX    @DPTR,A
-                     530     ; {
-                     531                             ; SOURCE LINE # 103
-                     532     ; 
-                     533     ;       tstack[0] = (unsigned int)task & 0xff;
-                     534                             ; SOURCE LINE # 105
-000B 900000   F      535             MOV     DPTR,#task?241
-000E A3              536             INC     DPTR
-000F A3              537             INC     DPTR
-0010 E0              538             MOVX    A,@DPTR
-0011 FF              539             MOV     R7,A
-0012 A3              540             INC     DPTR
-0013 E0              541             MOVX    A,@DPTR
-0014 FB              542             MOV     R3,A
-0015 A3              543             INC     DPTR
-0016 E0              544             MOVX    A,@DPTR
-0017 FA              545             MOV     R2,A
-0018 A3              546             INC     DPTR
-0019 E0              547             MOVX    A,@DPTR
-001A F9              548             MOV     R1,A
-001B EF              549             MOV     A,R7
-001C 120000   F      550             LCALL   ?C?CSTPTR
-                     551     ;       tstack[1] = (unsigned int)task >> 8;
-                     552                             ; SOURCE LINE # 106
-001F 900000   F      553             MOV     DPTR,#task?241
-0022 A3              554             INC     DPTR
-0023 E0              555             MOVX    A,@DPTR
-0024 FA              556             MOV     R2,A
-0025 A3              557             INC     DPTR
-0026 EA              558             MOV     A,R2
-0027 FF              559             MOV     R7,A
-0028 A3              560             INC     DPTR
-0029 E0              561             MOVX    A,@DPTR
-002A FB              562             MOV     R3,A
-002B A3              563             INC     DPTR
-002C E0              564             MOVX    A,@DPTR
-002D FA              565             MOV     R2,A
-002E A3              566             INC     DPTR
-002F E0              567             MOVX    A,@DPTR
-0030 F9              568             MOV     R1,A
-0031 900001          569             MOV     DPTR,#01H
-0034 EF              570             MOV     A,R7
-0035 120000   F      571             LCALL   ?C?CSTOPTR
-                     572     ; 
-                     573     ;       tcb_list[tid].sp                                = tstack + 1;
-                     574                             ; SOURCE LINE # 108
-0038 E9              575             MOV     A,R1
-0039 2401            576             ADD     A,#01H
-003B F9              577             MOV     R1,A
-003C 900000   F      578             MOV     DPTR,#tid?243
-003F A3              579             INC     DPTR
-0040 E0              580             MOVX    A,@DPTR
-0041 FE              581             MOV     R6,A
-0042 75F006          582             MOV     B,#06H
-0045 A4              583             MUL     AB
-0046 2400     F      584             ADD     A,#LOW (tcb_list)
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    10
+0009 AB00     F      519             MOV     R3,tstack?142
+000B AA00     F      520             MOV     R2,tstack?142+01H
+000D A900     F      521             MOV     R1,tstack?142+02H
+000F 120000   F      522             LCALL   ?C?CSTPTR
+                     523     ;       tstack[1] = (unsigned int)task >> 8;
+                     524                             ; SOURCE LINE # 109
+0012 E500     F      525             MOV     A,task?141+01H
+0014 AB00     F      526             MOV     R3,tstack?142
+0016 AA00     F      527             MOV     R2,tstack?142+01H
+0018 A900     F      528             MOV     R1,tstack?142+02H
+001A 900001          529             MOV     DPTR,#01H
+001D 120000   F      530             LCALL   ?C?CSTOPTR
+                     531     ; 
+                     532     ;       tcb_list[tid].sp                                = tstack + 1;
+                     533                             ; SOURCE LINE # 111
+0020 E9              534             MOV     A,R1
+0021 2401            535             ADD     A,#01H
+0023 F9              536             MOV     R1,A
+0024 E4              537             CLR     A
+0025 3A              538             ADDC    A,R2
+0026 AE00     F      539             MOV     R6,tid?143+01H
+0028 EE              540             MOV     A,R6
+0029 75F006          541             MOV     B,#06H
+002C A4              542             MUL     AB
+002D 2400     F      543             ADD     A,#LOW (tcb_list)
+002F F8              544             MOV     R0,A
+0030 A601            545             MOV     @R0,AR1
+                     546     ;       tcb_list[tid].os_status_type    = OS_READY;
+                     547                             ; SOURCE LINE # 112
+0032 EE              548             MOV     A,R6
+0033 75F006          549             MOV     B,#06H
+0036 A4              550             MUL     AB
+0037 2400     F      551             ADD     A,#LOW (tcb_list+05H)
+0039 F8              552             MOV     R0,A
+003A 7601            553             MOV     @R0,#01H
+                     554     ; 
+                     555     ;       max_task++;
+                     556                             ; SOURCE LINE # 114
+003C 0500     F      557             INC     max_task
+                     558     ; }
+                     559                             ; SOURCE LINE # 115
+003E 22              560             RET     
+                     561     ; END OF _os_task_create
+                     562     
+                     563     ; void os_idle_task(void);
+                     564     ; 
+                     565     ; void os_start()
+                     566     
+----                 567             RSEG  ?PR?os_start?MAIN
+0000                 568     os_start:
+                     569             USING   0
+                     570                             ; SOURCE LINE # 118
+                     571     ; {
+                     572                             ; SOURCE LINE # 119
+                     573     ;       // ×°ÔØ¿ÕÏÐÈÎÎñ
+                     574     ;       os_task_create(os_idle_task, &task_idle_stack, 0);//½«task1º¯Ê×°Èë0ºÅ²Û
+                     575                             ; SOURCE LINE # 121
+0000 750000   F      576             MOV     ?_os_task_create?BYTE+03H,#00H
+0003 750000   F      577             MOV     ?_os_task_create?BYTE+04H,#HIGH (task_idle_stack)
+0006 750000   F      578             MOV     ?_os_task_create?BYTE+05H,#LOW (task_idle_stack)
+0009 E4              579             CLR     A
+000A F500     F      580             MOV     ?_os_task_create?BYTE+06H,A
+000C F500     F      581             MOV     ?_os_task_create?BYTE+07H,A
+000E 7BFF            582             MOV     R3,#0FFH
+0010 7A00     F      583             MOV     R2,#HIGH (os_idle_task)
+0012 7900     F      584             MOV     R1,#LOW (os_idle_task)
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    10
 
-0048 F8              585             MOV     R0,A
-0049 A601            586             MOV     @R0,AR1
-                     587     ;       tcb_list[tid].os_status_type    = OS_READY;
-                     588                             ; SOURCE LINE # 109
-004B EE              589             MOV     A,R6
-004C 75F006          590             MOV     B,#06H
-004F A4              591             MUL     AB
-0050 2400     F      592             ADD     A,#LOW (tcb_list+05H)
-0052 F8              593             MOV     R0,A
-0053 7601            594             MOV     @R0,#01H
-                     595     ; 
-                     596     ;       max_task++;
-                     597                             ; SOURCE LINE # 111
-0055 900000   F      598             MOV     DPTR,#max_task
-0058 E0              599             MOVX    A,@DPTR
-0059 04              600             INC     A
-005A F0              601             MOVX    @DPTR,A
+0014 120000   F      585             LCALL   _os_task_create
+                     586     ; 
+                     587     ;       task_id = 0;
+                     588                             ; SOURCE LINE # 123
+0017 E4              589             CLR     A
+0018 F500     F      590             MOV     task_id,A
+                     591     ;       SP = tcb_list[task_id].sp;  
+                     592                             ; SOURCE LINE # 124
+001A E500     F      593             MOV     A,task_id
+001C 75F006          594             MOV     B,#06H
+001F A4              595             MUL     AB
+0020 2400     F      596             ADD     A,#LOW (tcb_list)
+0022 F8              597             MOV     R0,A
+0023 E6              598             MOV     A,@R0
+0024 F581            599             MOV     SP,A
+                     600     ; ///   POP_ALL_STACK();
+                     601     ;       return;
                      602     ; }
-                     603                             ; SOURCE LINE # 112
-005B 22              604             RET     
-                     605     ; END OF _os_task_create
+                     603                             ; SOURCE LINE # 127
+0026 22              604             RET     
+                     605     ; END OF os_start
                      606     
-                     607     ; void os_idle_task(void);
-                     608     ; 
-                     609     ; void os_start()
-                     610     
-----                 611             RSEG  ?PR?os_start?MAIN
-0000                 612     os_start:
-                     613             USING   0
-                     614                             ; SOURCE LINE # 115
-                     615     ; {
-                     616                             ; SOURCE LINE # 116
-                     617     ;       // ×°ÔØ¿ÕÏÐÈÎÎñ
-                     618     ;       os_task_create(os_idle_task, &task_idle_stack, 0);//½«task1º¯Ê×°Èë0ºÅ²Û
-                     619                             ; SOURCE LINE # 118
-0000 900000   F      620             MOV     DPTR,#?_os_task_create?BYTE+03H
-0003 E4              621             CLR     A
-0004 F0              622             MOVX    @DPTR,A
-0005 A3              623             INC     DPTR
-0006 7400     F      624             MOV     A,#HIGH (task_idle_stack)
-0008 F0              625             MOVX    @DPTR,A
-0009 A3              626             INC     DPTR
-000A 7400     F      627             MOV     A,#LOW (task_idle_stack)
-000C F0              628             MOVX    @DPTR,A
-000D E4              629             CLR     A
-000E A3              630             INC     DPTR
-000F F0              631             MOVX    @DPTR,A
-0010 A3              632             INC     DPTR
-0011 F0              633             MOVX    @DPTR,A
-0012 7BFF            634             MOV     R3,#0FFH
-0014 7A00     F      635             MOV     R2,#HIGH (os_idle_task)
-0016 7900     F      636             MOV     R1,#LOW (os_idle_task)
-0018 120000   F      637             LCALL   _os_task_create
-                     638     ; 
-                     639     ;       task_id = 0;
-                     640                             ; SOURCE LINE # 120
-001B E4              641             CLR     A
-001C F500     F      642             MOV     task_id,A
-                     643     ;       SP = tcb_list[task_id].sp;  
-                     644                             ; SOURCE LINE # 121
-001E E500     F      645             MOV     A,task_id
-0020 75F006          646             MOV     B,#06H
-0023 A4              647             MUL     AB
-0024 2400     F      648             ADD     A,#LOW (tcb_list)
-0026 F8              649             MOV     R0,A
-0027 E6              650             MOV     A,@R0
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    11
+                     607     ; void Delay500ms(void) //@11.0592MHz
+                     608     
+----                 609             RSEG  ?PR?Delay500ms?MAIN
+0000                 610     Delay500ms:
+                     611             USING   0
+                     612                             ; SOURCE LINE # 128
+                     613     ; {
+                     614                             ; SOURCE LINE # 129
+                     615     ;       unsigned char data i, j, k;
+                     616     ; 
+                     617     ;       _nop_();
+                     618                             ; SOURCE LINE # 132
+0000 00              619             NOP     
+                     620     ;       _nop_();
+                     621                             ; SOURCE LINE # 133
+0001 00              622             NOP     
+                     623     ;       i = 22;
+                     624                             ; SOURCE LINE # 134
+                     625     ;---- Variable 'i?344' assigned to Register 'R7' ----
+0002 7F16            626             MOV     R7,#016H
+                     627     ;       j = 3;
+                     628                             ; SOURCE LINE # 135
+                     629     ;---- Variable 'j?345' assigned to Register 'R6' ----
+0004 7E03            630             MOV     R6,#03H
+                     631     ;       k = 227;
+                     632                             ; SOURCE LINE # 136
+                     633     ;---- Variable 'k?346' assigned to Register 'R5' ----
+0006 7DE3            634             MOV     R5,#0E3H
+                     635     ;       do
+                     636     ;       {
+                     637                             ; SOURCE LINE # 138
+                     638     ;               do
+                     639     ;               {
+                     640                             ; SOURCE LINE # 140
+0008                 641     ?C0015:
+                     642     ;                       while (--k);
+                     643                             ; SOURCE LINE # 141
+0008 DDFE            644             DJNZ    R5,?C0015
+                     645     ;               } while (--j);
+                     646                             ; SOURCE LINE # 142
+000A DEFC            647             DJNZ    R6,?C0015
+                     648     ;       } while (--i);
+                     649                             ; SOURCE LINE # 143
+000C DFFA            650             DJNZ    R7,?C0015
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    11
 
-0028 F581            651             MOV     SP,A
-                     652     ;       return;
-                     653     ; }
-                     654                             ; SOURCE LINE # 123
-002A 22              655             RET     
-                     656     ; END OF os_start
-                     657     
-                     658     ; 
-                     659     ; // ÈÎÎñÑÓÊ±º¯Ê
-                     660     ; void os_delay(os_uint32_t tasks)
-                     661     
-----                 662             RSEG  ?PR?_os_delay?MAIN
-0000                 663     L?0033:
-                     664             USING   0
-0000 D285            665             SETB    LED_R
-0002                 666     L?0034:
-0002 7FF4            667             MOV     R7,#0F4H
-0004 7E01            668             MOV     R6,#01H
-0006                 669     L?0035:
-0006 7D00            670             MOV     R5,#00H
-0008 7C00            671             MOV     R4,#00H
-000A                 672     _os_delay:
-                     673             USING   0
-                     674                             ; SOURCE LINE # 126
-                     675     ;---- Variable 'tasks?444' assigned to Register 'R4/R5/R6/R7' ----
-                     676     ; {     
-                     677                             ; SOURCE LINE # 127
-                     678     ;       
-                     679     ;       // ÉèÖÃÑÓÊ±µÎ´ðÊ
-                     680     ;       tcb_list[task_id].delay_tick     =      tasks;
-                     681                             ; SOURCE LINE # 130
-000A E500     F      682             MOV     A,task_id
-000C 75F006          683             MOV     B,#06H
-000F A4              684             MUL     AB
-0010 2400     F      685             ADD     A,#LOW (tcb_list+01H)
-0012 F8              686             MOV     R0,A
-0013 120000   F      687             LCALL   ?C?LSTIDATA
-                     688     ;       // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
-                     689     ;       tcb_list[task_id].os_status_type =      OS_BLOCKED;
-                     690                             ; SOURCE LINE # 132
-0016 E500     F      691             MOV     A,task_id
-0018 75F006          692             MOV     B,#06H
-001B A4              693             MUL     AB
-001C 2400     F      694             ADD     A,#LOW (tcb_list+05H)
-001E F8              695             MOV     R0,A
-001F 7603            696             MOV     @R0,#03H
-                     697     ;       // Ö»ÒªÈÎÎñÑÓÊ±ÁË£¬¾ÍÂíÉÏÇÐ»»³öÈ¥
-                     698     ;       OSCtxSw();
-                     699                             ; SOURCE LINE # 134
-0021 020000   F      700             LJMP    OSCtxSw
-                     701     ; END OF _os_delay
-                     702     
-                     703     ;       //      
-                     704     ; }
-                     705     ; // ¿ÕÏÐº¯Ê
-                     706     ; void os_idle_task(void)
+                     651     ; }
+                     652                             ; SOURCE LINE # 144
+000E 22              653             RET     
+                     654     ; END OF Delay500ms
+                     655     
+                     656     ; 
+                     657     ; // ÈÎÎñÑÓÊ±º¯Ê
+                     658     ; void os_delay(os_uint32_t tasks)
+                     659     
+----                 660             RSEG  ?PR?_os_delay?MAIN
+0000                 661     L?0041:
+                     662             USING   0
+0000 7FF4            663             MOV     R7,#0F4H
+0002 7E01            664             MOV     R6,#01H
+0004 7D00            665             MOV     R5,#00H
+0006                 666     _os_delay:
+                     667             USING   0
+                     668                             ; SOURCE LINE # 147
+                     669     ; {     
+                     670                             ; SOURCE LINE # 148
+                     671     ;       tasks = tasks;
+                     672                             ; SOURCE LINE # 149
+                     673     ; //    // ÉèÖÃÑÓÊ±µÎ´ðÊ
+                     674     ; //    tcb_list[task_id].delay_tick     =      tasks;
+                     675     ; //    // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
+                     676     ; //    tcb_list[task_id].os_status_type =      OS_BLOCKED;
+                     677     ;       // Ö»ÒªÈÎÎñÑÓÊ±ÁË£¬¾ÍÂíÉÏÇÐ»»³öÈ¥
+                     678     ; //    OSCtxSw();
+                     679     ;       //      
+                     680     ;       Delay500ms();
+                     681                             ; SOURCE LINE # 157
+0006 020000   F      682             LJMP    Delay500ms
+                     683     ; END OF _os_delay
+                     684     
+                     685     ; }
+                     686     ; // ¿ÕÏÐº¯Ê
+                     687     ; void os_idle_task(void)
+                     688     
+----                 689             RSEG  ?PR?os_idle_task?MAIN
+0000                 690     os_idle_task:
+                     691             USING   0
+                     692                             ; SOURCE LINE # 160
+                     693     ; {
+                     694                             ; SOURCE LINE # 161
+0000                 695     ?C0019:
+                     696     ;       while(1)
+                     697                             ; SOURCE LINE # 162
+                     698     ;       {
+                     699                             ; SOURCE LINE # 163
+                     700     ;               OSCtxSw();
+                     701                             ; SOURCE LINE # 164
+0000 120000   F      702             LCALL   OSCtxSw
+                     703     ;       }
+                     704                             ; SOURCE LINE # 165
+0003 80FB            705             SJMP    ?C0019
+                     706     ; END OF os_idle_task
                      707     
-----                 708             RSEG  ?PR?os_idle_task?MAIN
-0000                 709     os_idle_task:
-                     710             USING   0
-                     711                             ; SOURCE LINE # 138
-                     712     ; {
-                     713                             ; SOURCE LINE # 139
-0000                 714     ?C0011:
-                     715     ;       while(1)
-                     716                             ; SOURCE LINE # 140
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    12
+                     708     ; }
+                     709     ; 
+                     710     ; void task1()
+                     711     
+----                 712             RSEG  ?PR?task1?MAIN
+0000                 713     task1:
+                     714             USING   0
+                     715                             ; SOURCE LINE # 168
+                     716     ; {
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    12
 
-                     717     ;       {
-                     718                             ; SOURCE LINE # 141
-                     719     ;               OSCtxSw();
-                     720                             ; SOURCE LINE # 142
-0000 120000   F      721             LCALL   OSCtxSw
-                     722     ;       }
-                     723                             ; SOURCE LINE # 143
-0003 80FB            724             SJMP    ?C0011
-                     725     ; END OF os_idle_task
-                     726     
-                     727     ; }
-                     728     ; 
-                     729     ; void task1()
-                     730     
-----                 731             RSEG  ?PR?task1?MAIN
-0000                 732     task1:
-                     733             USING   0
-                     734                             ; SOURCE LINE # 146
-                     735     ; {
-                     736                             ; SOURCE LINE # 147
-0000                 737     ?C0014:
-                     738     ;       while(1)
-                     739                             ; SOURCE LINE # 148
-                     740     ;       {
-                     741                             ; SOURCE LINE # 149
-                     742     ;               LED_R = 1;
-                     743                             ; SOURCE LINE # 150
+                     717                             ; SOURCE LINE # 169
+0000                 718     ?C0022:
+                     719     ;       while(1)
+                     720                             ; SOURCE LINE # 170
+                     721     ;       {
+                     722                             ; SOURCE LINE # 171
+                     723     ;               LED_R = 1;
+                     724                             ; SOURCE LINE # 172
+0000 D285            725             SETB    LED_R
+                     726     ;               os_delay(500);
+                     727                             ; SOURCE LINE # 173
+0002 7FF4            728             MOV     R7,#0F4H
+0004 7E01            729             MOV     R6,#01H
+0006 7D00            730             MOV     R5,#00H
+0008 7C00            731             MOV     R4,#00H
+000A 120000   F      732             LCALL   _os_delay
+                     733     ; 
+                     734     ;               LED_R = 0;
+                     735                             ; SOURCE LINE # 175
+000D C285            736             CLR     LED_R
+                     737     ;               os_delay(500);
+                     738                             ; SOURCE LINE # 176
+000F 120000   F      739             LCALL   L?0041
+                     740     ;               
+                     741     ;               LED_R = 1;
+                     742                             ; SOURCE LINE # 178
+0012 D285            743             SETB    LED_R
                      744     ;               os_delay(500);
-                     745                             ; SOURCE LINE # 151
-0000 120000   F      746             LCALL   L?0033
-                     747     ; 
-                     748     ;               LED_R = 0;
-                     749                             ; SOURCE LINE # 153
-0003 C285            750             CLR     LED_R
-                     751     ;               os_delay(500);
-                     752                             ; SOURCE LINE # 154
-0005 120000   F      753             LCALL   L?0034
-                     754     ;               
-                     755     ;               LED_R = 1;
-                     756                             ; SOURCE LINE # 156
-                     757     ;               os_delay(500);
-                     758                             ; SOURCE LINE # 157
-0008 120000   F      759             LCALL   L?0033
-                     760     ;               OSCtxSw();
-                     761                             ; SOURCE LINE # 158
-000B 120000   F      762             LCALL   OSCtxSw
-                     763     ; 
-                     764     ;       }
-                     765                             ; SOURCE LINE # 160
-000E 80F0            766             SJMP    ?C0014
-                     767     ; END OF task1
-                     768     
-                     769     ; }
-                     770     ; 
-                     771     ; void task2()
-                     772     
-----                 773             RSEG  ?PR?task2?MAIN
-0000                 774     task2:
-                     775             USING   0
-                     776                             ; SOURCE LINE # 163
-                     777     ; {
-                     778                             ; SOURCE LINE # 164
-0000                 779     ?C0017:
-                     780     ; 
-                     781     ;       while(1)
-                     782                             ; SOURCE LINE # 166
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    13
+                     745                             ; SOURCE LINE # 179
+0014 120000   F      746             LCALL   L?0041
+                     747     ;               OSCtxSw();
+                     748                             ; SOURCE LINE # 180
+0017 120000   F      749             LCALL   OSCtxSw
+                     750     ; 
+                     751     ;       }
+                     752                             ; SOURCE LINE # 182
+001A 80E4            753             SJMP    ?C0022
+                     754     ; END OF task1
+                     755     
+                     756     ; }
+                     757     ; 
+                     758     ; void task2()
+                     759     
+----                 760             RSEG  ?PR?task2?MAIN
+0000                 761     task2:
+                     762             USING   0
+                     763                             ; SOURCE LINE # 185
+                     764     ; {
+                     765                             ; SOURCE LINE # 186
+0000                 766     ?C0025:
+                     767     ; 
+                     768     ;       while(1)
+                     769                             ; SOURCE LINE # 188
+                     770     ;       {
+                     771                             ; SOURCE LINE # 189
+                     772     ;               LED_Y = 1;
+                     773                             ; SOURCE LINE # 190
+0000 D286            774             SETB    LED_Y
+                     775     ;               os_delay(1000);
+                     776                             ; SOURCE LINE # 191
+0002 7FE8            777             MOV     R7,#0E8H
+0004 7E03            778             MOV     R6,#03H
+0006 7D00            779             MOV     R5,#00H
+0008 7C00            780             MOV     R4,#00H
+000A 120000   F      781             LCALL   _os_delay
+                     782     ;               
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    13
 
-                     783     ;       {
-                     784                             ; SOURCE LINE # 167
-                     785     ;               LED_Y = 1;
-                     786                             ; SOURCE LINE # 168
-0000 D286            787             SETB    LED_Y
-                     788     ;               os_delay(1000);
-                     789                             ; SOURCE LINE # 169
-0002 7FE8            790             MOV     R7,#0E8H
-0004 7E03            791             MOV     R6,#03H
-0006 120000   F      792             LCALL   L?0035
-                     793     ;               
-                     794     ;               LED_Y = 0;
-                     795                             ; SOURCE LINE # 171
-0009 C286            796             CLR     LED_Y
-                     797     ;               os_delay(1000);
-                     798                             ; SOURCE LINE # 172
-000B 7FE8            799             MOV     R7,#0E8H
-000D 7E03            800             MOV     R6,#03H
-000F 120000   F      801             LCALL   L?0035
-                     802     ;               OSCtxSw();
-                     803                             ; SOURCE LINE # 173
-0012 120000   F      804             LCALL   OSCtxSw
+                     783     ;               LED_Y = 0;
+                     784                             ; SOURCE LINE # 193
+000D C286            785             CLR     LED_Y
+                     786     ;               os_delay(1000);
+                     787                             ; SOURCE LINE # 194
+000F 7FE8            788             MOV     R7,#0E8H
+0011 7E03            789             MOV     R6,#03H
+0013 7D00            790             MOV     R5,#00H
+0015 120000   F      791             LCALL   _os_delay
+                     792     ;               OSCtxSw();
+                     793                             ; SOURCE LINE # 195
+0018 120000   F      794             LCALL   OSCtxSw
+                     795     ; 
+                     796     ;       }
+                     797                             ; SOURCE LINE # 197
+001B 80E3            798             SJMP    ?C0025
+                     799     ; END OF task2
+                     800     
+----                 801     CSEG    AT      0000BH
+000B 020000   F      802             LJMP    time0_handle
+                     803     
+                     804     ; }
                      805     ; 
-                     806     ;       }
-                     807                             ; SOURCE LINE # 175
-0015 80E9            808             SJMP    ?C0017
-                     809     ; END OF task2
-                     810     
-----                 811     CSEG    AT      0000BH
-000B 020000   F      812             LJMP    time0_handle
-                     813     
-                     814     ; }
-                     815     ; 
-                     816     ; 
-                     817     ; unsigned int cut = 0;
-                     818     ; 
-                     819     ; //void time0_handle(void)large reentrant
-                     820     ; void time0_handle(void)interrupt 1
-                     821     
-----                 822             RSEG  ?PR?time0_handle?MAIN
-                     823             USING   0
-0000                 824     time0_handle:
-0000 C0E0            825             PUSH    ACC
-0002 C0F0            826             PUSH    B
-0004 C083            827             PUSH    DPH
-0006 C082            828             PUSH    DPL
-0008 C0D0            829             PUSH    PSW
-000A 75D000          830             MOV     PSW,#00H
-000D C000            831             PUSH    AR0
-000F C001            832             PUSH    AR1
-0011 C002            833             PUSH    AR2
-0013 C003            834             PUSH    AR3
-0015 C004            835             PUSH    AR4
-0017 C005            836             PUSH    AR5
-0019 C006            837             PUSH    AR6
-001B C007            838             PUSH    AR7
-                     839             USING   0
-                     840                             ; SOURCE LINE # 182
-                     841     ; {
-                     842     ;       os_uint8_t ti = 0;
-                     843                             ; SOURCE LINE # 184
-001D 900000   F      844             MOV     DPTR,#ti?845
-0020 E4              845             CLR     A
-0021 F0              846             MOVX    @DPTR,A
-                     847     ;       cut++;
-                     848                             ; SOURCE LINE # 185
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    14
+                     806     ; 
+                     807     ; unsigned int cut = 0;
+                     808     ; 
+                     809     ; //void time0_handle(void)large reentrant
+                     810     ; void time0_handle(void)interrupt 1
+                     811     
+----                 812             RSEG  ?PR?time0_handle?MAIN
+                     813             USING   0
+0000                 814     time0_handle:
+0000 C0E0            815             PUSH    ACC
+0002 C0F0            816             PUSH    B
+0004 C083            817             PUSH    DPH
+0006 C082            818             PUSH    DPL
+0008 C0D0            819             PUSH    PSW
+000A 75D000          820             MOV     PSW,#00H
+000D C000            821             PUSH    AR0
+000F C001            822             PUSH    AR1
+0011 C002            823             PUSH    AR2
+0013 C003            824             PUSH    AR3
+0015 C004            825             PUSH    AR4
+0017 C005            826             PUSH    AR5
+0019 C006            827             PUSH    AR6
+001B C007            828             PUSH    AR7
+                     829             USING   0
+                     830                             ; SOURCE LINE # 204
+                     831     ; {
+                     832     ;       os_uint8_t ti = 0;
+                     833                             ; SOURCE LINE # 206
+001D 750000   F      834             MOV     ti?848,#00H
+                     835     ;       cut++;
+                     836                             ; SOURCE LINE # 207
+0020 0500     F      837             INC     cut+01H
+0022 E500     F      838             MOV     A,cut+01H
+0024 7002            839             JNZ     ?C0039
+0026 0500     F      840             INC     cut
+0028                 841     ?C0039:
+                     842     ; 
+                     843     ;       if(cut == 500)
+                     844                             ; SOURCE LINE # 209
+0028 B4F40D          845             CJNE    A,#0F4H,?C0028
+002B E500     F      846             MOV     A,cut
+002D B40108          847             CJNE    A,#01H,?C0028
+                     848     ;       {
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    14
 
-0022 900000   F      849             MOV     DPTR,#cut+01H
-0025 E0              850             MOVX    A,@DPTR
-0026 04              851             INC     A
-0027 F0              852             MOVX    @DPTR,A
-0028 7006            853             JNZ     ?C0031
-002A 900000   F      854             MOV     DPTR,#cut
-002D E0              855             MOVX    A,@DPTR
-002E 04              856             INC     A
-002F F0              857             MOVX    @DPTR,A
-0030                 858     ?C0031:
-                     859     ; 
-                     860     ;       if(cut == 500)
-                     861                             ; SOURCE LINE # 187
-0030 900000   F      862             MOV     DPTR,#cut
-0033 E0              863             MOVX    A,@DPTR
-0034 B4010E          864             CJNE    A,#01H,?C0020
-0037 A3              865             INC     DPTR
-0038 E0              866             MOVX    A,@DPTR
-0039 B4F409          867             CJNE    A,#0F4H,?C0020
-                     868     ;       {
-                     869                             ; SOURCE LINE # 188
-                     870     ;               cut = 0;
-                     871                             ; SOURCE LINE # 189
-003C 900000   F      872             MOV     DPTR,#cut
-003F E4              873             CLR     A
-0040 F0              874             MOVX    @DPTR,A
-0041 A3              875             INC     DPTR
-0042 F0              876             MOVX    @DPTR,A
-                     877     ;               LED_G = !LED_G;
-                     878                             ; SOURCE LINE # 190
-0043 B287            879             CPL     LED_G
-                     880     ;       }
-                     881                             ; SOURCE LINE # 191
-0045                 882     ?C0020:
-                     883     ;       // ÔÚÕâÀï´¦Àí±éÀúÑÓÊ±
-                     884     ;       for(ti = 0; ti<max_task; ti++)
-                     885                             ; SOURCE LINE # 193
-0045 900000   F      886             MOV     DPTR,#ti?845
-0048 E4              887             CLR     A
-0049 F0              888             MOVX    @DPTR,A
-004A                 889     ?C0021:
-004A 900000   F      890             MOV     DPTR,#max_task
-004D E0              891             MOVX    A,@DPTR
-004E FF              892             MOV     R7,A
-004F 900000   F      893             MOV     DPTR,#ti?845
-0052 E0              894             MOVX    A,@DPTR
-0053 FE              895             MOV     R6,A
-0054 C3              896             CLR     C
-0055 9F              897             SUBB    A,R7
-0056 4003            898             JC      $ + 5H
-0058 020000   F      899             LJMP    ?C0026
-                     900     ;       {
-                     901                             ; SOURCE LINE # 194
-                     902     ;               if(tcb_list[ti].os_status_type != OS_BLOCKED)
-                     903                             ; SOURCE LINE # 195
-005B EE              904             MOV     A,R6
-005C 75F006          905             MOV     B,#06H
-005F A4              906             MUL     AB
-0060 2400     F      907             ADD     A,#LOW (tcb_list+05H)
-0062 F8              908             MOV     R0,A
-0063 E6              909             MOV     A,@R0
-0064 6403            910             XRL     A,#03H
-0066 706C            911             JNZ     ?C0023
-                     912     ;               {
-                     913                             ; SOURCE LINE # 196
-                     914     ;                       continue;
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    15
+                     849                             ; SOURCE LINE # 210
+                     850     ;               cut = 0;
+                     851                             ; SOURCE LINE # 211
+0030 750000   F      852             MOV     cut,#00H
+0033 750000   F      853             MOV     cut+01H,#00H
+                     854     ;               LED_G = !LED_G;
+                     855                             ; SOURCE LINE # 212
+0036 B287            856             CPL     LED_G
+                     857     ;       }
+                     858                             ; SOURCE LINE # 213
+0038                 859     ?C0028:
+                     860     ;       // ÔÚÕâÀï´¦Àí±éÀúÑÓÊ±
+                     861     ;       for(ti = 0; ti<max_task; ti++)
+                     862                             ; SOURCE LINE # 215
+0038 750000   F      863             MOV     ti?848,#00H
+003B                 864     ?C0029:
+003B E500     F      865             MOV     A,ti?848
+003D C3              866             CLR     C
+003E 9500     F      867             SUBB    A,max_task
+0040 4003            868             JC      $ + 5H
+0042 020000   F      869             LJMP    ?C0034
+                     870     ;       {
+                     871                             ; SOURCE LINE # 216
+                     872     ;               if(tcb_list[ti].os_status_type != OS_BLOCKED)
+                     873                             ; SOURCE LINE # 217
+0045 E500     F      874             MOV     A,ti?848
+0047 75F006          875             MOV     B,#06H
+004A A4              876             MUL     AB
+004B 2400     F      877             ADD     A,#LOW (tcb_list+05H)
+004D F8              878             MOV     R0,A
+004E E6              879             MOV     A,@R0
+004F 6403            880             XRL     A,#03H
+0051 706C            881             JNZ     ?C0031
+                     882     ;               {
+                     883                             ; SOURCE LINE # 218
+                     884     ;                       continue;
+                     885                             ; SOURCE LINE # 219
+                     886     ;               }
+                     887                             ; SOURCE LINE # 220
+                     888     ;               // ÉèÖÃÑÓÊ±µÎ´ðÊ
+                     889     ;               if((tcb_list[ti].delay_tick - 1) == 0)
+                     890                             ; SOURCE LINE # 222
+0053 E500     F      891             MOV     A,ti?848
+0055 75F006          892             MOV     B,#06H
+0058 A4              893             MUL     AB
+0059 2400     F      894             ADD     A,#LOW (tcb_list+01H)
+005B F8              895             MOV     R0,A
+005C 120000   F      896             LCALL   ?C?LLDIDATA
+005F EF              897             MOV     A,R7
+0060 24FF            898             ADD     A,#0FFH
+0062 FF              899             MOV     R7,A
+0063 EE              900             MOV     A,R6
+0064 34FF            901             ADDC    A,#0FFH
+0066 FE              902             MOV     R6,A
+0067 ED              903             MOV     A,R5
+0068 34FF            904             ADDC    A,#0FFH
+006A FD              905             MOV     R5,A
+006B EC              906             MOV     A,R4
+006C 34FF            907             ADDC    A,#0FFH
+006E FC              908             MOV     R4,A
+006F E4              909             CLR     A
+0070 FB              910             MOV     R3,A
+0071 FA              911             MOV     R2,A
+0072 F9              912             MOV     R1,A
+0073 F8              913             MOV     R0,A
+0074 C3              914             CLR     C
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    15
 
-                     915                             ; SOURCE LINE # 197
-                     916     ;               }
-                     917                             ; SOURCE LINE # 198
-                     918     ;               // ÉèÖÃÑÓÊ±µÎ´ðÊ
-                     919     ;               if((tcb_list[ti].delay_tick - 1) == 0)
-                     920                             ; SOURCE LINE # 200
-0068 E0              921             MOVX    A,@DPTR
-0069 75F006          922             MOV     B,#06H
-006C A4              923             MUL     AB
-006D 2400     F      924             ADD     A,#LOW (tcb_list+01H)
-006F F8              925             MOV     R0,A
-0070 120000   F      926             LCALL   ?C?LLDIDATA
-0073 EF              927             MOV     A,R7
-0074 24FF            928             ADD     A,#0FFH
-0076 FF              929             MOV     R7,A
-0077 EE              930             MOV     A,R6
-0078 34FF            931             ADDC    A,#0FFH
-007A FE              932             MOV     R6,A
-007B ED              933             MOV     A,R5
-007C 34FF            934             ADDC    A,#0FFH
-007E FD              935             MOV     R5,A
-007F EC              936             MOV     A,R4
-0080 34FF            937             ADDC    A,#0FFH
-0082 FC              938             MOV     R4,A
-0083 E4              939             CLR     A
-0084 FB              940             MOV     R3,A
-0085 FA              941             MOV     R2,A
-0086 F9              942             MOV     R1,A
-0087 F8              943             MOV     R0,A
-0088 C3              944             CLR     C
-0089 120000   F      945             LCALL   ?C?ULCMP
-008C 900000   F      946             MOV     DPTR,#ti?845
-008F 701C            947             JNZ     ?C0025
-                     948     ;               {
-                     949                             ; SOURCE LINE # 201
-                     950     ;                       tcb_list[ti].delay_tick = 0;
-                     951                             ; SOURCE LINE # 202
-0091 E0              952             MOVX    A,@DPTR
-0092 FB              953             MOV     R3,A
-0093 75F006          954             MOV     B,#06H
-0096 A4              955             MUL     AB
-0097 2400     F      956             ADD     A,#LOW (tcb_list+01H)
-0099 F8              957             MOV     R0,A
-009A 120000   F      958             LCALL   ?C?LSTKIDATA
-009D 00              959             DB      00H
-009E 00              960             DB      00H
-009F 00              961             DB      00H
-00A0 00              962             DB      00H
-                     963     ;                       // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
-                     964     ;                       tcb_list[ti].os_status_type = OS_READY;
-                     965                             ; SOURCE LINE # 204
-00A1 EB              966             MOV     A,R3
-00A2 75F006          967             MOV     B,#06H
-00A5 A4              968             MUL     AB
-00A6 2400     F      969             ADD     A,#LOW (tcb_list+05H)
-00A8 F8              970             MOV     R0,A
-00A9 7601            971             MOV     @R0,#01H
-                     972     ;                       continue;
-                     973                             ; SOURCE LINE # 205
-00AB 8027            974             SJMP    ?C0023
-                     975     ;               }
-                     976                             ; SOURCE LINE # 206
-00AD                 977     ?C0025:
-                     978     ;               tcb_list[ti].delay_tick--;
-                     979                             ; SOURCE LINE # 207
-00AD E0              980             MOVX    A,@DPTR
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    16
+0075 120000   F      915             LCALL   ?C?ULCMP
+0078 701D            916             JNZ     ?C0033
+                     917     ;               {
+                     918                             ; SOURCE LINE # 223
+                     919     ;                       tcb_list[ti].delay_tick = 0;
+                     920                             ; SOURCE LINE # 224
+007A E500     F      921             MOV     A,ti?848
+007C 75F006          922             MOV     B,#06H
+007F A4              923             MUL     AB
+0080 2400     F      924             ADD     A,#LOW (tcb_list+01H)
+0082 F8              925             MOV     R0,A
+0083 120000   F      926             LCALL   ?C?LSTKIDATA
+0086 00              927             DB      00H
+0087 00              928             DB      00H
+0088 00              929             DB      00H
+0089 00              930             DB      00H
+                     931     ;                       // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
+                     932     ;                       tcb_list[ti].os_status_type = OS_READY;
+                     933                             ; SOURCE LINE # 226
+008A E500     F      934             MOV     A,ti?848
+008C 75F006          935             MOV     B,#06H
+008F A4              936             MUL     AB
+0090 2400     F      937             ADD     A,#LOW (tcb_list+05H)
+0092 F8              938             MOV     R0,A
+0093 7601            939             MOV     @R0,#01H
+                     940     ;                       continue;
+                     941                             ; SOURCE LINE # 227
+0095 8028            942             SJMP    ?C0031
+                     943     ;               }
+                     944                             ; SOURCE LINE # 228
+0097                 945     ?C0033:
+                     946     ;               tcb_list[ti].delay_tick--;
+                     947                             ; SOURCE LINE # 229
+0097 E500     F      948             MOV     A,ti?848
+0099 75F006          949             MOV     B,#06H
+009C A4              950             MUL     AB
+009D 2400     F      951             ADD     A,#LOW (tcb_list+01H)
+009F F8              952             MOV     R0,A
+00A0 120000   F      953             LCALL   ?C?LLDIDATA
+00A3 EF              954             MOV     A,R7
+00A4 24FF            955             ADD     A,#0FFH
+00A6 FF              956             MOV     R7,A
+00A7 EE              957             MOV     A,R6
+00A8 34FF            958             ADDC    A,#0FFH
+00AA FE              959             MOV     R6,A
+00AB ED              960             MOV     A,R5
+00AC 34FF            961             ADDC    A,#0FFH
+00AE FD              962             MOV     R5,A
+00AF EC              963             MOV     A,R4
+00B0 34FF            964             ADDC    A,#0FFH
+00B2 FC              965             MOV     R4,A
+00B3 E500     F      966             MOV     A,ti?848
+00B5 75F006          967             MOV     B,#06H
+00B8 A4              968             MUL     AB
+00B9 2400     F      969             ADD     A,#LOW (tcb_list+01H)
+00BB F8              970             MOV     R0,A
+00BC 120000   F      971             LCALL   ?C?LSTIDATA
+                     972     ;       }
+                     973                             ; SOURCE LINE # 230
+00BF                 974     ?C0031:
+00BF 0500     F      975             INC     ti?848
+00C1 020000   F      976             LJMP    ?C0029
+                     977     ; }
+                     978                             ; SOURCE LINE # 231
+00C4                 979     ?C0034:
+00C4 D007            980             POP     AR7
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    16
 
-00AE FB              981             MOV     R3,A
-00AF 75F006          982             MOV     B,#06H
-00B2 A4              983             MUL     AB
-00B3 2400     F      984             ADD     A,#LOW (tcb_list+01H)
-00B5 F8              985             MOV     R0,A
-00B6 120000   F      986             LCALL   ?C?LLDIDATA
-00B9 EF              987             MOV     A,R7
-00BA 24FF            988             ADD     A,#0FFH
-00BC FF              989             MOV     R7,A
-00BD EE              990             MOV     A,R6
-00BE 34FF            991             ADDC    A,#0FFH
-00C0 FE              992             MOV     R6,A
-00C1 ED              993             MOV     A,R5
-00C2 34FF            994             ADDC    A,#0FFH
-00C4 FD              995             MOV     R5,A
-00C5 EC              996             MOV     A,R4
-00C6 34FF            997             ADDC    A,#0FFH
-00C8 FC              998             MOV     R4,A
-00C9 EB              999             MOV     A,R3
-00CA 75F006         1000             MOV     B,#06H
-00CD A4             1001             MUL     AB
-00CE 2400     F     1002             ADD     A,#LOW (tcb_list+01H)
-00D0 F8             1003             MOV     R0,A
-00D1 120000   F     1004             LCALL   ?C?LSTIDATA
-                    1005     ;       }
-                    1006                             ; SOURCE LINE # 208
-00D4                1007     ?C0023:
-00D4 900000   F     1008             MOV     DPTR,#ti?845
-00D7 E0             1009             MOVX    A,@DPTR
-00D8 04             1010             INC     A
-00D9 F0             1011             MOVX    @DPTR,A
-00DA 020000   F     1012             LJMP    ?C0021
-                    1013     ; }
-                    1014                             ; SOURCE LINE # 209
-00DD                1015     ?C0026:
-00DD D007           1016             POP     AR7
-00DF D006           1017             POP     AR6
-00E1 D005           1018             POP     AR5
-00E3 D004           1019             POP     AR4
-00E5 D003           1020             POP     AR3
-00E7 D002           1021             POP     AR2
-00E9 D001           1022             POP     AR1
-00EB D000           1023             POP     AR0
-00ED D0D0           1024             POP     PSW
-00EF D082           1025             POP     DPL
-00F1 D083           1026             POP     DPH
-00F3 D0F0           1027             POP     B
-00F5 D0E0           1028             POP     ACC
-00F7 32             1029             RETI    
-                    1030     ; END OF time0_handle
-                    1031     
-                    1032     ; 
-                    1033     ; void Timer0_Init(void)                //1ºÁÃë@11.0592MHz
-                    1034     
-----                1035             RSEG  ?PR?Timer0_Init?MAIN
-0000                1036     Timer0_Init:
-                    1037                             ; SOURCE LINE # 211
+00C6 D006            981             POP     AR6
+00C8 D005            982             POP     AR5
+00CA D004            983             POP     AR4
+00CC D003            984             POP     AR3
+00CE D002            985             POP     AR2
+00D0 D001            986             POP     AR1
+00D2 D000            987             POP     AR0
+00D4 D0D0            988             POP     PSW
+00D6 D082            989             POP     DPL
+00D8 D083            990             POP     DPH
+00DA D0F0            991             POP     B
+00DC D0E0            992             POP     ACC
+00DE 32              993             RETI    
+                     994     ; END OF time0_handle
+                     995     
+                     996     ; 
+                     997     ; void Timer0_Init(void)                //1ºÁÃë@11.0592MHz
+                     998     
+----                 999             RSEG  ?PR?Timer0_Init?MAIN
+0000                1000     Timer0_Init:
+                    1001                             ; SOURCE LINE # 233
+                    1002     ; {
+                    1003                             ; SOURCE LINE # 234
+                    1004     ;       AUXR |= 0x80;                   //¶¨Ê±Æ÷Ê±ÖÓ1TÄ£Ê½
+                    1005                             ; SOURCE LINE # 235
+0000 438E80         1006             ORL     AUXR,#080H
+                    1007     ;       TMOD &= 0xF0;                   //ÉèÖÃ¶¨Ê±Æ÷Ä£Ê½
+                    1008                             ; SOURCE LINE # 236
+0003 5389F0         1009             ANL     TMOD,#0F0H
+                    1010     ;       TL0 = 0xCD;                             //ÉèÖÃ¶¨Ê±³õÊ¼Öµ
+                    1011                             ; SOURCE LINE # 237
+0006 758ACD         1012             MOV     TL0,#0CDH
+                    1013     ;       TH0 = 0xD4;                             //ÉèÖÃ¶¨Ê±³õÊ¼Öµ
+                    1014                             ; SOURCE LINE # 238
+0009 758CD4         1015             MOV     TH0,#0D4H
+                    1016     ;       TF0 = 0;                                //Çå³TF0±êÖ¾
+                    1017                             ; SOURCE LINE # 239
+000C C28D           1018             CLR     TF0
+                    1019     ;       TR0 = 1;                                //¶¨Ê±Æ÷0¿ªÊ¼¼ÆÊ±
+                    1020                             ; SOURCE LINE # 240
+000E D28C           1021             SETB    TR0
+                    1022     ;       ET0 = 1;                                //Ê¹ÄÜ¶¨Ê±Æ÷0ÖÐ¶Ï
+                    1023                             ; SOURCE LINE # 241
+0010 D2A9           1024             SETB    ET0
+                    1025     ; }
+                    1026                             ; SOURCE LINE # 242
+0012 22             1027             RET     
+                    1028     ; END OF Timer0_Init
+                    1029     
+                    1030     ; 
+                    1031     ; /* Ö÷º¯Ê */
+                    1032     ; void main()
+                    1033     
+----                1034             RSEG  ?PR?main?MAIN
+0000                1035     main:
+                    1036             USING   0
+                    1037                             ; SOURCE LINE # 245
                     1038     ; {
-                    1039                             ; SOURCE LINE # 212
-                    1040     ;       AUXR |= 0x80;                   //¶¨Ê±Æ÷Ê±ÖÓ1TÄ£Ê½
-                    1041                             ; SOURCE LINE # 213
-0000 438E80         1042             ORL     AUXR,#080H
-                    1043     ;       TMOD &= 0xF0;                   //ÉèÖÃ¶¨Ê±Æ÷Ä£Ê½
-                    1044                             ; SOURCE LINE # 214
-0003 5389F0         1045             ANL     TMOD,#0F0H
-                    1046     ;       TL0 = 0xCD;                             //ÉèÖÃ¶¨Ê±³õÊ¼Öµ
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    17
+                    1039                             ; SOURCE LINE # 246
+                    1040     ;       P0M0 = 0x00;   //ÉèÖÃP0.0~P0.7ÎªË«Ïò¿ÚÄ£Ê½
+                    1041                             ; SOURCE LINE # 247
+0000 E4             1042             CLR     A
+0001 F594           1043             MOV     P0M0,A
+                    1044     ;       P0M1 = 0x00;
+                    1045                             ; SOURCE LINE # 248
+0003 F593           1046             MOV     P0M1,A
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    17
 
-                    1047                             ; SOURCE LINE # 215
-0006 758ACD         1048             MOV     TL0,#0CDH
-                    1049     ;       TH0 = 0xD4;                             //ÉèÖÃ¶¨Ê±³õÊ¼Öµ
-                    1050                             ; SOURCE LINE # 216
-0009 758CD4         1051             MOV     TH0,#0D4H
-                    1052     ;       TF0 = 0;                                //Çå³TF0±êÖ¾
-                    1053                             ; SOURCE LINE # 217
-000C C28D           1054             CLR     TF0
-                    1055     ;       TR0 = 1;                                //¶¨Ê±Æ÷0¿ªÊ¼¼ÆÊ±
-                    1056                             ; SOURCE LINE # 218
-000E D28C           1057             SETB    TR0
-                    1058     ;       ET0 = 1;                                //Ê¹ÄÜ¶¨Ê±Æ÷0ÖÐ¶Ï
-                    1059                             ; SOURCE LINE # 219
-0010 D2A9           1060             SETB    ET0
-                    1061     ; }
-                    1062                             ; SOURCE LINE # 220
-0012 22             1063             RET     
-                    1064     ; END OF Timer0_Init
-                    1065     
-                    1066     ; 
-                    1067     ; /* Ö÷º¯Ê */
-                    1068     ; void main()
-                    1069     
-----                1070             RSEG  ?PR?main?MAIN
-0000                1071     main:
-                    1072             USING   0
-                    1073                             ; SOURCE LINE # 223
-                    1074     ; {
-                    1075                             ; SOURCE LINE # 224
-                    1076     ;       P0M0 = 0x00;   //ÉèÖÃP0.0~P0.7ÎªË«Ïò¿ÚÄ£Ê½
-                    1077                             ; SOURCE LINE # 225
-0000 E4             1078             CLR     A
-0001 F594           1079             MOV     P0M0,A
-                    1080     ;       P0M1 = 0x00;
-                    1081                             ; SOURCE LINE # 226
-0003 F593           1082             MOV     P0M1,A
-                    1083     ;       Timer0_Init();
-                    1084                             ; SOURCE LINE # 227
-0005 120000   F     1085             LCALL   Timer0_Init
-                    1086     ;       EA = 1;
-                    1087                             ; SOURCE LINE # 228
-0008 D2AF           1088             SETB    EA
-                    1089     ;       P_SW2 |= (1<<7);
-                    1090                             ; SOURCE LINE # 229
-000A 43BA80         1091             ORL     P_SW2,#080H
-                    1092     ; 
-                    1093     ;       os_task_create(task1, &task_stack1, 1);//½«task1º¯Ê×°Èë0ºÅ²Û
-                    1094                             ; SOURCE LINE # 231
-000D 900000   F     1095             MOV     DPTR,#?_os_task_create?BYTE+03H
-0010 F0             1096             MOVX    @DPTR,A
-0011 A3             1097             INC     DPTR
-0012 7400     F     1098             MOV     A,#HIGH (task_stack1)
-0014 F0             1099             MOVX    @DPTR,A
-0015 A3             1100             INC     DPTR
-0016 7400     F     1101             MOV     A,#LOW (task_stack1)
-0018 F0             1102             MOVX    @DPTR,A
-0019 A3             1103             INC     DPTR
-001A E4             1104             CLR     A
-001B F0             1105             MOVX    @DPTR,A
-001C A3             1106             INC     DPTR
-001D 04             1107             INC     A
-001E F0             1108             MOVX    @DPTR,A
-001F 7BFF           1109             MOV     R3,#0FFH
-0021 7A00     F     1110             MOV     R2,#HIGH (task1)
-0023 7900     F     1111             MOV     R1,#LOW (task1)
-0025 120000   F     1112             LCALL   _os_task_create
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    18
-
-                    1113     ;       os_task_create(task2, &task_stack2, 2);//½«task2º¯Ê×°Èë1ºÅ²Û
-                    1114                             ; SOURCE LINE # 232
-0028 900000   F     1115             MOV     DPTR,#?_os_task_create?BYTE+03H
-002B E4             1116             CLR     A
-002C F0             1117             MOVX    @DPTR,A
-002D A3             1118             INC     DPTR
-002E 7400     F     1119             MOV     A,#HIGH (task_stack2)
-0030 F0             1120             MOVX    @DPTR,A
-0031 A3             1121             INC     DPTR
-0032 7400     F     1122             MOV     A,#LOW (task_stack2)
-0034 F0             1123             MOVX    @DPTR,A
-0035 A3             1124             INC     DPTR
-0036 E4             1125             CLR     A
-0037 F0             1126             MOVX    @DPTR,A
-0038 A3             1127             INC     DPTR
-0039 7402           1128             MOV     A,#02H
-003B F0             1129             MOVX    @DPTR,A
-003C 7BFF           1130             MOV     R3,#0FFH
-003E 7A00     F     1131             MOV     R2,#HIGH (task2)
-0040 7900     F     1132             MOV     R1,#LOW (task2)
-0042 120000   F     1133             LCALL   _os_task_create
-                    1134     ;       os_start();
-                    1135                             ; SOURCE LINE # 233
-0045 120000   F     1136             LCALL   os_start
-0048                1137     ?C0028:
-                    1138     ; 
-                    1139     ; 
-                    1140     ;       while(1)
-                    1141                             ; SOURCE LINE # 236
-                    1142     ;       {
-                    1143                             ; SOURCE LINE # 237
-                    1144     ; 
-                    1145     ;       }
-                    1146                             ; SOURCE LINE # 239
-0048 80FE           1147             SJMP    ?C0028
-                    1148     ; END OF main
-                    1149     
-                    1150             END
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    19
+                    1047     ;       Timer0_Init();
+                    1048                             ; SOURCE LINE # 249
+0005 120000   F     1049             LCALL   Timer0_Init
+                    1050     ;       EA = 1;
+                    1051                             ; SOURCE LINE # 250
+0008 D2AF           1052             SETB    EA
+                    1053     ;       P_SW2 |= (1<<7);
+                    1054                             ; SOURCE LINE # 251
+000A 43BA80         1055             ORL     P_SW2,#080H
+                    1056     ; 
+                    1057     ;       os_task_create(task1, &task_stack1, 1);//½«task1º¯Ê×°Èë0ºÅ²Û
+                    1058                             ; SOURCE LINE # 253
+000D F500     F     1059             MOV     ?_os_task_create?BYTE+03H,A
+000F 750000   F     1060             MOV     ?_os_task_create?BYTE+04H,#HIGH (task_stack1)
+0012 750000   F     1061             MOV     ?_os_task_create?BYTE+05H,#LOW (task_stack1)
+0015 F500     F     1062             MOV     ?_os_task_create?BYTE+06H,A
+0017 750001   F     1063             MOV     ?_os_task_create?BYTE+07H,#01H
+001A 7BFF           1064             MOV     R3,#0FFH
+001C 7A00     F     1065             MOV     R2,#HIGH (task1)
+001E 7900     F     1066             MOV     R1,#LOW (task1)
+0020 120000   F     1067             LCALL   _os_task_create
+                    1068     ;       os_task_create(task2, &task_stack2, 2);//½«task2º¯Ê×°Èë1ºÅ²Û
+                    1069                             ; SOURCE LINE # 254
+0023 750000   F     1070             MOV     ?_os_task_create?BYTE+03H,#00H
+0026 750000   F     1071             MOV     ?_os_task_create?BYTE+04H,#HIGH (task_stack2)
+0029 750000   F     1072             MOV     ?_os_task_create?BYTE+05H,#LOW (task_stack2)
+002C 750000   F     1073             MOV     ?_os_task_create?BYTE+06H,#00H
+002F 750002   F     1074             MOV     ?_os_task_create?BYTE+07H,#02H
+0032 7BFF           1075             MOV     R3,#0FFH
+0034 7A00     F     1076             MOV     R2,#HIGH (task2)
+0036 7900     F     1077             MOV     R1,#LOW (task2)
+0038 120000   F     1078             LCALL   _os_task_create
+                    1079     ;       os_start();
+                    1080                             ; SOURCE LINE # 255
+003B 120000   F     1081             LCALL   os_start
+003E                1082     ?C0036:
+                    1083     ; 
+                    1084     ; 
+                    1085     ;       while(1)
+                    1086                             ; SOURCE LINE # 258
+                    1087     ;       {
+                    1088                             ; SOURCE LINE # 259
+                    1089     ; 
+                    1090     ;       }
+                    1091                             ; SOURCE LINE # 261
+003E 80FE           1092             SJMP    ?C0036
+                    1093     ; END OF main
+                    1094     
+                    1095             END
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    18
 
 SYMBOL TABLE LISTING
 ------ ----- -------
 
 
-N A M E                    T Y P E  V A L U E   ATTRIBUTES
+N A M E                   T Y P E  V A L U E   ATTRIBUTES
 
-?C0002. . . . . . . . . .  C ADDR   000DH   R   SEG=?PR?OSCTXSW?MAIN
-?C0003. . . . . . . . . .  C ADDR   0028H   R   SEG=?PR?OSCTXSW?MAIN
-?C0004. . . . . . . . . .  C ADDR   0025H   R   SEG=?PR?OSCTXSW?MAIN
-?C0006. . . . . . . . . .  C ADDR   0030H   R   SEG=?PR?OSCTXSW?MAIN
-?C0011. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OS_IDLE_TASK?MAIN
-?C0014. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK1?MAIN
-?C0017. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK2?MAIN
-?C0020. . . . . . . . . .  C ADDR   0045H   R   SEG=?PR?TIME0_HANDLE?MAIN
-?C0021. . . . . . . . . .  C ADDR   004AH   R   SEG=?PR?TIME0_HANDLE?MAIN
-?C0023. . . . . . . . . .  C ADDR   00D4H   R   SEG=?PR?TIME0_HANDLE?MAIN
-?C0025. . . . . . . . . .  C ADDR   00ADH   R   SEG=?PR?TIME0_HANDLE?MAIN
-?C0026. . . . . . . . . .  C ADDR   00DDH   R   SEG=?PR?TIME0_HANDLE?MAIN
-?C0028. . . . . . . . . .  C ADDR   0048H   R   SEG=?PR?MAIN?MAIN
-?C0031. . . . . . . . . .  C ADDR   0030H   R   SEG=?PR?TIME0_HANDLE?MAIN
-?C?CSTOPTR. . . . . . . .  C ADDR   -----       EXT
-?C?CSTPTR . . . . . . . .  C ADDR   -----       EXT
-?C?LLDIDATA . . . . . . .  C ADDR   -----       EXT
-?C?LSTIDATA . . . . . . .  C ADDR   -----       EXT
-?C?LSTKIDATA. . . . . . .  C ADDR   -----       EXT
-?C?ULCMP. . . . . . . . .  C ADDR   -----       EXT
-?C_INITSEG. . . . . . . .  C SEG    000FH       REL=UNIT
-?C_STARTUP. . . . . . . .  C ADDR   -----       EXT
-?DT?MAIN. . . . . . . . .  D SEG    0002H       REL=UNIT
-?ID?MAIN. . . . . . . . .  I SEG    005AH       REL=UNIT
-?PR?MAIN?MAIN . . . . . .  C SEG    004AH       REL=UNIT
-?PR?OSCTXSW?MAIN. . . . .  C SEG    003DH       REL=UNIT
-?PR?OS_GETNEXTTASKID?MAIN  C SEG    0001H       REL=UNIT
-?PR?OS_IDLE_TASK?MAIN . .  C SEG    0005H       REL=UNIT
-?PR?OS_START?MAIN . . . .  C SEG    002BH       REL=UNIT
-?PR?TASK1?MAIN. . . . . .  C SEG    0010H       REL=UNIT
-?PR?TASK2?MAIN. . . . . .  C SEG    0017H       REL=UNIT
-?PR?TIME0_HANDLE?MAIN . .  C SEG    00F8H       REL=UNIT
-?PR?TIMER0_INIT?MAIN. . .  C SEG    0013H       REL=UNIT
-?PR?_OS_DELAY?MAIN. . . .  C SEG    0024H       REL=UNIT
-?PR?_OS_TASK_CREATE?MAIN.  C SEG    005CH       REL=UNIT
-?TIME0_HANDLE?BYTE. . . .  X ADDR   0000H   R   SEG=?XD?TIME0_HANDLE?MAIN
-?XD?MAIN. . . . . . . . .  X SEG    0003H       REL=UNIT
-?XD?TIME0_HANDLE?MAIN . .  X SEG    0001H       REL=UNIT
-?XD?_OS_TASK_CREATE?MAIN.  X SEG    0008H       REL=UNIT
-?_OS_TASK_CREATE?BYTE . .  X ADDR   0000H   R   SEG=?XD?_OS_TASK_CREATE?MAIN
-AC. . . . . . . . . . . .  B ADDR   00D0H.6 A   
-ACC . . . . . . . . . . .  D ADDR   00E0H   A   
-ADCCFG. . . . . . . . . .  D ADDR   00DEH   A   
-ADC_CONTR . . . . . . . .  D ADDR   00BCH   A   
-ADC_RES . . . . . . . . .  D ADDR   00BDH   A   
-ADC_RESL. . . . . . . . .  D ADDR   00BEH   A   
-AR0 . . . . . . . . . . .  D ADDR   0000H   A   
-AR1 . . . . . . . . . . .  D ADDR   0001H   A   
-AR2 . . . . . . . . . . .  D ADDR   0002H   A   
-AR3 . . . . . . . . . . .  D ADDR   0003H   A   
-AR4 . . . . . . . . . . .  D ADDR   0004H   A   
-AR5 . . . . . . . . . . .  D ADDR   0005H   A   
-AR6 . . . . . . . . . . .  D ADDR   0006H   A   
-AR7 . . . . . . . . . . .  D ADDR   0007H   A   
-AUXINTIF. . . . . . . . .  D ADDR   00EFH   A   
-AUXR. . . . . . . . . . .  D ADDR   008EH   A   
-B . . . . . . . . . . . .  D ADDR   00F0H   A   
-CCAP0H. . . . . . . . . .  D ADDR   00FAH   A   
-CCAP0L. . . . . . . . . .  D ADDR   00EAH   A   
-CCAP1H. . . . . . . . . .  D ADDR   00FBH   A   
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    20
+?C0001 . . . . . . . . .  C ADDR   000DH   R   SEG=?PR?OSCTXSW?MAIN
+?C0002 . . . . . . . . .  C ADDR   0025H   R   SEG=?PR?OSCTXSW?MAIN
+?C0003 . . . . . . . . .  C ADDR   0022H   R   SEG=?PR?OSCTXSW?MAIN
+?C0005 . . . . . . . . .  C ADDR   002DH   R   SEG=?PR?OSCTXSW?MAIN
+?C0015 . . . . . . . . .  C ADDR   0008H   R   SEG=?PR?DELAY500MS?MAIN
+?C0019 . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OS_IDLE_TASK?MAIN
+?C0022 . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK1?MAIN
+?C0025 . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK2?MAIN
+?C0028 . . . . . . . . .  C ADDR   0038H   R   SEG=?PR?TIME0_HANDLE?MAIN
+?C0029 . . . . . . . . .  C ADDR   003BH   R   SEG=?PR?TIME0_HANDLE?MAIN
+?C0031 . . . . . . . . .  C ADDR   00BFH   R   SEG=?PR?TIME0_HANDLE?MAIN
+?C0033 . . . . . . . . .  C ADDR   0097H   R   SEG=?PR?TIME0_HANDLE?MAIN
+?C0034 . . . . . . . . .  C ADDR   00C4H   R   SEG=?PR?TIME0_HANDLE?MAIN
+?C0036 . . . . . . . . .  C ADDR   003EH   R   SEG=?PR?MAIN?MAIN
+?C0039 . . . . . . . . .  C ADDR   0028H   R   SEG=?PR?TIME0_HANDLE?MAIN
+?C?CSTOPTR . . . . . . .  C ADDR   -----       EXT
+?C?CSTPTR. . . . . . . .  C ADDR   -----       EXT
+?C?LLDIDATA. . . . . . .  C ADDR   -----       EXT
+?C?LSTIDATA. . . . . . .  C ADDR   -----       EXT
+?C?LSTKIDATA . . . . . .  C ADDR   -----       EXT
+?C?ULCMP . . . . . . . .  C ADDR   -----       EXT
+?C_INITSEG . . . . . . .  C SEG    000DH       REL=UNIT
+?C_STARTUP . . . . . . .  C ADDR   -----       EXT
+?DT?MAIN . . . . . . . .  D SEG    0005H       REL=UNIT
+?DT?TIME0_HANDLE?MAIN. .  D SEG    0001H       REL=UNIT
+?DT?_OS_TASK_CREATE?MAIN  D SEG    0008H       REL=UNIT
+?ID?MAIN . . . . . . . .  I SEG    005AH       REL=UNIT
+?PR?DELAY500MS?MAIN. . .  C SEG    000FH       REL=UNIT
+?PR?MAIN?MAIN. . . . . .  C SEG    0040H       REL=UNIT
+?PR?OSCTXSW?MAIN . . . .  C SEG    003AH       REL=UNIT
+?PR?OS_IDLE_TASK?MAIN. .  C SEG    0005H       REL=UNIT
+?PR?OS_START?MAIN. . . .  C SEG    0027H       REL=UNIT
+?PR?TASK1?MAIN . . . . .  C SEG    001CH       REL=UNIT
+?PR?TASK2?MAIN . . . . .  C SEG    001DH       REL=UNIT
+?PR?TIME0_HANDLE?MAIN. .  C SEG    00DFH       REL=UNIT
+?PR?TIMER0_INIT?MAIN . .  C SEG    0013H       REL=UNIT
+?PR?_OS_DELAY?MAIN . . .  C SEG    0009H       REL=UNIT
+?PR?_OS_TASK_CREATE?MAIN  C SEG    003FH       REL=UNIT
+?TIME0_HANDLE?BYTE . . .  D ADDR   0000H   R   SEG=?DT?TIME0_HANDLE?MAIN
+?_OS_TASK_CREATE?BYTE. .  D ADDR   0000H   R   SEG=?DT?_OS_TASK_CREATE?MAIN
+AC . . . . . . . . . . .  B ADDR   00D0H.6 A   
+ACC. . . . . . . . . . .  D ADDR   00E0H   A   
+ADCCFG . . . . . . . . .  D ADDR   00DEH   A   
+ADC_CONTR. . . . . . . .  D ADDR   00BCH   A   
+ADC_RES. . . . . . . . .  D ADDR   00BDH   A   
+ADC_RESL . . . . . . . .  D ADDR   00BEH   A   
+AR0. . . . . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . . . . .  D ADDR   0003H   A   
+AR4. . . . . . . . . . .  D ADDR   0004H   A   
+AR5. . . . . . . . . . .  D ADDR   0005H   A   
+AR6. . . . . . . . . . .  D ADDR   0006H   A   
+AR7. . . . . . . . . . .  D ADDR   0007H   A   
+AUXINTIF . . . . . . . .  D ADDR   00EFH   A   
+AUXR . . . . . . . . . .  D ADDR   008EH   A   
+B. . . . . . . . . . . .  D ADDR   00F0H   A   
+CCAP0H . . . . . . . . .  D ADDR   00FAH   A   
+CCAP0L . . . . . . . . .  D ADDR   00EAH   A   
+CCAP1H . . . . . . . . .  D ADDR   00FBH   A   
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    19
 
-CCAP1L. . . . . . . . . .  D ADDR   00EBH   A   
-CCAP2H. . . . . . . . . .  D ADDR   00FCH   A   
-CCAP2L. . . . . . . . . .  D ADDR   00ECH   A   
-CCAPM0. . . . . . . . . .  D ADDR   00DAH   A   
-CCAPM1. . . . . . . . . .  D ADDR   00DBH   A   
-CCAPM2. . . . . . . . . .  D ADDR   00DCH   A   
-CCF0. . . . . . . . . . .  B ADDR   00D8H.0 A   
-CCF1. . . . . . . . . . .  B ADDR   00D8H.1 A   
-CCF2. . . . . . . . . . .  B ADDR   00D8H.2 A   
-CCON. . . . . . . . . . .  D ADDR   00D8H   A   
-CF. . . . . . . . . . . .  B ADDR   00D8H.7 A   
-CH. . . . . . . . . . . .  D ADDR   00F9H   A   
-CL. . . . . . . . . . . .  D ADDR   00E9H   A   
-CMOD. . . . . . . . . . .  D ADDR   00D9H   A   
-CMPCR1. . . . . . . . . .  D ADDR   00E6H   A   
-CMPCR2. . . . . . . . . .  D ADDR   00E7H   A   
-CR. . . . . . . . . . . .  B ADDR   00D8H.6 A   
-CUT . . . . . . . . . . .  X ADDR   0000H   R   SEG=?XD?MAIN
-CY. . . . . . . . . . . .  B ADDR   00D0H.7 A   
-DPH . . . . . . . . . . .  D ADDR   0083H   A   
-DPH1. . . . . . . . . . .  D ADDR   00E5H   A   
-DPL . . . . . . . . . . .  D ADDR   0082H   A   
-DPL1. . . . . . . . . . .  D ADDR   00E4H   A   
-DPS . . . . . . . . . . .  D ADDR   00E3H   A   
-EA. . . . . . . . . . . .  B ADDR   00A8H.7 A   
-EADC. . . . . . . . . . .  B ADDR   00A8H.5 A   
-ELVD. . . . . . . . . . .  B ADDR   00A8H.6 A   
-ES. . . . . . . . . . . .  B ADDR   00A8H.4 A   
-ET0 . . . . . . . . . . .  B ADDR   00A8H.1 A   
-ET1 . . . . . . . . . . .  B ADDR   00A8H.3 A   
-EX0 . . . . . . . . . . .  B ADDR   00A8H.0 A   
-EX1 . . . . . . . . . . .  B ADDR   00A8H.2 A   
-F0. . . . . . . . . . . .  B ADDR   00D0H.5 A   
-F1. . . . . . . . . . . .  B ADDR   00D0H.1 A   
-IAP_ADDRH . . . . . . . .  D ADDR   00C3H   A   
-IAP_ADDRL . . . . . . . .  D ADDR   00C4H   A   
-IAP_CMD . . . . . . . . .  D ADDR   00C5H   A   
-IAP_CONTR . . . . . . . .  D ADDR   00C7H   A   
-IAP_DATA. . . . . . . . .  D ADDR   00C2H   A   
-IAP_TPS . . . . . . . . .  D ADDR   00F5H   A   
-IAP_TRIG. . . . . . . . .  D ADDR   00C6H   A   
-IE. . . . . . . . . . . .  D ADDR   00A8H   A   
-IE0 . . . . . . . . . . .  B ADDR   0088H.1 A   
-IE1 . . . . . . . . . . .  B ADDR   0088H.3 A   
-IE2 . . . . . . . . . . .  D ADDR   00AFH   A   
-INT0. . . . . . . . . . .  B ADDR   00B0H.2 A   
-INT1. . . . . . . . . . .  B ADDR   00B0H.3 A   
-INTCLKO . . . . . . . . .  D ADDR   008FH   A   
-IP. . . . . . . . . . . .  D ADDR   00B8H   A   
-IP2 . . . . . . . . . . .  D ADDR   00B5H   A   
-IP2H. . . . . . . . . . .  D ADDR   00B6H   A   
-IP3 . . . . . . . . . . .  D ADDR   00DFH   A   
-IP3H. . . . . . . . . . .  D ADDR   00EEH   A   
-IPH . . . . . . . . . . .  D ADDR   00B7H   A   
-IRCBAND . . . . . . . . .  D ADDR   009DH   A   
-IRTRIM. . . . . . . . . .  D ADDR   009FH   A   
-IT0 . . . . . . . . . . .  B ADDR   0088H.0 A   
-IT1 . . . . . . . . . . .  B ADDR   0088H.2 A   
-L?0033. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?_OS_DELAY?MAIN
-L?0034. . . . . . . . . .  C ADDR   0002H   R   SEG=?PR?_OS_DELAY?MAIN
-L?0035. . . . . . . . . .  C ADDR   0006H   R   SEG=?PR?_OS_DELAY?MAIN
-LED_G . . . . . . . . . .  B ADDR   0080H.7 A   
-LED_R . . . . . . . . . .  B ADDR   0080H.5 A   
-LED_Y . . . . . . . . . .  B ADDR   0080H.6 A   
-LIRTRIM . . . . . . . . .  D ADDR   009EH   A   
-MAIN. . . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?MAIN?MAIN
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    21
+CCAP1L . . . . . . . . .  D ADDR   00EBH   A   
+CCAP2H . . . . . . . . .  D ADDR   00FCH   A   
+CCAP2L . . . . . . . . .  D ADDR   00ECH   A   
+CCAPM0 . . . . . . . . .  D ADDR   00DAH   A   
+CCAPM1 . . . . . . . . .  D ADDR   00DBH   A   
+CCAPM2 . . . . . . . . .  D ADDR   00DCH   A   
+CCF0 . . . . . . . . . .  B ADDR   00D8H.0 A   
+CCF1 . . . . . . . . . .  B ADDR   00D8H.1 A   
+CCF2 . . . . . . . . . .  B ADDR   00D8H.2 A   
+CCON . . . . . . . . . .  D ADDR   00D8H   A   
+CF . . . . . . . . . . .  B ADDR   00D8H.7 A   
+CH . . . . . . . . . . .  D ADDR   00F9H   A   
+CL . . . . . . . . . . .  D ADDR   00E9H   A   
+CMOD . . . . . . . . . .  D ADDR   00D9H   A   
+CMPCR1 . . . . . . . . .  D ADDR   00E6H   A   
+CMPCR2 . . . . . . . . .  D ADDR   00E7H   A   
+CR . . . . . . . . . . .  B ADDR   00D8H.6 A   
+CUT. . . . . . . . . . .  D ADDR   0000H   R   SEG=?DT?MAIN
+CY . . . . . . . . . . .  B ADDR   00D0H.7 A   
+DELAY500MS . . . . . . .  C ADDR   0000H   R   SEG=?PR?DELAY500MS?MAIN
+DPH. . . . . . . . . . .  D ADDR   0083H   A   
+DPH1 . . . . . . . . . .  D ADDR   00E5H   A   
+DPL. . . . . . . . . . .  D ADDR   0082H   A   
+DPL1 . . . . . . . . . .  D ADDR   00E4H   A   
+DPS. . . . . . . . . . .  D ADDR   00E3H   A   
+EA . . . . . . . . . . .  B ADDR   00A8H.7 A   
+EADC . . . . . . . . . .  B ADDR   00A8H.5 A   
+ELVD . . . . . . . . . .  B ADDR   00A8H.6 A   
+ES . . . . . . . . . . .  B ADDR   00A8H.4 A   
+ET0. . . . . . . . . . .  B ADDR   00A8H.1 A   
+ET1. . . . . . . . . . .  B ADDR   00A8H.3 A   
+EX0. . . . . . . . . . .  B ADDR   00A8H.0 A   
+EX1. . . . . . . . . . .  B ADDR   00A8H.2 A   
+F0 . . . . . . . . . . .  B ADDR   00D0H.5 A   
+F1 . . . . . . . . . . .  B ADDR   00D0H.1 A   
+IAP_ADDRH. . . . . . . .  D ADDR   00C3H   A   
+IAP_ADDRL. . . . . . . .  D ADDR   00C4H   A   
+IAP_CMD. . . . . . . . .  D ADDR   00C5H   A   
+IAP_CONTR. . . . . . . .  D ADDR   00C7H   A   
+IAP_DATA . . . . . . . .  D ADDR   00C2H   A   
+IAP_TPS. . . . . . . . .  D ADDR   00F5H   A   
+IAP_TRIG . . . . . . . .  D ADDR   00C6H   A   
+IE . . . . . . . . . . .  D ADDR   00A8H   A   
+IE0. . . . . . . . . . .  B ADDR   0088H.1 A   
+IE1. . . . . . . . . . .  B ADDR   0088H.3 A   
+IE2. . . . . . . . . . .  D ADDR   00AFH   A   
+INT0 . . . . . . . . . .  B ADDR   00B0H.2 A   
+INT1 . . . . . . . . . .  B ADDR   00B0H.3 A   
+INTCLKO. . . . . . . . .  D ADDR   008FH   A   
+IP . . . . . . . . . . .  D ADDR   00B8H   A   
+IP2. . . . . . . . . . .  D ADDR   00B5H   A   
+IP2H . . . . . . . . . .  D ADDR   00B6H   A   
+IP3. . . . . . . . . . .  D ADDR   00DFH   A   
+IP3H . . . . . . . . . .  D ADDR   00EEH   A   
+IPH. . . . . . . . . . .  D ADDR   00B7H   A   
+IRCBAND. . . . . . . . .  D ADDR   009DH   A   
+IRTRIM . . . . . . . . .  D ADDR   009FH   A   
+IT0. . . . . . . . . . .  B ADDR   0088H.0 A   
+IT1. . . . . . . . . . .  B ADDR   0088H.2 A   
+L?0041 . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?_OS_DELAY?MAIN
+LED_G. . . . . . . . . .  B ADDR   0080H.7 A   
+LED_R. . . . . . . . . .  B ADDR   0080H.5 A   
+LED_Y. . . . . . . . . .  B ADDR   0080H.6 A   
+LIRTRIM. . . . . . . . .  D ADDR   009EH   A   
+MAIN . . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?MAIN?MAIN
+MAX_TASK . . . . . . . .  D ADDR   0002H   R   SEG=?DT?MAIN
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    20
 
-MAX_TASK. . . . . . . . .  X ADDR   0002H   R   SEG=?XD?MAIN
-OSCTXSW . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OSCTXSW?MAIN
-OS_GETNEXTTASKID. . . . .  C ADDR   0000H   R   SEG=?PR?OS_GETNEXTTASKID?MAIN
-OS_IDLE_TASK. . . . . . .  C ADDR   0000H   R   SEG=?PR?OS_IDLE_TASK?MAIN
-OS_START. . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OS_START?MAIN
-OS_TCB_SIZE . . . . . . .  D ADDR   0001H   R   SEG=?DT?MAIN
-OV. . . . . . . . . . . .  B ADDR   00D0H.2 A   
-P . . . . . . . . . . . .  B ADDR   00D0H.0 A   
-P0. . . . . . . . . . . .  D ADDR   0080H   A   
-P00 . . . . . . . . . . .  B ADDR   0080H.0 A   
-P01 . . . . . . . . . . .  B ADDR   0080H.1 A   
-P02 . . . . . . . . . . .  B ADDR   0080H.2 A   
-P03 . . . . . . . . . . .  B ADDR   0080H.3 A   
-P04 . . . . . . . . . . .  B ADDR   0080H.4 A   
-P05 . . . . . . . . . . .  B ADDR   0080H.5 A   
-P06 . . . . . . . . . . .  B ADDR   0080H.6 A   
-P07 . . . . . . . . . . .  B ADDR   0080H.7 A   
-P0M0. . . . . . . . . . .  D ADDR   0094H   A   
-P0M1. . . . . . . . . . .  D ADDR   0093H   A   
-P1. . . . . . . . . . . .  D ADDR   0090H   A   
-P10 . . . . . . . . . . .  B ADDR   0090H.0 A   
-P11 . . . . . . . . . . .  B ADDR   0090H.1 A   
-P12 . . . . . . . . . . .  B ADDR   0090H.2 A   
-P13 . . . . . . . . . . .  B ADDR   0090H.3 A   
-P14 . . . . . . . . . . .  B ADDR   0090H.4 A   
-P15 . . . . . . . . . . .  B ADDR   0090H.5 A   
-P16 . . . . . . . . . . .  B ADDR   0090H.6 A   
-P17 . . . . . . . . . . .  B ADDR   0090H.7 A   
-P1M0. . . . . . . . . . .  D ADDR   0092H   A   
-P1M1. . . . . . . . . . .  D ADDR   0091H   A   
-P2. . . . . . . . . . . .  D ADDR   00A0H   A   
-P20 . . . . . . . . . . .  B ADDR   00A0H.0 A   
-P21 . . . . . . . . . . .  B ADDR   00A0H.1 A   
-P22 . . . . . . . . . . .  B ADDR   00A0H.2 A   
-P23 . . . . . . . . . . .  B ADDR   00A0H.3 A   
-P24 . . . . . . . . . . .  B ADDR   00A0H.4 A   
-P25 . . . . . . . . . . .  B ADDR   00A0H.5 A   
-P26 . . . . . . . . . . .  B ADDR   00A0H.6 A   
-P27 . . . . . . . . . . .  B ADDR   00A0H.7 A   
-P2M0. . . . . . . . . . .  D ADDR   0096H   A   
-P2M1. . . . . . . . . . .  D ADDR   0095H   A   
-P3. . . . . . . . . . . .  D ADDR   00B0H   A   
-P30 . . . . . . . . . . .  B ADDR   00B0H.0 A   
-P31 . . . . . . . . . . .  B ADDR   00B0H.1 A   
-P32 . . . . . . . . . . .  B ADDR   00B0H.2 A   
-P33 . . . . . . . . . . .  B ADDR   00B0H.3 A   
-P34 . . . . . . . . . . .  B ADDR   00B0H.4 A   
-P35 . . . . . . . . . . .  B ADDR   00B0H.5 A   
-P36 . . . . . . . . . . .  B ADDR   00B0H.6 A   
-P37 . . . . . . . . . . .  B ADDR   00B0H.7 A   
-P3M0. . . . . . . . . . .  D ADDR   00B2H   A   
-P3M1. . . . . . . . . . .  D ADDR   00B1H   A   
-P4. . . . . . . . . . . .  D ADDR   00C0H   A   
-P40 . . . . . . . . . . .  B ADDR   00C0H.0 A   
-P41 . . . . . . . . . . .  B ADDR   00C0H.1 A   
-P42 . . . . . . . . . . .  B ADDR   00C0H.2 A   
-P43 . . . . . . . . . . .  B ADDR   00C0H.3 A   
-P44 . . . . . . . . . . .  B ADDR   00C0H.4 A   
-P45 . . . . . . . . . . .  B ADDR   00C0H.5 A   
-P46 . . . . . . . . . . .  B ADDR   00C0H.6 A   
-P47 . . . . . . . . . . .  B ADDR   00C0H.7 A   
-P4M0. . . . . . . . . . .  D ADDR   00B4H   A   
-P4M1. . . . . . . . . . .  D ADDR   00B3H   A   
-P5. . . . . . . . . . . .  D ADDR   00C8H   A   
-P50 . . . . . . . . . . .  B ADDR   00C8H.0 A   
-P51 . . . . . . . . . . .  B ADDR   00C8H.1 A   
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    22
+OSCTXSW. . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OSCTXSW?MAIN
+OS_IDLE_TASK . . . . . .  C ADDR   0000H   R   SEG=?PR?OS_IDLE_TASK?MAIN
+OS_START . . . . . . . .  C ADDR   0000H   R   SEG=?PR?OS_START?MAIN
+OS_TCB_SIZE. . . . . . .  D ADDR   0004H   R   SEG=?DT?MAIN
+OV . . . . . . . . . . .  B ADDR   00D0H.2 A   
+P. . . . . . . . . . . .  B ADDR   00D0H.0 A   
+P0 . . . . . . . . . . .  D ADDR   0080H   A   
+P00. . . . . . . . . . .  B ADDR   0080H.0 A   
+P01. . . . . . . . . . .  B ADDR   0080H.1 A   
+P02. . . . . . . . . . .  B ADDR   0080H.2 A   
+P03. . . . . . . . . . .  B ADDR   0080H.3 A   
+P04. . . . . . . . . . .  B ADDR   0080H.4 A   
+P05. . . . . . . . . . .  B ADDR   0080H.5 A   
+P06. . . . . . . . . . .  B ADDR   0080H.6 A   
+P07. . . . . . . . . . .  B ADDR   0080H.7 A   
+P0M0 . . . . . . . . . .  D ADDR   0094H   A   
+P0M1 . . . . . . . . . .  D ADDR   0093H   A   
+P1 . . . . . . . . . . .  D ADDR   0090H   A   
+P10. . . . . . . . . . .  B ADDR   0090H.0 A   
+P11. . . . . . . . . . .  B ADDR   0090H.1 A   
+P12. . . . . . . . . . .  B ADDR   0090H.2 A   
+P13. . . . . . . . . . .  B ADDR   0090H.3 A   
+P14. . . . . . . . . . .  B ADDR   0090H.4 A   
+P15. . . . . . . . . . .  B ADDR   0090H.5 A   
+P16. . . . . . . . . . .  B ADDR   0090H.6 A   
+P17. . . . . . . . . . .  B ADDR   0090H.7 A   
+P1M0 . . . . . . . . . .  D ADDR   0092H   A   
+P1M1 . . . . . . . . . .  D ADDR   0091H   A   
+P2 . . . . . . . . . . .  D ADDR   00A0H   A   
+P20. . . . . . . . . . .  B ADDR   00A0H.0 A   
+P21. . . . . . . . . . .  B ADDR   00A0H.1 A   
+P22. . . . . . . . . . .  B ADDR   00A0H.2 A   
+P23. . . . . . . . . . .  B ADDR   00A0H.3 A   
+P24. . . . . . . . . . .  B ADDR   00A0H.4 A   
+P25. . . . . . . . . . .  B ADDR   00A0H.5 A   
+P26. . . . . . . . . . .  B ADDR   00A0H.6 A   
+P27. . . . . . . . . . .  B ADDR   00A0H.7 A   
+P2M0 . . . . . . . . . .  D ADDR   0096H   A   
+P2M1 . . . . . . . . . .  D ADDR   0095H   A   
+P3 . . . . . . . . . . .  D ADDR   00B0H   A   
+P30. . . . . . . . . . .  B ADDR   00B0H.0 A   
+P31. . . . . . . . . . .  B ADDR   00B0H.1 A   
+P32. . . . . . . . . . .  B ADDR   00B0H.2 A   
+P33. . . . . . . . . . .  B ADDR   00B0H.3 A   
+P34. . . . . . . . . . .  B ADDR   00B0H.4 A   
+P35. . . . . . . . . . .  B ADDR   00B0H.5 A   
+P36. . . . . . . . . . .  B ADDR   00B0H.6 A   
+P37. . . . . . . . . . .  B ADDR   00B0H.7 A   
+P3M0 . . . . . . . . . .  D ADDR   00B2H   A   
+P3M1 . . . . . . . . . .  D ADDR   00B1H   A   
+P4 . . . . . . . . . . .  D ADDR   00C0H   A   
+P40. . . . . . . . . . .  B ADDR   00C0H.0 A   
+P41. . . . . . . . . . .  B ADDR   00C0H.1 A   
+P42. . . . . . . . . . .  B ADDR   00C0H.2 A   
+P43. . . . . . . . . . .  B ADDR   00C0H.3 A   
+P44. . . . . . . . . . .  B ADDR   00C0H.4 A   
+P45. . . . . . . . . . .  B ADDR   00C0H.5 A   
+P46. . . . . . . . . . .  B ADDR   00C0H.6 A   
+P47. . . . . . . . . . .  B ADDR   00C0H.7 A   
+P4M0 . . . . . . . . . .  D ADDR   00B4H   A   
+P4M1 . . . . . . . . . .  D ADDR   00B3H   A   
+P5 . . . . . . . . . . .  D ADDR   00C8H   A   
+P50. . . . . . . . . . .  B ADDR   00C8H.0 A   
+P51. . . . . . . . . . .  B ADDR   00C8H.1 A   
+P52. . . . . . . . . . .  B ADDR   00C8H.2 A   
+P53. . . . . . . . . . .  B ADDR   00C8H.3 A   
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    21
 
-P52 . . . . . . . . . . .  B ADDR   00C8H.2 A   
-P53 . . . . . . . . . . .  B ADDR   00C8H.3 A   
-P54 . . . . . . . . . . .  B ADDR   00C8H.4 A   
-P55 . . . . . . . . . . .  B ADDR   00C8H.5 A   
-P56 . . . . . . . . . . .  B ADDR   00C8H.6 A   
-P57 . . . . . . . . . . .  B ADDR   00C8H.7 A   
-P5M0. . . . . . . . . . .  D ADDR   00CAH   A   
-P5M1. . . . . . . . . . .  D ADDR   00C9H   A   
-P6. . . . . . . . . . . .  D ADDR   00E8H   A   
-P60 . . . . . . . . . . .  B ADDR   00E8H.0 A   
-P61 . . . . . . . . . . .  B ADDR   00E8H.1 A   
-P62 . . . . . . . . . . .  B ADDR   00E8H.2 A   
-P63 . . . . . . . . . . .  B ADDR   00E8H.3 A   
-P64 . . . . . . . . . . .  B ADDR   00E8H.4 A   
-P65 . . . . . . . . . . .  B ADDR   00E8H.5 A   
-P66 . . . . . . . . . . .  B ADDR   00E8H.6 A   
-P67 . . . . . . . . . . .  B ADDR   00E8H.7 A   
-P6M0. . . . . . . . . . .  D ADDR   00CCH   A   
-P6M1. . . . . . . . . . .  D ADDR   00CBH   A   
-P7. . . . . . . . . . . .  D ADDR   00F8H   A   
-P70 . . . . . . . . . . .  B ADDR   00F8H.0 A   
-P71 . . . . . . . . . . .  B ADDR   00F8H.1 A   
-P72 . . . . . . . . . . .  B ADDR   00F8H.2 A   
-P73 . . . . . . . . . . .  B ADDR   00F8H.3 A   
-P74 . . . . . . . . . . .  B ADDR   00F8H.4 A   
-P75 . . . . . . . . . . .  B ADDR   00F8H.5 A   
-P76 . . . . . . . . . . .  B ADDR   00F8H.6 A   
-P77 . . . . . . . . . . .  B ADDR   00F8H.7 A   
-P7M0. . . . . . . . . . .  D ADDR   00E2H   A   
-P7M1. . . . . . . . . . .  D ADDR   00E1H   A   
-PADC. . . . . . . . . . .  B ADDR   00B8H.5 A   
-PCA_PWM0. . . . . . . . .  D ADDR   00F2H   A   
-PCA_PWM1. . . . . . . . .  D ADDR   00F3H   A   
-PCA_PWM2. . . . . . . . .  D ADDR   00F4H   A   
-PCON. . . . . . . . . . .  D ADDR   0087H   A   
-PLVD. . . . . . . . . . .  B ADDR   00B8H.6 A   
-PPCA. . . . . . . . . . .  B ADDR   00B8H.7 A   
-PS. . . . . . . . . . . .  B ADDR   00B8H.4 A   
-PSW . . . . . . . . . . .  D ADDR   00D0H   A   
-PT0 . . . . . . . . . . .  B ADDR   00B8H.1 A   
-PT1 . . . . . . . . . . .  B ADDR   00B8H.3 A   
-PWMCFG01. . . . . . . . .  D ADDR   00F6H   A   
-PWMCFG23. . . . . . . . .  D ADDR   00F7H   A   
-PWMCFG45. . . . . . . . .  D ADDR   00FEH   A   
-PWMSET. . . . . . . . . .  D ADDR   00F1H   A   
-PX0 . . . . . . . . . . .  B ADDR   00B8H.0 A   
-PX1 . . . . . . . . . . .  B ADDR   00B8H.2 A   
-P_SW1 . . . . . . . . . .  D ADDR   00A2H   A   
-P_SW2 . . . . . . . . . .  D ADDR   00BAH   A   
-RB8 . . . . . . . . . . .  B ADDR   0098H.2 A   
-RD. . . . . . . . . . . .  B ADDR   00B0H.7 A   
-REN . . . . . . . . . . .  B ADDR   0098H.4 A   
-RI. . . . . . . . . . . .  B ADDR   0098H.0 A   
-RS0 . . . . . . . . . . .  B ADDR   00D0H.3 A   
-RS1 . . . . . . . . . . .  B ADDR   00D0H.4 A   
-RSTCFG. . . . . . . . . .  D ADDR   00FFH   A   
-RXD . . . . . . . . . . .  B ADDR   00B0H.0 A   
-S2BUF . . . . . . . . . .  D ADDR   009BH   A   
-S2CON . . . . . . . . . .  D ADDR   009AH   A   
-S3BUF . . . . . . . . . .  D ADDR   00ADH   A   
-S3CON . . . . . . . . . .  D ADDR   00ACH   A   
-S4BUF . . . . . . . . . .  D ADDR   0085H   A   
-S4CON . . . . . . . . . .  D ADDR   0084H   A   
-SADDR . . . . . . . . . .  D ADDR   00A9H   A   
-SADEN . . . . . . . . . .  D ADDR   00B9H   A   
-SBUF. . . . . . . . . . .  D ADDR   0099H   A   
-A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 17:22:51 PAGE    23
+P54. . . . . . . . . . .  B ADDR   00C8H.4 A   
+P55. . . . . . . . . . .  B ADDR   00C8H.5 A   
+P56. . . . . . . . . . .  B ADDR   00C8H.6 A   
+P57. . . . . . . . . . .  B ADDR   00C8H.7 A   
+P5M0 . . . . . . . . . .  D ADDR   00CAH   A   
+P5M1 . . . . . . . . . .  D ADDR   00C9H   A   
+P6 . . . . . . . . . . .  D ADDR   00E8H   A   
+P60. . . . . . . . . . .  B ADDR   00E8H.0 A   
+P61. . . . . . . . . . .  B ADDR   00E8H.1 A   
+P62. . . . . . . . . . .  B ADDR   00E8H.2 A   
+P63. . . . . . . . . . .  B ADDR   00E8H.3 A   
+P64. . . . . . . . . . .  B ADDR   00E8H.4 A   
+P65. . . . . . . . . . .  B ADDR   00E8H.5 A   
+P66. . . . . . . . . . .  B ADDR   00E8H.6 A   
+P67. . . . . . . . . . .  B ADDR   00E8H.7 A   
+P6M0 . . . . . . . . . .  D ADDR   00CCH   A   
+P6M1 . . . . . . . . . .  D ADDR   00CBH   A   
+P7 . . . . . . . . . . .  D ADDR   00F8H   A   
+P70. . . . . . . . . . .  B ADDR   00F8H.0 A   
+P71. . . . . . . . . . .  B ADDR   00F8H.1 A   
+P72. . . . . . . . . . .  B ADDR   00F8H.2 A   
+P73. . . . . . . . . . .  B ADDR   00F8H.3 A   
+P74. . . . . . . . . . .  B ADDR   00F8H.4 A   
+P75. . . . . . . . . . .  B ADDR   00F8H.5 A   
+P76. . . . . . . . . . .  B ADDR   00F8H.6 A   
+P77. . . . . . . . . . .  B ADDR   00F8H.7 A   
+P7M0 . . . . . . . . . .  D ADDR   00E2H   A   
+P7M1 . . . . . . . . . .  D ADDR   00E1H   A   
+PADC . . . . . . . . . .  B ADDR   00B8H.5 A   
+PCA_PWM0 . . . . . . . .  D ADDR   00F2H   A   
+PCA_PWM1 . . . . . . . .  D ADDR   00F3H   A   
+PCA_PWM2 . . . . . . . .  D ADDR   00F4H   A   
+PCON . . . . . . . . . .  D ADDR   0087H   A   
+PLVD . . . . . . . . . .  B ADDR   00B8H.6 A   
+PPCA . . . . . . . . . .  B ADDR   00B8H.7 A   
+PS . . . . . . . . . . .  B ADDR   00B8H.4 A   
+PSW. . . . . . . . . . .  D ADDR   00D0H   A   
+PT0. . . . . . . . . . .  B ADDR   00B8H.1 A   
+PT1. . . . . . . . . . .  B ADDR   00B8H.3 A   
+PWMCFG01 . . . . . . . .  D ADDR   00F6H   A   
+PWMCFG23 . . . . . . . .  D ADDR   00F7H   A   
+PWMCFG45 . . . . . . . .  D ADDR   00FEH   A   
+PWMSET . . . . . . . . .  D ADDR   00F1H   A   
+PX0. . . . . . . . . . .  B ADDR   00B8H.0 A   
+PX1. . . . . . . . . . .  B ADDR   00B8H.2 A   
+P_SW1. . . . . . . . . .  D ADDR   00A2H   A   
+P_SW2. . . . . . . . . .  D ADDR   00BAH   A   
+RB8. . . . . . . . . . .  B ADDR   0098H.2 A   
+RD . . . . . . . . . . .  B ADDR   00B0H.7 A   
+REN. . . . . . . . . . .  B ADDR   0098H.4 A   
+RI . . . . . . . . . . .  B ADDR   0098H.0 A   
+RS0. . . . . . . . . . .  B ADDR   00D0H.3 A   
+RS1. . . . . . . . . . .  B ADDR   00D0H.4 A   
+RSTCFG . . . . . . . . .  D ADDR   00FFH   A   
+RXD. . . . . . . . . . .  B ADDR   00B0H.0 A   
+S2BUF. . . . . . . . . .  D ADDR   009BH   A   
+S2CON. . . . . . . . . .  D ADDR   009AH   A   
+S3BUF. . . . . . . . . .  D ADDR   00ADH   A   
+S3CON. . . . . . . . . .  D ADDR   00ACH   A   
+S4BUF. . . . . . . . . .  D ADDR   0085H   A   
+S4CON. . . . . . . . . .  D ADDR   0084H   A   
+SADDR. . . . . . . . . .  D ADDR   00A9H   A   
+SADEN. . . . . . . . . .  D ADDR   00B9H   A   
+SBUF . . . . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . . . . .  D ADDR   0098H   A   
+SM0. . . . . . . . . . .  B ADDR   0098H.7 A   
+A51 MACRO ASSEMBLER  MAIN                                                                 12/27/2023 22:42:06 PAGE    22
 
-SCON. . . . . . . . . . .  D ADDR   0098H   A   
-SM0 . . . . . . . . . . .  B ADDR   0098H.7 A   
-SM1 . . . . . . . . . . .  B ADDR   0098H.6 A   
-SM2 . . . . . . . . . . .  B ADDR   0098H.5 A   
-SP. . . . . . . . . . . .  D ADDR   0081H   A   
-SPCTL . . . . . . . . . .  D ADDR   00CEH   A   
-SPDAT . . . . . . . . . .  D ADDR   00CFH   A   
-SPSTAT. . . . . . . . . .  D ADDR   00CDH   A   
-T0. . . . . . . . . . . .  B ADDR   00B0H.4 A   
-T1. . . . . . . . . . . .  B ADDR   00B0H.5 A   
-T2H . . . . . . . . . . .  D ADDR   00D6H   A   
-T2L . . . . . . . . . . .  D ADDR   00D7H   A   
-T3H . . . . . . . . . . .  D ADDR   00D4H   A   
-T3L . . . . . . . . . . .  D ADDR   00D5H   A   
-T3T4M . . . . . . . . . .  D ADDR   00D1H   A   
-T4H . . . . . . . . . . .  D ADDR   00D2H   A   
-T4L . . . . . . . . . . .  D ADDR   00D3H   A   
-T4T3M . . . . . . . . . .  D ADDR   00D1H   A   
-TA. . . . . . . . . . . .  D ADDR   00AEH   A   
-TASK1 . . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK1?MAIN
-TASK2 . . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK2?MAIN
-TASK?241. . . . . . . . .  X ADDR   0000H   R   SEG=?XD?_OS_TASK_CREATE?MAIN
-TASK_ID . . . . . . . . .  D ADDR   0000H   R   SEG=?DT?MAIN
-TASK_IDLE_STACK . . . . .  I ADDR   0000H   R   SEG=?ID?MAIN
-TASK_STACK1 . . . . . . .  I ADDR   0032H   R   SEG=?ID?MAIN
-TASK_STACK2 . . . . . . .  I ADDR   0046H   R   SEG=?ID?MAIN
-TB8 . . . . . . . . . . .  B ADDR   0098H.3 A   
-TCB_LIST. . . . . . . . .  I ADDR   0014H   R   SEG=?ID?MAIN
-TCON. . . . . . . . . . .  D ADDR   0088H   A   
-TF0 . . . . . . . . . . .  B ADDR   0088H.5 A   
-TF1 . . . . . . . . . . .  B ADDR   0088H.7 A   
-TH0 . . . . . . . . . . .  D ADDR   008CH   A   
-TH1 . . . . . . . . . . .  D ADDR   008DH   A   
-TH2 . . . . . . . . . . .  D ADDR   00D6H   A   
-TH3 . . . . . . . . . . .  D ADDR   00D4H   A   
-TH4 . . . . . . . . . . .  D ADDR   00D2H   A   
-TI. . . . . . . . . . . .  B ADDR   0098H.1 A   
-TI?845. . . . . . . . . .  X ADDR   0000H   R   SEG=?XD?TIME0_HANDLE?MAIN
-TID?243 . . . . . . . . .  X ADDR   0006H   R   SEG=?XD?_OS_TASK_CREATE?MAIN
-TIME0_HANDLE. . . . . . .  C ADDR   0000H   R   SEG=?PR?TIME0_HANDLE?MAIN
-TIMER0_INIT . . . . . . .  C ADDR   0000H   R   SEG=?PR?TIMER0_INIT?MAIN
-TL0 . . . . . . . . . . .  D ADDR   008AH   A   
-TL1 . . . . . . . . . . .  D ADDR   008BH   A   
-TL2 . . . . . . . . . . .  D ADDR   00D7H   A   
-TL3 . . . . . . . . . . .  D ADDR   00D5H   A   
-TL4 . . . . . . . . . . .  D ADDR   00D3H   A   
-TMOD. . . . . . . . . . .  D ADDR   0089H   A   
-TR0 . . . . . . . . . . .  B ADDR   0088H.4 A   
-TR1 . . . . . . . . . . .  B ADDR   0088H.6 A   
-TSTACK?242. . . . . . . .  X ADDR   0003H   R   SEG=?XD?_OS_TASK_CREATE?MAIN
-TXD . . . . . . . . . . .  B ADDR   00B0H.1 A   
-WDT_CONTR . . . . . . . .  D ADDR   00C1H   A   
-WKTCH . . . . . . . . . .  D ADDR   00ABH   A   
-WKTCL . . . . . . . . . .  D ADDR   00AAH   A   
-WR. . . . . . . . . . . .  B ADDR   00B0H.6 A   
-_OS_DELAY . . . . . . . .  C ADDR   000AH   R   SEG=?PR?_OS_DELAY?MAIN
-_OS_TASK_CREATE . . . . .  C ADDR   0000H   R   SEG=?PR?_OS_TASK_CREATE?MAIN
+SM1. . . . . . . . . . .  B ADDR   0098H.6 A   
+SM2. . . . . . . . . . .  B ADDR   0098H.5 A   
+SP . . . . . . . . . . .  D ADDR   0081H   A   
+SPCTL. . . . . . . . . .  D ADDR   00CEH   A   
+SPDAT. . . . . . . . . .  D ADDR   00CFH   A   
+SPSTAT . . . . . . . . .  D ADDR   00CDH   A   
+T0 . . . . . . . . . . .  B ADDR   00B0H.4 A   
+T1 . . . . . . . . . . .  B ADDR   00B0H.5 A   
+T2H. . . . . . . . . . .  D ADDR   00D6H   A   
+T2L. . . . . . . . . . .  D ADDR   00D7H   A   
+T3H. . . . . . . . . . .  D ADDR   00D4H   A   
+T3L. . . . . . . . . . .  D ADDR   00D5H   A   
+T3T4M. . . . . . . . . .  D ADDR   00D1H   A   
+T4H. . . . . . . . . . .  D ADDR   00D2H   A   
+T4L. . . . . . . . . . .  D ADDR   00D3H   A   
+T4T3M. . . . . . . . . .  D ADDR   00D1H   A   
+TA . . . . . . . . . . .  D ADDR   00AEH   A   
+TASK1. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK1?MAIN
+TASK2. . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TASK2?MAIN
+TASK?141 . . . . . . . .  D ADDR   0000H   R   SEG=?DT?_OS_TASK_CREATE?MAIN
+TASK_ID. . . . . . . . .  D ADDR   0003H   R   SEG=?DT?MAIN
+TASK_IDLE_STACK. . . . .  I ADDR   0000H   R   SEG=?ID?MAIN
+TASK_STACK1. . . . . . .  I ADDR   0032H   R   SEG=?ID?MAIN
+TASK_STACK2. . . . . . .  I ADDR   0046H   R   SEG=?ID?MAIN
+TB8. . . . . . . . . . .  B ADDR   0098H.3 A   
+TCB_LIST . . . . . . . .  I ADDR   0014H   R   SEG=?ID?MAIN
+TCON . . . . . . . . . .  D ADDR   0088H   A   
+TF0. . . . . . . . . . .  B ADDR   0088H.5 A   
+TF1. . . . . . . . . . .  B ADDR   0088H.7 A   
+TH0. . . . . . . . . . .  D ADDR   008CH   A   
+TH1. . . . . . . . . . .  D ADDR   008DH   A   
+TH2. . . . . . . . . . .  D ADDR   00D6H   A   
+TH3. . . . . . . . . . .  D ADDR   00D4H   A   
+TH4. . . . . . . . . . .  D ADDR   00D2H   A   
+TI . . . . . . . . . . .  B ADDR   0098H.1 A   
+TI?848 . . . . . . . . .  D ADDR   0000H   R   SEG=?DT?TIME0_HANDLE?MAIN
+TID?143. . . . . . . . .  D ADDR   0006H   R   SEG=?DT?_OS_TASK_CREATE?MAIN
+TIME0_HANDLE . . . . . .  C ADDR   0000H   R   SEG=?PR?TIME0_HANDLE?MAIN
+TIMER0_INIT. . . . . . .  C ADDR   0000H   R   SEG=?PR?TIMER0_INIT?MAIN
+TL0. . . . . . . . . . .  D ADDR   008AH   A   
+TL1. . . . . . . . . . .  D ADDR   008BH   A   
+TL2. . . . . . . . . . .  D ADDR   00D7H   A   
+TL3. . . . . . . . . . .  D ADDR   00D5H   A   
+TL4. . . . . . . . . . .  D ADDR   00D3H   A   
+TMOD . . . . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . . . . .  B ADDR   0088H.4 A   
+TR1. . . . . . . . . . .  B ADDR   0088H.6 A   
+TSTACK?142 . . . . . . .  D ADDR   0003H   R   SEG=?DT?_OS_TASK_CREATE?MAIN
+TXD. . . . . . . . . . .  B ADDR   00B0H.1 A   
+WDT_CONTR. . . . . . . .  D ADDR   00C1H   A   
+WKTCH. . . . . . . . . .  D ADDR   00ABH   A   
+WKTCL. . . . . . . . . .  D ADDR   00AAH   A   
+WR . . . . . . . . . . .  B ADDR   00B0H.6 A   
+_OS_DELAY. . . . . . . .  C ADDR   0006H   R   SEG=?PR?_OS_DELAY?MAIN
+_OS_TASK_CREATE. . . . .  C ADDR   0000H   R   SEG=?PR?_OS_TASK_CREATE?MAIN
 
 
 REGISTER BANK(S) USED: 0 

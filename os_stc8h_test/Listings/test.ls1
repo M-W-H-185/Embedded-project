@@ -1,0 +1,137 @@
+A51 MACRO ASSEMBLER  TEST                                                                 12/27/2023 23:07:06 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\test.OBJ
+ASSEMBLER INVOKED BY: D:\Keil_v5_C51\C51\BIN\A51.EXE .\Objects\test.src PR(.\Listings\test.ls1) EP DEBUG
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; .\Objects\test.SRC generated from: test.c
+                       2     ; COMPILER INVOKED BY:
+                       3     ;        D:\Keil_v5_C51\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DE
+                             BUG OBJECTEXTEND CODE PRINT(.\Listings\test.lst) TABS(2) SRC(.\Objects\test.SRC)
+                       4     
+                       5     
+                       6     NAME    TEST
+                       7     
+                       8     ?PR?push_all_?TEST   SEGMENT CODE 
+                       9     ?PR?pop_all_?TEST    SEGMENT CODE 
+                      10             PUBLIC  pop_all_
+                      11             PUBLIC  push_all_
+                      12     ; 
+                      13     ; void push_all_(void)
+                      14     
+----                  15             RSEG  ?PR?push_all_?TEST
+0000                  16     push_all_:
+                      17             USING   0
+                      18                             ; SOURCE LINE # 2
+                      19     ; {
+                      20                             ; SOURCE LINE # 3
+                      21     ; 
+                      22     ; 
+                      23     ; __asm PUSH    ACC   ;Ñ¹Õ»
+0000 C0E0             24              PUSH   ACC   ;Ñ¹Õ»
+                      25     ; __asm PUSH    B
+0002 C0F0             26              PUSH   B
+                      27     ; __asm PUSH    DPH
+0004 C083             28              PUSH   DPH
+                      29     ; __asm PUSH    DPL
+0006 C082             30              PUSH   DPL
+                      31     ; __asm PUSH    PSW
+0008 C0D0             32              PUSH   PSW
+                      33     ; __asm PUSH    AR0
+000A C000             34              PUSH   AR0
+                      35     ; __asm PUSH    AR1
+000C C001             36              PUSH   AR1
+                      37     ; __asm PUSH    AR2
+000E C002             38              PUSH   AR2
+                      39     ; __asm PUSH    AR3
+0010 C003             40              PUSH   AR3
+                      41     ; __asm PUSH    AR4
+0012 C004             42              PUSH   AR4
+                      43     ; __asm PUSH    AR5
+0014 C005             44              PUSH   AR5
+                      45     ; __asm PUSH    AR6
+0016 C006             46              PUSH   AR6
+                      47     ; __asm PUSH    AR7     
+0018 C007             48              PUSH   AR7     
+                      49     ; }
+                      50                             ; SOURCE LINE # 19
+001A 22               51             RET     
+                      52     ; END OF push_all_
+                      53     
+                      54     ; void pop_all_(void)
+                      55     
+----                  56             RSEG  ?PR?pop_all_?TEST
+0000                  57     pop_all_:
+A51 MACRO ASSEMBLER  TEST                                                                 12/27/2023 23:07:06 PAGE     2
+
+                      58             USING   0
+                      59                             ; SOURCE LINE # 20
+                      60     ; {
+                      61                             ; SOURCE LINE # 21
+                      62     ; 
+                      63     ;       __asm POP       AR7     ;³öÕ»
+0000 D007             64              POP    AR7     ;³öÕ»
+                      65     ;       __asm POP       AR6
+0002 D006             66              POP    AR6
+                      67     ;       __asm POP       AR5
+0004 D005             68              POP    AR5
+                      69     ;       __asm POP       AR4
+0006 D004             70              POP    AR4
+                      71     ;       __asm POP       AR3
+0008 D003             72              POP    AR3
+                      73     ;       __asm POP       AR2
+000A D002             74              POP    AR2
+                      75     ;       __asm POP       AR1
+000C D001             76              POP    AR1
+                      77     ;       __asm POP       AR0
+000E D000             78              POP    AR0
+                      79     ;       __asm POP       PSW
+0010 D0D0             80              POP    PSW
+                      81     ;       __asm POP       DPL
+0012 D082             82              POP    DPL
+                      83     ;       __asm POP       DPH
+0014 D083             84              POP    DPH
+                      85     ;       __asm POP       B
+0016 D0F0             86              POP    B
+                      87     ;       __asm POP       ACC             
+0018 D0E0             88              POP    ACC             
+                      89     ; }                     ; SOURCE LINE # 36
+001A 22               90             RET     
+                      91     ; END OF pop_all_
+                      92     
+                      93             END
+A51 MACRO ASSEMBLER  TEST                                                                 12/27/2023 23:07:06 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+?PR?POP_ALL_?TEST.  C SEG    001BH       REL=UNIT
+?PR?PUSH_ALL_?TEST  C SEG    001BH       REL=UNIT
+ACC. . . . . . . .  D ADDR   00E0H   A   
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+AR3. . . . . . . .  D ADDR   0003H   A   
+AR4. . . . . . . .  D ADDR   0004H   A   
+AR5. . . . . . . .  D ADDR   0005H   A   
+AR6. . . . . . . .  D ADDR   0006H   A   
+AR7. . . . . . . .  D ADDR   0007H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+DPH. . . . . . . .  D ADDR   0083H   A   
+DPL. . . . . . . .  D ADDR   0082H   A   
+POP_ALL_ . . . . .  C ADDR   0000H   R   SEG=?PR?POP_ALL_?TEST
+PSW. . . . . . . .  D ADDR   00D0H   A   
+PUSH_ALL_. . . . .  C ADDR   0000H   R   SEG=?PR?PUSH_ALL_?TEST
+TEST . . . . . . .  N NUMB   -----       
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

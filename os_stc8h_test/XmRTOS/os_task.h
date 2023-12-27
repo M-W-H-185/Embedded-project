@@ -1,12 +1,13 @@
-#include "os_config.h"
-// 启动调度器。执行后创建最低优先级任务 idle
-void os_task_start_scheduler(void);
 
-// 创建一个任务
-void os_task_create(void);
-// 删除一个任务
-void os_task_delete(void);
-// 让一个任务进入阻塞态
-void os_task_suspend(void);
-// 任务延时函数
-void os_task_delay(os_uint16_t ticks);
+#define MAX_TASKS 5       /*任务槽个数.必须和实际任务数一至*/
+#define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
+typedef     unsigned char    os_uint8_t;	//  8 bits 
+
+typedef     unsigned int     os_uint16_t;	// 16 bits 
+
+typedef     unsigned long    os_uint32_t;	// 32 bits 
+void os_start();
+void os_delay(os_uint32_t tasks);
+void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid);
+void OSCtxSw();
+void time_handleHook(void);

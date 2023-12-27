@@ -1,0 +1,60 @@
+C51 COMPILER V9.59.0.0   TEST                                                              12/27/2023 23:07:06 PAGE 1   
+
+
+C51 COMPILER V9.59.0.0, COMPILATION OF MODULE TEST
+NO OBJECT MODULE REQUESTED
+COMPILER INVOKED BY: D:\Keil_v5_C51\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND 
+                    -CODE PRINT(.\Listings\test.lst) TABS(2) SRC(.\Objects\test.SRC)
+
+line level    source
+
+   1          
+   2          void push_all_(void)
+   3          {
+   4   1      
+   5   1      
+   6   1      __asm PUSH  ACC   ;Ñ¹Õ»
+   7   1      __asm PUSH  B
+   8   1      __asm PUSH  DPH
+   9   1      __asm PUSH  DPL
+  10   1      __asm PUSH  PSW
+  11   1      __asm PUSH  AR0
+  12   1      __asm PUSH  AR1
+  13   1      __asm PUSH  AR2
+  14   1      __asm PUSH  AR3
+  15   1      __asm PUSH  AR4
+  16   1      __asm PUSH  AR5
+  17   1      __asm PUSH  AR6
+  18   1      __asm PUSH  AR7 
+  19   1      }
+  20          void pop_all_(void)
+  21          {
+  22   1      
+  23   1        __asm POP AR7 ;³öÕ»
+  24   1        __asm POP AR6
+  25   1        __asm POP AR5
+  26   1        __asm POP AR4
+  27   1        __asm POP AR3
+  28   1        __asm POP AR2
+  29   1        __asm POP AR1
+  30   1        __asm POP AR0
+  31   1        __asm POP PSW
+  32   1        __asm POP DPL
+  33   1        __asm POP DPH
+  34   1        __asm POP B
+  35   1        __asm POP ACC   
+  36   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     80    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

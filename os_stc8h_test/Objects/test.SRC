@@ -1,0 +1,93 @@
+; .\Objects\test.SRC generated from: test.c
+; COMPILER INVOKED BY:
+;        D:\Keil_v5_C51\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\test.lst) TABS(2) SRC(.\Objects\test.SRC)
+
+
+NAME	TEST
+
+?PR?push_all_?TEST   SEGMENT CODE 
+?PR?pop_all_?TEST    SEGMENT CODE 
+	PUBLIC	pop_all_
+	PUBLIC	push_all_
+; 
+; void push_all_(void)
+
+	RSEG  ?PR?push_all_?TEST
+push_all_:
+	USING	0
+			; SOURCE LINE # 2
+; {
+			; SOURCE LINE # 3
+; 
+; 
+; __asm PUSH	ACC   ;Ñ¹Õ»
+	 PUSH	ACC   ;Ñ¹Õ»
+; __asm PUSH	B
+	 PUSH	B
+; __asm PUSH	DPH
+	 PUSH	DPH
+; __asm PUSH	DPL
+	 PUSH	DPL
+; __asm PUSH	PSW
+	 PUSH	PSW
+; __asm PUSH	AR0
+	 PUSH	AR0
+; __asm PUSH	AR1
+	 PUSH	AR1
+; __asm PUSH	AR2
+	 PUSH	AR2
+; __asm PUSH	AR3
+	 PUSH	AR3
+; __asm PUSH	AR4
+	 PUSH	AR4
+; __asm PUSH	AR5
+	 PUSH	AR5
+; __asm PUSH	AR6
+	 PUSH	AR6
+; __asm PUSH	AR7	
+	 PUSH	AR7	
+; }
+			; SOURCE LINE # 19
+	RET  	
+; END OF push_all_
+
+; void pop_all_(void)
+
+	RSEG  ?PR?pop_all_?TEST
+pop_all_:
+	USING	0
+			; SOURCE LINE # 20
+; {
+			; SOURCE LINE # 21
+; 
+; 	__asm POP	AR7	;³öÕ»
+	 POP	AR7	;³öÕ»
+; 	__asm POP	AR6
+	 POP	AR6
+; 	__asm POP	AR5
+	 POP	AR5
+; 	__asm POP	AR4
+	 POP	AR4
+; 	__asm POP	AR3
+	 POP	AR3
+; 	__asm POP	AR2
+	 POP	AR2
+; 	__asm POP	AR1
+	 POP	AR1
+; 	__asm POP	AR0
+	 POP	AR0
+; 	__asm POP	PSW
+	 POP	PSW
+; 	__asm POP	DPL
+	 POP	DPL
+; 	__asm POP	DPH
+	 POP	DPH
+; 	__asm POP	B
+	 POP	B
+; 	__asm POP	ACC		
+	 POP	ACC		
+; }			; SOURCE LINE # 36
+	RET  	
+; END OF pop_all_
+
+	END

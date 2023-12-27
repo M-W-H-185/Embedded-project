@@ -1,4 +1,6 @@
 ".\Objects\STARTUP.obj",
-".\Objects\main.obj" 
+".\Objects\main.obj",
+".\Objects\os_task.obj",
+".\Objects\test.obj" 
 TO ".\Objects\ºôÎüµÆpwm" 
 PRINT(".\Listings\ºôÎüµÆpwm.m51") RAMSIZE(256) 
