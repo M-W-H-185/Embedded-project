@@ -1,10 +1,10 @@
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 17:30:45 PAGE     1
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
 OBJECT MODULE PLACED IN .\Objects\os_mcu.obj
-ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE XmRTOS\os_mcu.asm SET(SMALL) DEBUG PRINT(.\Listings\os_mcu.lst) OBJECT(
-                      .\Objects\os_mcu.obj) EP
+ASSEMBLER INVOKED BY: D:\Keil_v5_C51\C51\BIN\A51.EXE XmRTOS\os_mcu.asm SET(SMALL) DEBUG PRINT(.\Listings\os_mcu.lst) OBJ
+                      ECT(.\Objects\os_mcu.obj) EP
 
 LOC  OBJ            LINE     SOURCE
 
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       53             POP 0x04
                       54             POP 0x03
                       55             POP 0x02
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 17:30:45 PAGE     2
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     2
 
                       56             POP 0x01
                       57             POP 0x00
@@ -133,7 +133,7 @@ LOC  OBJ            LINE     SOURCE
                      117     
                      118     
                      119     
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 17:30:45 PAGE     3
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     3
 
                      120     ; ---------------- 定时器0 相关调用 ----------------
                      121     ; --- 定时器0 中断服务程序 ---
@@ -176,7 +176,7 @@ LOC  OBJ            LINE     SOURCE
                              ;       MOV R0,#tcb_list+1+4+1; os_status_type 是uint8_t 所以是偏移量+1跳到下一个tcb_list[0
                              ].test_value = 0x88;
                              ;       MOV @R0,#0x88;
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 17:30:45 PAGE     4
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------

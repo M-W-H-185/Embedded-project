@@ -28,8 +28,12 @@ os_uint8_t max_task = 0;
 
 /* 任务控制列表 */
 struct os_tcb_t xdata tcb_list[MAX_TASKS];
-/* 公共堆栈 */
-os_uint8_t idata public_stack[MAX_TASK_DEP];
+/* 
+	公共堆栈
+	1、中断压栈会将数据压到这里面，切换任务前需要拷贝到 私有任务堆栈 内
+	2、出栈前先将SP指向需要切换的任务控制块的sp内，然后在将 私有任务堆栈 拷贝到公共堆栈中
+*/
+static os_uint8_t idata public_stack[MAX_TASK_DEP];
 
 /*空闲任务堆栈.*/
 os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];		
@@ -61,10 +65,12 @@ void os_switch()
 	{
 		task_id = 0;
 	}
+	// 先将下一个id的sp指向到SP
+	SP = tcb_list[task_id].sp;
+
 	// 将任务堆栈拷贝到公共堆栈里面
 	memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
 	
-    SP = tcb_list[task_id].sp;
 
 	
 	// 下面中断汇编已经出栈

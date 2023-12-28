@@ -1,9 +1,9 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    12/28/2023  17:30:45  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    12/28/2023  21:33:29  PAGE 1
 
 
-BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
-C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj, .\Objects\os_task.obj, .\Objects\os_mcu.obj TO .\
->> Objects\ºôÎüµÆpwm PRINT (.\Listings\ºôÎüµÆpwm.m51) RAMSIZE (256)
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+D:\KEIL_V5_C51\C51\BIN\BL51.EXE .\Objects\STARTUP.obj, .\Objects\main.obj, .\Objects\os_task.obj, .\Objects\os_mcu.obj T
+>> O .\Objects\ºôÎüµÆpwm PRINT (.\Listings\ºôÎüµÆpwm.m51) RAMSIZE (256)
 
 
 MEMORY MODEL: SMALL
@@ -14,14 +14,14 @@ INPUT MODULES INCLUDED:
   .\Objects\main.obj (MAIN)
   .\Objects\os_task.obj (OS_TASK)
   .\Objects\os_mcu.obj (OS_CPU_A_ASM)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?COPY)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CSTPTR)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?CSTOPTR)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?ULCMP)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LSTXDATA)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?LSTKXDATA)
-  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?OFFXADD)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C_INIT)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?COPY)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?CSTPTR)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?CSTOPTR)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?ULCMP)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?LSTXDATA)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?LSTKXDATA)
+  D:\KEIL_V5_C51\C51\LIB\C51S.LIB (?C?OFFXADD)
 
 
 LINK MAP OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
@@ -59,7 +59,7 @@ LINK MAP OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
             CODE    04FDH     0029H     UNIT         ?PR?TASK1?MAIN
             CODE    0526H     0027H     UNIT         ?PR?_OS_DELAY?OS_TASK
             CODE    054DH     001AH     UNIT         ?PR?_?TIME0_HANDLE?MAIN
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 2
 
 
             CODE    0567H     0013H     UNIT         ?PR?TIMER0_INIT?MAIN
@@ -119,7 +119,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
 
   -------         MODULE        ?C_STARTUP
   C:02F5H         SEGMENT       ?C_C51STARTUP
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 3
 
 
   I:0029H         SEGMENT       ?STACK
@@ -179,7 +179,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
   D:008EH         PUBLIC        AUXR
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 4
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 4
 
 
   B:00A8H.1       PUBLIC        ET0
@@ -239,7 +239,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   C:0555H         LINE#         81
   C:055DH         LINE#         82
   C:055DH         LINE#         83
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 5
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 5
 
 
   C:0562H         LINE#         84
@@ -291,99 +291,98 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   C:03F8H         PUBLIC        os_start
   C:0003H         PUBLIC        os_idle_task
   D:00D0H         PUBLIC        PSW
-  I:0015H         PUBLIC        public_stack
+  I:0015H         SYMBOL        public_stack
   -------         PROC          OS_SWITCH
   -------         DO            
   D:0007H         SYMBOL        ost_i
   -------         ENDDO         
-  C:0257H         LINE#         39
-  C:0257H         LINE#         40
-  C:0257H         LINE#         42
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 6
+  C:0257H         LINE#         43
+  C:0257H         LINE#         44
+  C:0257H         LINE#         46
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 6
 
 
-  C:0258H         LINE#         46
-  C:0280H         LINE#         49
-  C:0296H         LINE#         51
-  C:029EH         LINE#         52
-  C:029EH         LINE#         53
-  C:02B0H         LINE#         54
-  C:02B0H         LINE#         55
-  C:02B2H         LINE#         56
-  C:02B2H         LINE#         58
-  C:02B2H         LINE#         59
-  C:02B5H         LINE#         60
-  C:02BAH         LINE#         61
-  C:02BAH         LINE#         62
-  C:02BDH         LINE#         63
-  C:02BDH         LINE#         65
-  C:02E1H         LINE#         67
-  C:02F4H         LINE#         71
+  C:0258H         LINE#         50
+  C:0280H         LINE#         53
+  C:0296H         LINE#         55
+  C:029EH         LINE#         56
+  C:029EH         LINE#         57
+  C:02B1H         LINE#         58
+  C:02B1H         LINE#         59
+  C:02B3H         LINE#         60
+  C:02B3H         LINE#         62
+  C:02B3H         LINE#         63
+  C:02B6H         LINE#         64
+  C:02BBH         LINE#         65
+  C:02BBH         LINE#         66
+  C:02BEH         LINE#         67
+  C:02BEH         LINE#         69
+  C:02D1H         LINE#         72
   -------         ENDPROC       OS_SWITCH
   -------         PROC          _OS_TASK_CREATE
   D:0008H         SYMBOL        task
   D:000BH         SYMBOL        tstack
   D:000EH         SYMBOL        tid
-  C:0381H         LINE#         73
-  C:0387H         LINE#         74
-  C:0387H         LINE#         76
-  C:0393H         LINE#         77
-  C:03A1H         LINE#         79
-  C:03BDH         LINE#         80
-  C:03D5H         LINE#         82
-  C:03F5H         LINE#         85
-  C:03F7H         LINE#         86
+  C:0381H         LINE#         79
+  C:0387H         LINE#         80
+  C:0387H         LINE#         82
+  C:0393H         LINE#         83
+  C:03A1H         LINE#         85
+  C:03BDH         LINE#         86
+  C:03D5H         LINE#         88
+  C:03F5H         LINE#         91
+  C:03F7H         LINE#         92
   -------         ENDPROC       _OS_TASK_CREATE
   -------         PROC          OS_START
-  C:03F8H         LINE#         89
-  C:03F8H         LINE#         90
-  C:03F8H         LINE#         91
-  C:03FAH         LINE#         93
-  C:0411H         LINE#         96
-  C:0414H         LINE#         98
-  C:0438H         LINE#         100
-  C:044BH         LINE#         103
-  C:044DH         LINE#         105
+  C:03F8H         LINE#         95
+  C:03F8H         LINE#         96
+  C:03F8H         LINE#         97
+  C:03FAH         LINE#         99
+  C:0411H         LINE#         102
+  C:0414H         LINE#         104
+  C:0438H         LINE#         106
+  C:044BH         LINE#         109
+  C:044DH         LINE#         111
   -------         ENDPROC       OS_START
   -------         PROC          _OS_DELAY
   D:0004H         SYMBOL        tasks
-  C:0526H         LINE#         109
-  C:0526H         LINE#         110
-  C:0526H         LINE#         111
-  C:0526H         LINE#         113
-  C:0538H         LINE#         115
-  C:054AH         LINE#         117
+  C:0526H         LINE#         115
+  C:0526H         LINE#         116
+  C:0526H         LINE#         117
+  C:0526H         LINE#         119
+  C:0538H         LINE#         121
+  C:054AH         LINE#         123
   -------         ENDPROC       _OS_DELAY
   -------         PROC          OS_IDLE_TASK
-  C:0003H         LINE#         121
-  C:0003H         LINE#         122
-  C:0003H         LINE#         123
+  C:0003H         LINE#         127
+  C:0003H         LINE#         128
+  C:0003H         LINE#         129
   -------         ENDPROC       OS_IDLE_TASK
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 7
-
-
   -------         PROC          TIME_HANDLEHOOK
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 7
+
+
   -------         DO            
   D:0010H         SYMBOL        ti
   -------         ENDDO         
-  C:0192H         LINE#         125
-  C:0192H         LINE#         126
-  C:0192H         LINE#         127
-  C:0195H         LINE#         130
-  C:01A1H         LINE#         131
-  C:01A1H         LINE#         132
-  C:01B8H         LINE#         133
-  C:01B8H         LINE#         134
-  C:01B8H         LINE#         135
-  C:01B8H         LINE#         137
-  C:01EBH         LINE#         138
-  C:01EBH         LINE#         139
-  C:0201H         LINE#         141
-  C:0213H         LINE#         142
-  C:0215H         LINE#         143
-  C:0215H         LINE#         144
-  C:024FH         LINE#         145
-  C:0254H         LINE#         146
+  C:0192H         LINE#         131
+  C:0192H         LINE#         132
+  C:0192H         LINE#         133
+  C:0195H         LINE#         136
+  C:01A1H         LINE#         137
+  C:01A1H         LINE#         138
+  C:01B8H         LINE#         139
+  C:01B8H         LINE#         140
+  C:01B8H         LINE#         141
+  C:01B8H         LINE#         143
+  C:01EBH         LINE#         144
+  C:01EBH         LINE#         145
+  C:0201H         LINE#         147
+  C:0213H         LINE#         148
+  C:0215H         LINE#         149
+  C:0215H         LINE#         150
+  C:024FH         LINE#         151
+  C:0254H         LINE#         152
   -------         ENDPROC       TIME_HANDLEHOOK
   -------         ENDMOD        OS_TASK
 
@@ -419,10 +418,10 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   C:04B6H         LINE#         128
   C:04B8H         LINE#         128
   C:04BAH         LINE#         128
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  12/28/2023  17:30:45  PAGE 8
-
-
   C:04BCH         LINE#         128
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  12/28/2023  21:33:29  PAGE 8
+
+
   C:04BEH         LINE#         128
   C:04C0H         LINE#         128
   C:04C2H         LINE#         128
