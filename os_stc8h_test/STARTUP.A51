@@ -117,7 +117,7 @@ DPH     DATA    83H
 ?STACK          SEGMENT   IDATA
 
                 RSEG    ?STACK
-                DS      40
+                DS      1
 
                 EXTRN CODE (?C_START)
                 PUBLIC  ?C_STARTUP

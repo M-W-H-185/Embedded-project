@@ -5,89 +5,120 @@
 
 NAME	TEST
 
-?PR?push_all_?TEST   SEGMENT CODE 
-?PR?pop_all_?TEST    SEGMENT CODE 
-	PUBLIC	pop_all_
-	PUBLIC	push_all_
+?PR?PUSH_ALL_STACK?TEST                  SEGMENT CODE 
+?PR?POP_ALL_STACK?TEST                   SEGMENT CODE 
+	PUBLIC	POP_ALL_STACK
+	PUBLIC	PUSH_ALL_STACK
 ; 
-; void push_all_(void)
+; void PUSH_ALL_STACK(void)
 
-	RSEG  ?PR?push_all_?TEST
-push_all_:
+	RSEG  ?PR?PUSH_ALL_STACK?TEST
+PUSH_ALL_STACK:
 	USING	0
 			; SOURCE LINE # 2
 ; {
 			; SOURCE LINE # 3
-; 
-; 	__asm PUSH	ACC   ;Ñ¹Õ»
-	 PUSH	ACC   ;Ñ¹Õ»
-; 	__asm PUSH	B
-	 PUSH	B
-; 	__asm PUSH	DPH
-	 PUSH	DPH
-; 	__asm PUSH	DPL
-	 PUSH	DPL
-; 	__asm PUSH	PSW
-	 PUSH	PSW
-; 	__asm PUSH	AR0
-	 PUSH	AR0
-; 	__asm PUSH	AR1
-	 PUSH	AR1
-; 	__asm PUSH	AR2
-	 PUSH	AR2
-; 	__asm PUSH	AR3
-	 PUSH	AR3
-; 	__asm PUSH	AR4
-	 PUSH	AR4
-; 	__asm PUSH	AR5
-	 PUSH	AR5
-; 	__asm PUSH	AR6
-	 PUSH	AR6
-; 	__asm PUSH	AR7	
-	 PUSH	AR7	
+;         __asm PUSH PSW
+	 PUSH PSW
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm PUSH B
+	 PUSH B
+;         __asm PUSH DPL
+	 PUSH DPL
+;         __asm PUSH DPH
+	 PUSH DPH
+;         __asm MOV  A,R0	;R0~R7ÈëÕ»
+	 MOV  A,R0	;R0~R7ÈëÕ»
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R1
+	 MOV  A,R1
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R2
+	 MOV  A,R2
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R3
+	 MOV  A,R3
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R4
+	 MOV  A,R4
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R5
+	 MOV  A,R5
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R6
+	 MOV  A,R6
+;         __asm PUSH ACC
+	 PUSH ACC
+;         __asm MOV  A,R7
+	 MOV  A,R7
+;         __asm PUSH ACC
+	 PUSH ACC
 ; 	
 ; }
-			; SOURCE LINE # 19
+			; SOURCE LINE # 26
 	RET  	
-; END OF push_all_
+; END OF PUSH_ALL_STACK
 
-; void pop_all_(void)
+; void POP_ALL_STACK(void)
 
-	RSEG  ?PR?pop_all_?TEST
-pop_all_:
+	RSEG  ?PR?POP_ALL_STACK?TEST
+POP_ALL_STACK:
 	USING	0
-			; SOURCE LINE # 20
+			; SOURCE LINE # 27
 ; {
-			; SOURCE LINE # 21
+			; SOURCE LINE # 28
 ; 
-; 	__asm POP	AR7	;³öÕ»
-	 POP	AR7	;³öÕ»
-; 	__asm POP	AR6
-	 POP	AR6
-; 	__asm POP	AR5
-	 POP	AR5
-; 	__asm POP	AR4
-	 POP	AR4
-; 	__asm POP	AR3
-	 POP	AR3
-; 	__asm POP	AR2
-	 POP	AR2
-; 	__asm POP	AR1
-	 POP	AR1
-; 	__asm POP	AR0
-	 POP	AR0
-; 	__asm POP	PSW
-	 POP	PSW
-; 	__asm POP	DPL
-	 POP	DPL
-; 	__asm POP	DPH
-	 POP	DPH
-; 	__asm POP	B
-	 POP	B
-; 	__asm POP	ACC		
-	 POP	ACC		
-; }			; SOURCE LINE # 36
+;         __asm POP  ACC	;R0~R7³öÕ»
+	 POP  ACC	;R0~R7³öÕ»
+;         __asm MOV  R7,A
+	 MOV  R7,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R6,A
+	 MOV  R6,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R5,A
+	 MOV  R5,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R4,A
+	 MOV  R4,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R3,A
+	 MOV  R3,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R2,A
+	 MOV  R2,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R1,A
+	 MOV  R1,A
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm MOV  R0,A
+	 MOV  R0,A
+;         __asm POP  DPH
+	 POP  DPH
+;         __asm POP  DPL
+	 POP  DPL
+;         __asm POP  B
+	 POP  B
+;         __asm POP  ACC
+	 POP  ACC
+;         __asm POP  PSW	
+	 POP  PSW	
+; }			; SOURCE LINE # 51
 	RET  	
-; END OF pop_all_
+; END OF POP_ALL_STACK
 
 	END

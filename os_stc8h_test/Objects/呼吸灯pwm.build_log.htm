@@ -29,14 +29,20 @@ Rebuild target 'Target 1'
 assembling STARTUP.A51...
 compiling main.c...
 compiling os_task.c...
-XmRTOS\os_task.c(96): warning C260: '=': pointer truncation
+XmRTOS\os_task.c(99): warning C260: '=': pointer truncation
+compiling test.c...
+assembling .\Objects\test.src...
 linking...
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?DELAY500MS?OS_TASK
-Program Size: data=242.0 xdata=0 code=880
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?PUSH_ALL_STACK?TEST
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?POP_ALL_STACK?TEST
+Program Size: data=217.0 xdata=0 code=1081
 creating hex file from ".\Objects\ºôÎüµÆpwm"...
-".\Objects\ºôÎüµÆpwm" - 0 Error(s), 2 Warning(s).
-Build Time Elapsed:  00:00:00
+".\Objects\ºôÎüµÆpwm" - 0 Error(s), 4 Warning(s).
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

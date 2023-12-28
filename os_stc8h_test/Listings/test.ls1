@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 10:54:40 PAGE     1
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -15,120 +15,145 @@ LOC  OBJ            LINE     SOURCE
                        5     
                        6     NAME    TEST
                        7     
-                       8     ?PR?push_all_?TEST   SEGMENT CODE 
-                       9     ?PR?pop_all_?TEST    SEGMENT CODE 
-                      10             PUBLIC  pop_all_
-                      11             PUBLIC  push_all_
+                       8     ?PR?PUSH_ALL_STACK?TEST                  SEGMENT CODE 
+                       9     ?PR?POP_ALL_STACK?TEST                   SEGMENT CODE 
+                      10             PUBLIC  POP_ALL_STACK
+                      11             PUBLIC  PUSH_ALL_STACK
                       12     ; 
-                      13     ; void push_all_(void)
+                      13     ; void PUSH_ALL_STACK(void)
                       14     
-----                  15             RSEG  ?PR?push_all_?TEST
-0000                  16     push_all_:
+----                  15             RSEG  ?PR?PUSH_ALL_STACK?TEST
+0000                  16     PUSH_ALL_STACK:
                       17             USING   0
                       18                             ; SOURCE LINE # 2
                       19     ; {
                       20                             ; SOURCE LINE # 3
-                      21     ; 
-                      22     ;       __asm PUSH      ACC   ;Ñ¹Õ»
-0000 C0E0             23              PUSH   ACC   ;Ñ¹Õ»
-                      24     ;       __asm PUSH      B
-0002 C0F0             25              PUSH   B
-                      26     ;       __asm PUSH      DPH
-0004 C083             27              PUSH   DPH
-                      28     ;       __asm PUSH      DPL
-0006 C082             29              PUSH   DPL
-                      30     ;       __asm PUSH      PSW
-0008 C0D0             31              PUSH   PSW
-                      32     ;       __asm PUSH      AR0
-000A C000             33              PUSH   AR0
-                      34     ;       __asm PUSH      AR1
-000C C001             35              PUSH   AR1
-                      36     ;       __asm PUSH      AR2
-000E C002             37              PUSH   AR2
-                      38     ;       __asm PUSH      AR3
-0010 C003             39              PUSH   AR3
-                      40     ;       __asm PUSH      AR4
-0012 C004             41              PUSH   AR4
-                      42     ;       __asm PUSH      AR5
-0014 C005             43              PUSH   AR5
-                      44     ;       __asm PUSH      AR6
-0016 C006             45              PUSH   AR6
-                      46     ;       __asm PUSH      AR7     
-0018 C007             47              PUSH   AR7     
-                      48     ;       
-                      49     ; }
-                      50                             ; SOURCE LINE # 19
-001A 22               51             RET     
-                      52     ; END OF push_all_
-                      53     
-                      54     ; void pop_all_(void)
-                      55     
-----                  56             RSEG  ?PR?pop_all_?TEST
-0000                  57     pop_all_:
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 10:54:40 PAGE     2
+                      21     ;         __asm PUSH PSW
+0000 C0D0             22              PUSH PSW
+                      23     ;         __asm PUSH ACC
+0002 C0E0             24              PUSH ACC
+                      25     ;         __asm PUSH B
+0004 C0F0             26              PUSH B
+                      27     ;         __asm PUSH DPL
+0006 C082             28              PUSH DPL
+                      29     ;         __asm PUSH DPH
+0008 C083             30              PUSH DPH
+                      31     ;         __asm MOV  A,R0       ;R0~R7ÈëÕ»
+000A E8               32              MOV  A,R0      ;R0~R7ÈëÕ»
+                      33     ;         __asm PUSH ACC
+000B C0E0             34              PUSH ACC
+                      35     ;         __asm MOV  A,R1
+000D E9               36              MOV  A,R1
+                      37     ;         __asm PUSH ACC
+000E C0E0             38              PUSH ACC
+                      39     ;         __asm MOV  A,R2
+0010 EA               40              MOV  A,R2
+                      41     ;         __asm PUSH ACC
+0011 C0E0             42              PUSH ACC
+                      43     ;         __asm MOV  A,R3
+0013 EB               44              MOV  A,R3
+                      45     ;         __asm PUSH ACC
+0014 C0E0             46              PUSH ACC
+                      47     ;         __asm MOV  A,R4
+0016 EC               48              MOV  A,R4
+                      49     ;         __asm PUSH ACC
+0017 C0E0             50              PUSH ACC
+                      51     ;         __asm MOV  A,R5
+0019 ED               52              MOV  A,R5
+                      53     ;         __asm PUSH ACC
+001A C0E0             54              PUSH ACC
+                      55     ;         __asm MOV  A,R6
+001C EE               56              MOV  A,R6
+                      57     ;         __asm PUSH ACC
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     2
 
-                      58             USING   0
-                      59                             ; SOURCE LINE # 20
-                      60     ; {
-                      61                             ; SOURCE LINE # 21
-                      62     ; 
-                      63     ;       __asm POP       AR7     ;³öÕ»
-0000 D007             64              POP    AR7     ;³öÕ»
-                      65     ;       __asm POP       AR6
-0002 D006             66              POP    AR6
-                      67     ;       __asm POP       AR5
-0004 D005             68              POP    AR5
-                      69     ;       __asm POP       AR4
-0006 D004             70              POP    AR4
-                      71     ;       __asm POP       AR3
-0008 D003             72              POP    AR3
-                      73     ;       __asm POP       AR2
-000A D002             74              POP    AR2
-                      75     ;       __asm POP       AR1
-000C D001             76              POP    AR1
-                      77     ;       __asm POP       AR0
-000E D000             78              POP    AR0
-                      79     ;       __asm POP       PSW
-0010 D0D0             80              POP    PSW
-                      81     ;       __asm POP       DPL
-0012 D082             82              POP    DPL
-                      83     ;       __asm POP       DPH
-0014 D083             84              POP    DPH
-                      85     ;       __asm POP       B
-0016 D0F0             86              POP    B
-                      87     ;       __asm POP       ACC             
-0018 D0E0             88              POP    ACC             
-                      89     ; }                     ; SOURCE LINE # 36
-001A 22               90             RET     
-                      91     ; END OF pop_all_
-                      92     
-                      93             END
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 10:54:40 PAGE     3
+001D C0E0             58              PUSH ACC
+                      59     ;         __asm MOV  A,R7
+001F EF               60              MOV  A,R7
+                      61     ;         __asm PUSH ACC
+0020 C0E0             62              PUSH ACC
+                      63     ;       
+                      64     ; }
+                      65                             ; SOURCE LINE # 26
+0022 22               66             RET     
+                      67     ; END OF PUSH_ALL_STACK
+                      68     
+                      69     ; void POP_ALL_STACK(void)
+                      70     
+----                  71             RSEG  ?PR?POP_ALL_STACK?TEST
+0000                  72     POP_ALL_STACK:
+                      73             USING   0
+                      74                             ; SOURCE LINE # 27
+                      75     ; {
+                      76                             ; SOURCE LINE # 28
+                      77     ; 
+                      78     ;         __asm POP  ACC        ;R0~R7³öÕ»
+0000 D0E0             79              POP  ACC       ;R0~R7³öÕ»
+                      80     ;         __asm MOV  R7,A
+0002 FF               81              MOV  R7,A
+                      82     ;         __asm POP  ACC
+0003 D0E0             83              POP  ACC
+                      84     ;         __asm MOV  R6,A
+0005 FE               85              MOV  R6,A
+                      86     ;         __asm POP  ACC
+0006 D0E0             87              POP  ACC
+                      88     ;         __asm MOV  R5,A
+0008 FD               89              MOV  R5,A
+                      90     ;         __asm POP  ACC
+0009 D0E0             91              POP  ACC
+                      92     ;         __asm MOV  R4,A
+000B FC               93              MOV  R4,A
+                      94     ;         __asm POP  ACC
+000C D0E0             95              POP  ACC
+                      96     ;         __asm MOV  R3,A
+000E FB               97              MOV  R3,A
+                      98     ;         __asm POP  ACC
+000F D0E0             99              POP  ACC
+                     100     ;         __asm MOV  R2,A
+0011 FA              101              MOV  R2,A
+                     102     ;         __asm POP  ACC
+0012 D0E0            103              POP  ACC
+                     104     ;         __asm MOV  R1,A
+0014 F9              105              MOV  R1,A
+                     106     ;         __asm POP  ACC
+0015 D0E0            107              POP  ACC
+                     108     ;         __asm MOV  R0,A
+0017 F8              109              MOV  R0,A
+                     110     ;         __asm POP  DPH
+0018 D083            111              POP  DPH
+                     112     ;         __asm POP  DPL
+001A D082            113              POP  DPL
+                     114     ;         __asm POP  B
+001C D0F0            115              POP  B
+                     116     ;         __asm POP  ACC
+001E D0E0            117              POP  ACC
+                     118     ;         __asm POP  PSW        
+0020 D0D0            119              POP  PSW       
+                     120     ; }                     ; SOURCE LINE # 51
+0022 22              121             RET     
+                     122     ; END OF POP_ALL_STACK
+                     123     
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     3
+
+                     124             END
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------
 
 
-N A M E             T Y P E  V A L U E   ATTRIBUTES
+N A M E                  T Y P E  V A L U E   ATTRIBUTES
 
-?PR?POP_ALL_?TEST.  C SEG    001BH       REL=UNIT
-?PR?PUSH_ALL_?TEST  C SEG    001BH       REL=UNIT
-ACC. . . . . . . .  D ADDR   00E0H   A   
-AR0. . . . . . . .  D ADDR   0000H   A   
-AR1. . . . . . . .  D ADDR   0001H   A   
-AR2. . . . . . . .  D ADDR   0002H   A   
-AR3. . . . . . . .  D ADDR   0003H   A   
-AR4. . . . . . . .  D ADDR   0004H   A   
-AR5. . . . . . . .  D ADDR   0005H   A   
-AR6. . . . . . . .  D ADDR   0006H   A   
-AR7. . . . . . . .  D ADDR   0007H   A   
-B. . . . . . . . .  D ADDR   00F0H   A   
-DPH. . . . . . . .  D ADDR   0083H   A   
-DPL. . . . . . . .  D ADDR   0082H   A   
-POP_ALL_ . . . . .  C ADDR   0000H   R   SEG=?PR?POP_ALL_?TEST
-PSW. . . . . . . .  D ADDR   00D0H   A   
-PUSH_ALL_. . . . .  C ADDR   0000H   R   SEG=?PR?PUSH_ALL_?TEST
-TEST . . . . . . .  N NUMB   -----       
+?PR?POP_ALL_STACK?TEST.  C SEG    0023H       REL=UNIT
+?PR?PUSH_ALL_STACK?TEST  C SEG    0023H       REL=UNIT
+ACC . . . . . . . . . .  D ADDR   00E0H   A   
+B . . . . . . . . . . .  D ADDR   00F0H   A   
+DPH . . . . . . . . . .  D ADDR   0083H   A   
+DPL . . . . . . . . . .  D ADDR   0082H   A   
+POP_ALL_STACK . . . . .  C ADDR   0000H   R   SEG=?PR?POP_ALL_STACK?TEST
+PSW . . . . . . . . . .  D ADDR   00D0H   A   
+PUSH_ALL_STACK. . . . .  C ADDR   0000H   R   SEG=?PR?PUSH_ALL_STACK?TEST
+TEST. . . . . . . . . .  N NUMB   -----       
 
 
 REGISTER BANK(S) USED: 0 

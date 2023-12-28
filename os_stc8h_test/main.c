@@ -37,7 +37,7 @@ void task1()
 		
 		LED_R = 1;
 		os_delay(500);
-		OSCtxSw();
+		os_switch();
 
 	}
 }
@@ -49,10 +49,12 @@ void task2()
 	{
 		LED_Y = 1;
 		os_delay(1000);
+		os_delay(1000);
 		
 		LED_Y = 0;
 		os_delay(1000);
-		OSCtxSw();
+		os_delay(1000);
+		os_switch();
 
 	}
 }
