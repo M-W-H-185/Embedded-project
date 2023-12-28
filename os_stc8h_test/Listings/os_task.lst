@@ -1,10 +1,10 @@
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 1   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 1   
 
 
-C51 COMPILER V9.59.0.0, COMPILATION OF MODULE OS_TASK
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE OS_TASK
 OBJECT MODULE PLACED IN .\Objects\os_task.obj
-COMPILER INVOKED BY: D:\Keil_v5_C51\C51\BIN\C51.EXE XmRTOS\os_task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJ
-                    -ECTEXTEND CODE PRINT(.\Listings\os_task.lst) TABS(2) OBJECT(.\Objects\os_task.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE XmRTOS\os_task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTE
+                    -XTEND CODE PRINT(.\Listings\os_task.lst) OBJECT(.\Objects\os_task.obj)
 
 line level    source
 
@@ -17,19 +17,19 @@ line level    source
    7          extern void pop_all_(void);
    8          enum OS_TASK_STATUS_TYPE
    9          {
-  10            OS_READY      = 1,  // 就绪态
-  11            OS_RUNING     = 2,  // 运行态
-  12            OS_BLOCKED    = 3,  // 阻塞态
-  13            OS_SUSPENDED  = 4 // 停止态
+  10                  OS_READY      = 1,      // 就绪态
+  11                  OS_RUNING     = 2,      // 运行态
+  12                  OS_BLOCKED    = 3,      // 阻塞态
+  13                  OS_SUSPENDED  = 4       // 停止态
   14          
   15          };
   16          
   17          // 任务控制块
   18          typedef struct os_tcb_t
   19          {
-  20            os_uint8_t      sp;         // sp 堆栈指针存储
-  21            os_uint32_t     delay_tick;     // 延时滴答数
-  22            os_uint8_t      os_status_type;   // 任务状态
+  20                  os_uint8_t                      sp;                                     // sp 堆栈指针存储
+  21                  os_uint32_t             delay_tick;                     // 延时滴答数
+  22                  os_uint8_t                      os_status_type;         // 任务状态
   23          };
   24          
   25          os_uint8_t data task_id = 0;    /*当前活动任务号*/
@@ -38,140 +38,169 @@ line level    source
   28          // 任务控制列表
   29          struct os_tcb_t idata tcb_list[MAX_TASKS];
   30          
-  31          os_uint8_t idata task_idle_stack[MAX_TASK_DEP];   /*空闲任务堆栈.*/
+  31          os_uint8_t idata task_idle_stack[MAX_TASK_DEP];         /*空闲任务堆栈.*/
   32          //// 获取下一个任务id
   33          //void os_getNextTaskId(void)
   34          //{
-  35          //  
-  36          ////  
-  37          ////  
-  38          ////  
+  35          //      
+  36          ////    
+  37          ////    
+  38          ////    
   39          
   40          //}
   41          // 任务切换函数
-  42            os_uint8_t  ost_i = 0;
+  42                  os_uint8_t  ost_i = 0;
   43          
   44          void OSCtxSw()
   45          {
   46   1      
-  47   1        EA = 0;//关中断
-  48   1        EA = 0;//关中断
-  49   1        EA = 0;//关中断
-  50   1        push_all_();
-  51   1        tcb_list[task_id].sp = SP;
-  52   1      
-  53   1      // 找出就绪态的一个id
-  54   1        for(ost_i = 0; ost_i < max_task; ost_i++)
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 2   
+  47   1              EA = 0;//关中断
+  48   1      
+  49   1              
+  50   1              
+  51   1              // 入栈
+  52   1              // 入栈
+  53   1              
+  54   1              
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 2   
 
-  55   1        {
-  56   2          if(tcb_list[ost_i].os_status_type == OS_READY)
-  57   2          {
-  58   3            task_id = ost_i;
-  59   3            continue;
-  60   3      
-  61   3          }
-  62   2        }
-  63   1        if(task_id == max_task)
-  64   1        {
-  65   2          task_id = 0;
-  66   2        }
-  67   1        
-  68   1          SP = tcb_list[task_id].sp;
-  69   1      pop_all_();
-  70   1        EA = 1;//开中断
-  71   1      }
-  72           
-  73          void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
-  74          {
-  75   1      
-  76   1        tstack[0] = (unsigned int)task & 0xff;
-  77   1        tstack[1] = (unsigned int)task >> 8;
-  78   1      
-  79   1        tcb_list[tid].sp        = tstack + 1;
-*** WARNING C260 IN LINE 79 OF XmRTOS\os_task.c: '=': pointer truncation
-  80   1        tcb_list[tid].os_status_type  = OS_READY;
-  81   1      
-  82   1        max_task++;
-  83   1      }
-  84          void os_idle_task(void);
-  85          
-  86          void os_start()
-  87          {
-  88   1        EA = 0;//关中断
-  89   1        // 装载空闲任务
-  90   1        os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
-  91   1      
-  92   1        task_id = 0;
-  93   1        SP = tcb_list[task_id].sp;
-  94   1        pop_all_();
-  95   1        EA = 1;//开中断
-  96   1        return;
-  97   1      }
-  98          void Delay500ms(void) //@11.0592MHz
-  99          {
- 100   1        unsigned char data i, j, k;
- 101   1      
- 102   1        _nop_();
- 103   1        _nop_();
- 104   1        i = 22;
- 105   1        j = 3;
- 106   1        k = 227;
- 107   1        do
- 108   1        {
- 109   2          do
- 110   2          {
- 111   3            while (--k);
- 112   3          } while (--j);
- 113   2        } while (--i);
- 114   1      }
- 115          
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 3   
+  55   1              
+  56   1              
+  57   1              
+  58   1              
+  59   1              
+  60   1              tcb_list[task_id].sp = SP;
+  61   1              // 找出就绪态的一个id
+  62   1              for(ost_i = 0; ost_i < max_task; ost_i++)
+  63   1              {
+  64   2                      if(tcb_list[ost_i].os_status_type == OS_READY)
+  65   2                      {
+  66   3                              task_id = ost_i;
+  67   3                              continue;
+  68   3      
+  69   3                      }
+  70   2              }
+  71   1              if(task_id == max_task)
+  72   1              {
+  73   2                      task_id = 0;
+  74   2              }
+  75   1          SP = tcb_list[task_id].sp;
+  76   1              
+  77   1              
+  78   1              // 出栈
+  79   1              // 出栈
+  80   1              
+  81   1              
+  82   1              
+  83   1              
+  84   1              EA = 1;//开中断
+  85   1      }
+  86           
+  87          void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
+  88          {
+  89   1      
+  90   1              tstack[0] = (unsigned int)task & 0xff;
+  91   1              tstack[1] = (unsigned int)task >> 8;
+  92   1      
+  93   1              
+  94   1              
+  95   1              
+  96   1              tcb_list[tid].sp                                = tstack + 1;   // 这里加一实际上就是取了将taskck[1]的地址保存了。sp指向它就相当于指向
+             -了任务函数
+*** WARNING C260 IN LINE 96 OF XmRTOS\os_task.c: '=': pointer truncation
+  97   1              tcb_list[tid].os_status_type    = OS_READY;
+  98   1      
+  99   1              
+ 100   1              
+ 101   1              
+ 102   1              
+ 103   1              
+ 104   1              
+ 105   1              
+ 106   1              max_task++;
+ 107   1      }
+ 108          void os_idle_task(void);
+ 109          
+ 110          void os_start()
+ 111          {
+ 112   1              EA = 0;//关中断
+ 113   1              // 装载空闲任务
+ 114   1              os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 3   
 
- 116          // 任务延时函数
- 117          void os_delay(os_uint32_t tasks)
- 118          { 
- 119   1        tasks = tasks;
- 120   1      //  // 设置延时滴答数
- 121   1      //  tcb_list[task_id].delay_tick   =  tasks;
- 122   1      //  // 将任务设置为阻塞态
- 123   1      //  tcb_list[task_id].os_status_type =  OS_BLOCKED;
- 124   1        // 只要任务延时了，就马上切换出去
- 125   1      //  OSCtxSw();
- 126   1        //  
- 127   1        Delay500ms();
- 128   1      }
- 129          // 空闲函数
- 130          void os_idle_task(void)
- 131          {
- 132   1        while(1)
- 133   1        {
- 134   2          OSCtxSw();
- 135   2        }
- 136   1      }
- 137          void time_handleHook(void)
- 138          {
- 139   1        os_uint8_t ti = 0;
- 140   1      
- 141   1          // 在这里处理遍历延时
- 142   1        for(ti = 0; ti<max_task; ti++)
- 143   1        {
- 144   2          if(tcb_list[ti].os_status_type != OS_BLOCKED)
- 145   2          {
- 146   3            continue;
- 147   3          }
- 148   2          // 设置延时滴答数
- 149   2          if((tcb_list[ti].delay_tick - 1) == 0)
- 150   2          {
- 151   3            tcb_list[ti].delay_tick = 0;
- 152   3            // 将任务设置为阻塞态
- 153   3            tcb_list[ti].os_status_type = OS_READY;
- 154   3            continue;
- 155   3          }
- 156   2          tcb_list[ti].delay_tick--;
- 157   2        }
- 158   1      }
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 4   
+ 115   1              task_id = 0;
+ 116   1              SP = tcb_list[task_id].sp;
+ 117   1              
+ 118   1              // 出栈
+ 119   1              // 出栈
+ 120   1              
+ 121   1              EA = 1;//开中断
+ 122   1              return;
+ 123   1      }
+ 124          void Delay500ms(void)   //@11.0592MHz
+ 125          {
+ 126   1              unsigned char data i, j, k;
+ 127   1      
+ 128   1              _nop_();
+ 129   1              _nop_();
+ 130   1              i = 22;
+ 131   1              j = 3;
+ 132   1              k = 227;
+ 133   1              do
+ 134   1              {
+ 135   2                      do
+ 136   2                      {
+ 137   3                              while (--k);
+ 138   3                      } while (--j);
+ 139   2              } while (--i);
+ 140   1      }
+ 141          
+ 142          // 任务延时函数
+ 143          void os_delay(os_uint32_t tasks)
+ 144          {       
+ 145   1              tasks = tasks;
+ 146   1              // 设置延时滴答数
+ 147   1              tcb_list[task_id].delay_tick     =      tasks;
+ 148   1              // 将任务设置为阻塞态
+ 149   1              tcb_list[task_id].os_status_type =      OS_BLOCKED;
+ 150   1              // 只要任务延时了，就马上切换出去
+ 151   1              OSCtxSw();
+ 152   1      
+ 153   1      }
+ 154          // 空闲函数
+ 155          void os_idle_task(void)
+ 156          {
+ 157   1              while(1)
+ 158   1              {
+ 159   2                      OSCtxSw();
+ 160   2              }
+ 161   1      }
+ 162          void time_handleHook(void)
+ 163          {
+ 164   1              os_uint8_t ti = 0;
+ 165   1      
+ 166   1                      // 在这里处理遍历延时
+ 167   1              for(ti = 0; ti<max_task; ti++)
+ 168   1              {
+ 169   2                      if(tcb_list[ti].os_status_type != OS_BLOCKED)
+ 170   2                      {
+ 171   3                              continue;
+ 172   3                      }
+ 173   2                      // 设置延时滴答数
+ 174   2                      if((tcb_list[ti].delay_tick - 1) == 0)
+ 175   2                      {
+ 176   3                              tcb_list[ti].delay_tick = 0;
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 4   
+
+ 177   3                              // 将任务设置为阻塞态
+ 178   3                              tcb_list[ti].os_status_type = OS_READY;
+ 179   3                              continue;
+ 180   3                      }
+ 181   2                      tcb_list[ti].delay_tick--;
+ 182   2              }
+ 183   1              
+ 184   1      }
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -181,95 +210,86 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 45
                                            ; SOURCE LINE # 47
 0000 C2AF              CLR     EA
-                                           ; SOURCE LINE # 48
-0002 C2AF              CLR     EA
-                                           ; SOURCE LINE # 49
-0004 C2AF              CLR     EA
-                                           ; SOURCE LINE # 50
-0006 120000      E     LCALL   push_all_
-                                           ; SOURCE LINE # 51
-0009 E500        R     MOV     A,task_id
-000B 75F006            MOV     B,#06H
-000E A4                MUL     AB
-000F 2400        R     ADD     A,#LOW tcb_list
-0011 F8                MOV     R0,A
-0012 A681              MOV     @R0,SP
-                                           ; SOURCE LINE # 54
-0014 E4                CLR     A
-0015 F500        R     MOV     ost_i,A
-0017         ?C0001:
-0017 E500        R     MOV     A,ost_i
-0019 C3                CLR     C
-001A 9500        R     SUBB    A,max_task
-001C 5015              JNC     ?C0002
-                                           ; SOURCE LINE # 55
-                                           ; SOURCE LINE # 56
-001E E500        R     MOV     A,ost_i
-0020 75F006            MOV     B,#06H
-0023 A4                MUL     AB
-0024 2400        R     ADD     A,#LOW tcb_list+05H
-0026 F8                MOV     R0,A
-0027 E6                MOV     A,@R0
-0028 6401              XRL     A,#01H
-002A 7003              JNZ     ?C0003
-                                           ; SOURCE LINE # 57
-                                           ; SOURCE LINE # 58
-002C 850000      R     MOV     task_id,ost_i
-                                           ; SOURCE LINE # 59
-                                           ; SOURCE LINE # 61
+                                           ; SOURCE LINE # 60
+0002 E500        R     MOV     A,task_id
+0004 75F006            MOV     B,#06H
+0007 A4                MUL     AB
+0008 2400        R     ADD     A,#LOW tcb_list
+000A F8                MOV     R0,A
+000B A681              MOV     @R0,SP
                                            ; SOURCE LINE # 62
-002F         ?C0003:
-002F 0500        R     INC     ost_i
-0031 80E4              SJMP    ?C0001
-0033         ?C0002:
+000D E4                CLR     A
+000E F500        R     MOV     ost_i,A
+0010         ?C0001:
+0010 E500        R     MOV     A,ost_i
+0012 C3                CLR     C
+0013 9500        R     SUBB    A,max_task
+0015 5014              JNC     ?C0002
                                            ; SOURCE LINE # 63
-0033 E500        R     MOV     A,task_id
-0035 B50003      R     CJNE    A,max_task,?C0005
                                            ; SOURCE LINE # 64
+0017 E500        R     MOV     A,ost_i
+0019 75F006            MOV     B,#06H
+001C A4                MUL     AB
+001D 2400        R     ADD     A,#LOW tcb_list+05H
+001F F8                MOV     R0,A
+0020 E6                MOV     A,@R0
+0021 B40103            CJNE    A,#01H,?C0003
                                            ; SOURCE LINE # 65
-0038 E4                CLR     A
-0039 F500        R     MOV     task_id,A
                                            ; SOURCE LINE # 66
-003B         ?C0005:
-                                           ; SOURCE LINE # 68
-003B E500        R     MOV     A,task_id
-003D 75F006            MOV     B,#06H
-0040 A4                MUL     AB
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 5   
-
-0041 2400        R     ADD     A,#LOW tcb_list
-0043 F8                MOV     R0,A
-0044 E6                MOV     A,@R0
-0045 F581              MOV     SP,A
+0024 850000      R     MOV     task_id,ost_i
+                                           ; SOURCE LINE # 67
                                            ; SOURCE LINE # 69
-0047 120000      E     LCALL   pop_all_
                                            ; SOURCE LINE # 70
-004A D2AF              SETB    EA
+0027         ?C0003:
+0027 0500        R     INC     ost_i
+0029 80E5              SJMP    ?C0001
+002B         ?C0002:
                                            ; SOURCE LINE # 71
-004C 22                RET     
+002B E500        R     MOV     A,task_id
+002D B50003      R     CJNE    A,max_task,?C0005
+                                           ; SOURCE LINE # 72
+                                           ; SOURCE LINE # 73
+0030 E4                CLR     A
+0031 F500        R     MOV     task_id,A
+                                           ; SOURCE LINE # 74
+0033         ?C0005:
+                                           ; SOURCE LINE # 75
+0033 E500        R     MOV     A,task_id
+0035 75F006            MOV     B,#06H
+0038 A4                MUL     AB
+0039 2400        R     ADD     A,#LOW tcb_list
+003B F8                MOV     R0,A
+003C E6                MOV     A,@R0
+003D F581              MOV     SP,A
+                                           ; SOURCE LINE # 84
+003F D2AF              SETB    EA
+                                           ; SOURCE LINE # 85
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 6   
+
+0041 22                RET     
              ; FUNCTION OSCtxSw (END)
 
              ; FUNCTION _os_task_create (BEGIN)
-                                           ; SOURCE LINE # 73
+                                           ; SOURCE LINE # 87
 0000 8B00        R     MOV     task,R3
 0002 8A00        R     MOV     task+01H,R2
 0004 8900        R     MOV     task+02H,R1
-                                           ; SOURCE LINE # 74
-                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 88
+                                           ; SOURCE LINE # 90
 0006 AF01              MOV     R7,AR1
 0008 EF                MOV     A,R7
 0009 AB00        R     MOV     R3,tstack
 000B AA00        R     MOV     R2,tstack+01H
 000D A900        R     MOV     R1,tstack+02H
 000F 120000      E     LCALL   ?C?CSTPTR
-                                           ; SOURCE LINE # 77
+                                           ; SOURCE LINE # 91
 0012 E500        R     MOV     A,task+01H
 0014 AB00        R     MOV     R3,tstack
 0016 AA00        R     MOV     R2,tstack+01H
 0018 A900        R     MOV     R1,tstack+02H
 001A 900001            MOV     DPTR,#01H
 001D 120000      E     LCALL   ?C?CSTOPTR
-                                           ; SOURCE LINE # 79
+                                           ; SOURCE LINE # 96
 0020 E9                MOV     A,R1
 0021 2401              ADD     A,#01H
 0023 F9                MOV     R1,A
@@ -282,27 +302,25 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002D 2400        R     ADD     A,#LOW tcb_list
 002F F8                MOV     R0,A
 0030 A601              MOV     @R0,AR1
-                                           ; SOURCE LINE # 80
+                                           ; SOURCE LINE # 97
 0032 EE                MOV     A,R6
 0033 75F006            MOV     B,#06H
 0036 A4                MUL     AB
 0037 2400        R     ADD     A,#LOW tcb_list+05H
 0039 F8                MOV     R0,A
 003A 7601              MOV     @R0,#01H
-                                           ; SOURCE LINE # 82
+                                           ; SOURCE LINE # 106
 003C 0500        R     INC     max_task
-                                           ; SOURCE LINE # 83
+                                           ; SOURCE LINE # 107
 003E 22                RET     
              ; FUNCTION _os_task_create (END)
 
              ; FUNCTION os_start (BEGIN)
-                                           ; SOURCE LINE # 86
-                                           ; SOURCE LINE # 87
-                                           ; SOURCE LINE # 88
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 6   
-
+                                           ; SOURCE LINE # 110
+                                           ; SOURCE LINE # 111
+                                           ; SOURCE LINE # 112
 0000 C2AF              CLR     EA
-                                           ; SOURCE LINE # 90
+                                           ; SOURCE LINE # 114
 0002 750000      R     MOV     ?_os_task_create?BYTE+03H,#00H
 0005 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_idle_stack
 0008 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_idle_stack
@@ -310,13 +328,15 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 000C F500        R     MOV     ?_os_task_create?BYTE+06H,A
 000E F500        R     MOV     ?_os_task_create?BYTE+07H,A
 0010 7BFF              MOV     R3,#0FFH
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 7   
+
 0012 7A00        R     MOV     R2,#HIGH os_idle_task
 0014 7900        R     MOV     R1,#LOW os_idle_task
 0016 120000      R     LCALL   _os_task_create
-                                           ; SOURCE LINE # 92
+                                           ; SOURCE LINE # 115
 0019 E4                CLR     A
 001A F500        R     MOV     task_id,A
-                                           ; SOURCE LINE # 93
+                                           ; SOURCE LINE # 116
 001C E500        R     MOV     A,task_id
 001E 75F006            MOV     B,#06H
 0021 A4                MUL     AB
@@ -324,72 +344,85 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0024 F8                MOV     R0,A
 0025 E6                MOV     A,@R0
 0026 F581              MOV     SP,A
-                                           ; SOURCE LINE # 94
-0028 120000      E     LCALL   pop_all_
-                                           ; SOURCE LINE # 95
-002B D2AF              SETB    EA
-                                           ; SOURCE LINE # 97
-002D 22                RET     
+                                           ; SOURCE LINE # 121
+0028 D2AF              SETB    EA
+                                           ; SOURCE LINE # 123
+002A 22                RET     
              ; FUNCTION os_start (END)
 
              ; FUNCTION Delay500ms (BEGIN)
-                                           ; SOURCE LINE # 98
-                                           ; SOURCE LINE # 99
-                                           ; SOURCE LINE # 102
+                                           ; SOURCE LINE # 124
+                                           ; SOURCE LINE # 125
+                                           ; SOURCE LINE # 128
 0000 00                NOP     
-                                           ; SOURCE LINE # 103
+                                           ; SOURCE LINE # 129
 0001 00                NOP     
-                                           ; SOURCE LINE # 104
+                                           ; SOURCE LINE # 130
 ;---- Variable 'i' assigned to Register 'R7' ----
 0002 7F16              MOV     R7,#016H
-                                           ; SOURCE LINE # 105
+                                           ; SOURCE LINE # 131
 ;---- Variable 'j' assigned to Register 'R6' ----
 0004 7E03              MOV     R6,#03H
-                                           ; SOURCE LINE # 106
+                                           ; SOURCE LINE # 132
 ;---- Variable 'k' assigned to Register 'R5' ----
 0006 7DE3              MOV     R5,#0E3H
-                                           ; SOURCE LINE # 108
-                                           ; SOURCE LINE # 110
+                                           ; SOURCE LINE # 134
+                                           ; SOURCE LINE # 136
 0008         ?C0015:
-                                           ; SOURCE LINE # 111
+                                           ; SOURCE LINE # 137
 0008 DDFE              DJNZ    R5,?C0015
-                                           ; SOURCE LINE # 112
+                                           ; SOURCE LINE # 138
 000A DEFC              DJNZ    R6,?C0015
-                                           ; SOURCE LINE # 113
+                                           ; SOURCE LINE # 139
 000C DFFA              DJNZ    R7,?C0015
-                                           ; SOURCE LINE # 114
+                                           ; SOURCE LINE # 140
 000E 22                RET     
              ; FUNCTION Delay500ms (END)
 
              ; FUNCTION _os_delay (BEGIN)
-                                           ; SOURCE LINE # 117
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 7   
+                                           ; SOURCE LINE # 143
+;---- Variable 'tasks' assigned to Register 'R4/R5/R6/R7' ----
+                                           ; SOURCE LINE # 144
+                                           ; SOURCE LINE # 145
+                                           ; SOURCE LINE # 147
+0000 E500        R     MOV     A,task_id
+0002 75F006            MOV     B,#06H
+0005 A4                MUL     AB
+0006 2400        R     ADD     A,#LOW tcb_list+01H
+0008 F8                MOV     R0,A
+0009 120000      E     LCALL   ?C?LSTIDATA
+                                           ; SOURCE LINE # 149
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 8   
 
-                                           ; SOURCE LINE # 118
-                                           ; SOURCE LINE # 119
-                                           ; SOURCE LINE # 127
-0000 020000      R     LJMP    Delay500ms
+000C E500        R     MOV     A,task_id
+000E 75F006            MOV     B,#06H
+0011 A4                MUL     AB
+0012 2400        R     ADD     A,#LOW tcb_list+05H
+0014 F8                MOV     R0,A
+0015 7603              MOV     @R0,#03H
+                                           ; SOURCE LINE # 151
+0017 020000      R     LJMP    OSCtxSw
              ; FUNCTION _os_delay (END)
 
              ; FUNCTION os_idle_task (BEGIN)
-                                           ; SOURCE LINE # 130
-                                           ; SOURCE LINE # 131
+                                           ; SOURCE LINE # 155
+                                           ; SOURCE LINE # 156
 0000         ?C0019:
-                                           ; SOURCE LINE # 132
-                                           ; SOURCE LINE # 133
-                                           ; SOURCE LINE # 134
+                                           ; SOURCE LINE # 157
+                                           ; SOURCE LINE # 158
+                                           ; SOURCE LINE # 159
 0000 120000      R     LCALL   OSCtxSw
-                                           ; SOURCE LINE # 135
+                                           ; SOURCE LINE # 160
 0003 80FB              SJMP    ?C0019
              ; FUNCTION os_idle_task (END)
 
              ; FUNCTION time_handleHook (BEGIN)
-                                           ; SOURCE LINE # 137
-                                           ; SOURCE LINE # 138
-                                           ; SOURCE LINE # 139
+                                           ; SOURCE LINE # 162
+                                           ; SOURCE LINE # 163
+                                           ; SOURCE LINE # 164
 0000 E4                CLR     A
 0001 F500        R     MOV     ti,A
-                                           ; SOURCE LINE # 142
+                                           ; SOURCE LINE # 167
 0003 F500        R     MOV     ti,A
 0005         ?C0022:
 0005 E500        R     MOV     A,ti
@@ -397,8 +430,8 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0008 9500        R     SUBB    A,max_task
 000A 4003              JC      $ + 5H
 000C 020000      R     LJMP    ?C0027
-                                           ; SOURCE LINE # 143
-                                           ; SOURCE LINE # 144
+                                           ; SOURCE LINE # 168
+                                           ; SOURCE LINE # 169
 000F E500        R     MOV     A,ti
 0011 75F006            MOV     B,#06H
 0014 A4                MUL     AB
@@ -407,10 +440,10 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0018 E6                MOV     A,@R0
 0019 6403              XRL     A,#03H
 001B 706C              JNZ     ?C0024
-                                           ; SOURCE LINE # 145
-                                           ; SOURCE LINE # 146
-                                           ; SOURCE LINE # 147
-                                           ; SOURCE LINE # 149
+                                           ; SOURCE LINE # 170
+                                           ; SOURCE LINE # 171
+                                           ; SOURCE LINE # 172
+                                           ; SOURCE LINE # 174
 001D E500        R     MOV     A,ti
 001F 75F006            MOV     B,#06H
 0022 A4                MUL     AB
@@ -423,12 +456,12 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002D EE                MOV     A,R6
 002E 34FF              ADDC    A,#0FFH
 0030 FE                MOV     R6,A
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 9   
+
 0031 ED                MOV     A,R5
 0032 34FF              ADDC    A,#0FFH
 0034 FD                MOV     R5,A
 0035 EC                MOV     A,R4
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 8   
-
 0036 34FF              ADDC    A,#0FFH
 0038 FC                MOV     R4,A
 0039 E4                CLR     A
@@ -439,8 +472,8 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 003E C3                CLR     C
 003F 120000      E     LCALL   ?C?ULCMP
 0042 701D              JNZ     ?C0026
-                                           ; SOURCE LINE # 150
-                                           ; SOURCE LINE # 151
+                                           ; SOURCE LINE # 175
+                                           ; SOURCE LINE # 176
 0044 E500        R     MOV     A,ti
 0046 75F006            MOV     B,#06H
 0049 A4                MUL     AB
@@ -451,18 +484,18 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0051 00                DB      00H
 0052 00                DB      00H
 0053 00                DB      00H
-                                           ; SOURCE LINE # 153
+                                           ; SOURCE LINE # 178
 0054 E500        R     MOV     A,ti
 0056 75F006            MOV     B,#06H
 0059 A4                MUL     AB
 005A 2400        R     ADD     A,#LOW tcb_list+05H
 005C F8                MOV     R0,A
 005D 7601              MOV     @R0,#01H
-                                           ; SOURCE LINE # 154
+                                           ; SOURCE LINE # 179
 005F 8028              SJMP    ?C0024
-                                           ; SOURCE LINE # 155
+                                           ; SOURCE LINE # 180
 0061         ?C0026:
-                                           ; SOURCE LINE # 156
+                                           ; SOURCE LINE # 181
 0061 E500        R     MOV     A,ti
 0063 75F006            MOV     B,#06H
 0066 A4                MUL     AB
@@ -487,13 +520,13 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0083 2400        R     ADD     A,#LOW tcb_list+01H
 0085 F8                MOV     R0,A
 0086 120000      E     LCALL   ?C?LSTIDATA
-                                           ; SOURCE LINE # 157
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 11:16:05 PAGE 10  
+
+                                           ; SOURCE LINE # 182
 0089         ?C0024:
 0089 0500        R     INC     ti
 008B 020000      R     LJMP    ?C0022
-C51 COMPILER V9.59.0.0   OS_TASK                                                           12/27/2023 23:07:06 PAGE 9   
-
-                                           ; SOURCE LINE # 158
+                                           ; SOURCE LINE # 184
 008E         ?C0027:
 008E 22                RET     
              ; FUNCTION time_handleHook (END)
@@ -501,12 +534,12 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    352    ----
+   CODE SIZE        =    361    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      3       9
-   IDATA SIZE       =     50    ----
+   IDATA SIZE       =     80    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 

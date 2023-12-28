@@ -2,20 +2,20 @@
 void push_all_(void)
 {
 
-
-__asm PUSH	ACC   ;ѹջ
-__asm PUSH	B
-__asm PUSH	DPH
-__asm PUSH	DPL
-__asm PUSH	PSW
-__asm PUSH	AR0
-__asm PUSH	AR1
-__asm PUSH	AR2
-__asm PUSH	AR3
-__asm PUSH	AR4
-__asm PUSH	AR5
-__asm PUSH	AR6
-__asm PUSH	AR7	
+	__asm PUSH	ACC   ;ѹջ
+	__asm PUSH	B
+	__asm PUSH	DPH
+	__asm PUSH	DPL
+	__asm PUSH	PSW
+	__asm PUSH	AR0
+	__asm PUSH	AR1
+	__asm PUSH	AR2
+	__asm PUSH	AR3
+	__asm PUSH	AR4
+	__asm PUSH	AR5
+	__asm PUSH	AR6
+	__asm PUSH	AR7	
+	
 }
 void pop_all_(void)
 {

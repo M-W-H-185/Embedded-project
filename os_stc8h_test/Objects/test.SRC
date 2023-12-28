@@ -1,6 +1,6 @@
 ; .\Objects\test.SRC generated from: test.c
 ; COMPILER INVOKED BY:
-;        D:\Keil_v5_C51\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\test.lst) TABS(2) SRC(.\Objects\test.SRC)
+;        C:\Keil_v5\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\test.lst) SRC(.\Objects\test.SRC)
 
 
 NAME	TEST
@@ -19,33 +19,33 @@ push_all_:
 ; {
 			; SOURCE LINE # 3
 ; 
-; 
-; __asm PUSH	ACC   ;ѹջ
+; 	__asm PUSH	ACC   ;ѹջ
 	 PUSH	ACC   ;ѹջ
-; __asm PUSH	B
+; 	__asm PUSH	B
 	 PUSH	B
-; __asm PUSH	DPH
+; 	__asm PUSH	DPH
 	 PUSH	DPH
-; __asm PUSH	DPL
+; 	__asm PUSH	DPL
 	 PUSH	DPL
-; __asm PUSH	PSW
+; 	__asm PUSH	PSW
 	 PUSH	PSW
-; __asm PUSH	AR0
+; 	__asm PUSH	AR0
 	 PUSH	AR0
-; __asm PUSH	AR1
+; 	__asm PUSH	AR1
 	 PUSH	AR1
-; __asm PUSH	AR2
+; 	__asm PUSH	AR2
 	 PUSH	AR2
-; __asm PUSH	AR3
+; 	__asm PUSH	AR3
 	 PUSH	AR3
-; __asm PUSH	AR4
+; 	__asm PUSH	AR4
 	 PUSH	AR4
-; __asm PUSH	AR5
+; 	__asm PUSH	AR5
 	 PUSH	AR5
-; __asm PUSH	AR6
+; 	__asm PUSH	AR6
 	 PUSH	AR6
-; __asm PUSH	AR7	
+; 	__asm PUSH	AR7	
 	 PUSH	AR7	
+; 	
 ; }
 			; SOURCE LINE # 19
 	RET  	

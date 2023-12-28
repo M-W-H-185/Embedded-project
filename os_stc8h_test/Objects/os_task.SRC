@@ -1,6 +1,6 @@
 ; .\Objects\os_task.SRC generated from: XmRTOS\os_task.c
 ; COMPILER INVOKED BY:
-;        D:\Keil_v5_C51\C51\BIN\C51.EXE XmRTOS\os_task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_task.lst) TABS(2) SRC(.\Objects\os_task.SRC)
+;        C:\Keil_v5\C51\BIN\C51.EXE XmRTOS\os_task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_task.lst) SRC(.\Objects\os_task.SRC)
 
 $NOMOD51
 
@@ -254,10 +254,11 @@ P0M0	DATA	094H
 ?PR?time_handleHook?OS_TASK              SEGMENT CODE 
 ?DT?time_handleHook?OS_TASK              SEGMENT DATA OVERLAYABLE 
 ?C_INITSEG           SEGMENT CODE 
-?ID?OS_TASK          SEGMENT IDATA 
 ?DT?OS_TASK          SEGMENT DATA 
+?ID?OS_TASK          SEGMENT IDATA 
+	EXTRN	CODE (push_all_)
+	EXTRN	CODE (pop_all_)
 	EXTRN	CODE (?C?CSTPTR)
-	EXTRN	CODE (?C?CSTOPTR)
 	EXTRN	CODE (?C?LLDIDATA)
 	EXTRN	CODE (?C?ULCMP)
 	EXTRN	CODE (?C?LSTKIDATA)
@@ -266,6 +267,7 @@ P0M0	DATA	094H
 	PUBLIC	max_task
 	PUBLIC	tcb_list
 	PUBLIC	task_idle_stack
+	PUBLIC	ost_i
 	PUBLIC	time_handleHook
 	PUBLIC	os_idle_task
 	PUBLIC	_os_delay
@@ -277,23 +279,24 @@ P0M0	DATA	094H
 
 	RSEG  ?DT?time_handleHook?OS_TASK
 ?time_handleHook?BYTE:
-         ti?648:   DS   1
+         ti?647:   DS   1
 
 	RSEG  ?DT?_os_task_create?OS_TASK
 ?_os_task_create?BYTE:
-       task?141:   DS   3
+       task?140:   DS   3
 	ORG  3
-     tstack?142:   DS   3
+     tstack?141:   DS   3
 	ORG  6
-        tid?143:   DS   2
-
-	RSEG  ?ID?OS_TASK
-task_idle_stack:   DS   20
-       tcb_list:   DS   30
+        tid?142:   DS   2
 
 	RSEG  ?DT?OS_TASK
+          ost_i:   DS   1
        max_task:   DS   1
         task_id:   DS   1
+
+	RSEG  ?ID?OS_TASK
+task_idle_stack:   DS   50
+       tcb_list:   DS   40
 
 	RSEG  ?C_INITSEG
 	DB	001H
@@ -304,11 +307,17 @@ task_idle_stack:   DS   20
 	DB	max_task
 	DB	000H
 
+	DB	001H
+	DB	ost_i
+	DB	000H
+
 ; #include "os_task.h"
 ; 
 ; #include "stc8g.h"
 ; #include "intrins.h"
 ; #include "stdio.h"
+; extern void push_all_(void);
+; extern void pop_all_(void);
 ; enum OS_TASK_STATUS_TYPE
 ; {
 ; 	OS_READY      = 1,	// 就绪态
@@ -318,13 +327,13 @@ task_idle_stack:   DS   20
 ; 
 ; };
 ; 
-; 	// 任务控制块
-; 	typedef struct os_tcb_t
-; 	{
-; 		os_uint8_t 			sp;					// sp 堆栈指针存储
-; 		os_uint32_t 		delay_tick;			// 延时滴答数
-; 		os_uint8_t 			os_status_type;		// 任务状态
-; 	};
+; // 任务控制块
+; typedef struct os_tcb_t
+; {
+; 	os_uint8_t 			*stk;				
+; 	os_uint32_t 		delay_tick;			// 延时滴答数
+; 	os_uint8_t 			os_status_type;		// 任务状态
+; };
 ; 
 ; os_uint8_t data task_id = 0;    /*当前活动任务号*/
 ; os_uint8_t max_task = 0;
@@ -343,142 +352,89 @@ task_idle_stack:   DS   20
 ; 
 ; //}
 ; // 任务切换函数
+; 	os_uint8_t  ost_i = 0;
+; 
 ; void OSCtxSw()
 
 	RSEG  ?PR?OSCtxSw?OS_TASK
 OSCtxSw:
 	USING	0
-			; SOURCE LINE # 40
+			; SOURCE LINE # 44
 ; {
-			; SOURCE LINE # 41
-; 	os_uint8_t  ost_i = 0;
-			; SOURCE LINE # 42
-;---- Variable 'ost_i?040' assigned to Register 'R7' ----
-	 PUSH	ACC   ;压栈
-; 		__asm PUSH	ACC   ;压栈
-; 	__asm PUSH	B
-	 PUSH	B
-; 	__asm PUSH	DPH
-	 PUSH	DPH
-; 	__asm PUSH	DPL
-	 PUSH	DPL
-; 	__asm PUSH	PSW
-	 PUSH	PSW
-; 	__asm PUSH	AR0
-	 PUSH	AR0
-; 	__asm PUSH	AR1
-	 PUSH	AR1
-; 	__asm PUSH	AR2
-	 PUSH	AR2
-; 	__asm PUSH	AR3
-	 PUSH	AR3
-; 	__asm PUSH	AR4
-	 PUSH	AR4
-; 	__asm PUSH	AR5
-	 PUSH	AR5
-; 	__asm PUSH	AR6
-	 PUSH	AR6
-; 	__asm PUSH	AR7	
-	 PUSH	AR7	
-; 	tcb_list[task_id].sp = SP;
-			; SOURCE LINE # 56
-	MOV  	A,task_id
-	MOV  	B,#06H
-	MUL  	AB
-	ADD  	A,#LOW (tcb_list)
-	MOV  	R0,A
-	MOV  	@R0,SP
+			; SOURCE LINE # 45
 ; 
+; 	EA = 0;//关中断
+			; SOURCE LINE # 47
+	CLR  	EA
+; 	EA = 0;//关中断
+			; SOURCE LINE # 48
+	CLR  	EA
+; 	EA = 0;//关中断
+			; SOURCE LINE # 49
+	CLR  	EA
+; 	push_all_();
+			; SOURCE LINE # 50
+	LCALL	push_all_
 ; // 找出就绪态的一个id
 ; 	for(ost_i = 0; ost_i < max_task; ost_i++)
-			; SOURCE LINE # 59
+			; SOURCE LINE # 52
 	CLR  	A
-	MOV  	R7,A
+	MOV  	ost_i,A
 ?C0001:
-	MOV  	A,R7
+	MOV  	A,ost_i
 	CLR  	C
 	SUBB 	A,max_task
 	JNC  	?C0002
 ; 	{
-			; SOURCE LINE # 60
+			; SOURCE LINE # 53
 ; 		if(tcb_list[ost_i].os_status_type == OS_READY)
-			; SOURCE LINE # 61
-	MOV  	A,R7
-	MOV  	B,#06H
+			; SOURCE LINE # 54
+	MOV  	A,ost_i
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+05H)
+	ADD  	A,#LOW (tcb_list+07H)
 	MOV  	R0,A
 	MOV  	A,@R0
-	XRL  	A,#01H
-	JNZ  	?C0003
+	CJNE 	A,#01H,?C0003
 ; 		{
-			; SOURCE LINE # 62
+			; SOURCE LINE # 55
 ; 			task_id = ost_i;
-			; SOURCE LINE # 63
-	MOV  	task_id,R7
+			; SOURCE LINE # 56
+	MOV  	task_id,ost_i
 ; 			continue;
-			; SOURCE LINE # 64
+			; SOURCE LINE # 57
 ; 
 ; 		}
-			; SOURCE LINE # 66
+			; SOURCE LINE # 59
 ; 	}
-			; SOURCE LINE # 67
+			; SOURCE LINE # 60
 ?C0003:
-	INC  	R7
+	INC  	ost_i
 	SJMP 	?C0001
 ?C0002:
 ; 	if(task_id == max_task)
-			; SOURCE LINE # 68
+			; SOURCE LINE # 61
 	MOV  	A,task_id
 	CJNE 	A,max_task,?C0005
 ; 	{
-			; SOURCE LINE # 69
+			; SOURCE LINE # 62
 ; 		task_id = 0;
-			; SOURCE LINE # 70
+			; SOURCE LINE # 63
 	CLR  	A
 	MOV  	task_id,A
 ; 	}
-			; SOURCE LINE # 71
+			; SOURCE LINE # 64
 ?C0005:
 ; 	
-;     SP = tcb_list[task_id].sp;
-			; SOURCE LINE # 73
-	MOV  	A,task_id
-	MOV  	B,#06H
-	MUL  	AB
-	ADD  	A,#LOW (tcb_list)
-	MOV  	R0,A
-	MOV  	A,@R0
-	MOV  	SP,A
-; 		__asm POP	AR7	;出栈
-	 POP	AR7	;出栈
-; 	__asm POP	AR6
-	 POP	AR6
-; 	__asm POP	AR5
-	 POP	AR5
-; 	__asm POP	AR4
-	 POP	AR4
-; 	__asm POP	AR3
-	 POP	AR3
-; 	__asm POP	AR2
-	 POP	AR2
-; 	__asm POP	AR1
-	 POP	AR1
-; 	__asm POP	AR0
-	 POP	AR0
-; 	__asm POP	PSW
-	 POP	PSW
-; 	__asm POP	DPL
-	 POP	DPL
-; 	__asm POP	DPH
-	 POP	DPH
-; 	__asm POP	B
-	 POP	B
-; 	__asm POP	ACC		
-	 POP	ACC		
+; pop_all_();
+			; SOURCE LINE # 66
+	LCALL	pop_all_
 ; 	
+; 	EA = 1;//开中断
+			; SOURCE LINE # 68
+	SETB 	EA
 ; }
-			; SOURCE LINE # 88
+			; SOURCE LINE # 69
 	RET  	
 ; END OF OSCtxSw
 
@@ -488,58 +444,242 @@ OSCtxSw:
 	RSEG  ?PR?_os_task_create?OS_TASK
 _os_task_create:
 	USING	0
-			; SOURCE LINE # 90
-	MOV  	task?141,R3
-	MOV  	task?141+01H,R2
-	MOV  	task?141+02H,R1
+			; SOURCE LINE # 71
+	MOV  	task?140,R3
+	MOV  	task?140+01H,R2
+	MOV  	task?140+02H,R1
 ; {
-			; SOURCE LINE # 91
+			; SOURCE LINE # 72
 ; 
-; 	tstack[0] = (unsigned int)task & 0xff;
-			; SOURCE LINE # 93
-	MOV  	R7,AR1
+; 	tcb_list[tid].stk 				= tstack ;
+			; SOURCE LINE # 74
+	MOV  	R2,tstack?141+01H
+	MOV  	R1,tstack?141+02H
+	MOV  	R7,tid?142+01H
 	MOV  	A,R7
-	MOV  	R3,tstack?142
-	MOV  	R2,tstack?142+01H
-	MOV  	R1,tstack?142+02H
-	LCALL	?C?CSTPTR
-; 	tstack[1] = (unsigned int)task >> 8;
-			; SOURCE LINE # 94
-	MOV  	A,task?141+01H
-	MOV  	R3,tstack?142
-	MOV  	R2,tstack?142+01H
-	MOV  	R1,tstack?142+02H
-	MOV  	DPTR,#01H
-	LCALL	?C?CSTOPTR
-; 
-; 	tcb_list[tid].sp 				= tstack + 1;
-			; SOURCE LINE # 96
-	MOV  	A,R1
-	ADD  	A,#01H
-	MOV  	R1,A
-	CLR  	A
-	ADDC 	A,R2
-	MOV  	R6,tid?143+01H
-	MOV  	A,R6
-	MOV  	B,#06H
+	MOV  	B,#08H
 	MUL  	AB
 	ADD  	A,#LOW (tcb_list)
 	MOV  	R0,A
+	MOV  	@R0,tstack?141
+	INC  	R0
+	MOV  	@R0,AR2
+	INC  	R0
 	MOV  	@R0,AR1
 ; 	tcb_list[tid].os_status_type 	= OS_READY;
-			; SOURCE LINE # 97
-	MOV  	A,R6
-	MOV  	B,#06H
+			; SOURCE LINE # 75
+	MOV  	A,R7
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+05H)
+	ADD  	A,#LOW (tcb_list+07H)
 	MOV  	R0,A
 	MOV  	@R0,#01H
+; 	
+; 	*tstack++=15;						/* 任务堆栈长度 								*/
+			; SOURCE LINE # 77
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0028
+	INC  	tstack?141+01H
+?C0028:
+	DEC  	A
+	MOV  	R1,A
+	MOV  	A,#0FH
+	LCALL	?C?CSTPTR
+; 	*tstack++=(unsigned int)task & 0xFF;		/* 任务代码地址低8位 							*/
+			; SOURCE LINE # 78
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0029
+	INC  	tstack?141+01H
+?C0029:
+	DEC  	A
+	MOV  	R1,A
+	MOV  	A,task?140+02H
+	LCALL	?C?CSTPTR
+; 	*tstack++=(unsigned int)task >> 8;		/* 任务代码地址高8位 							*/
+			; SOURCE LINE # 79
+	MOV  	A,task?140+01H
+	MOV  	R7,A
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0030
+	INC  	tstack?141+01H
+?C0030:
+	DEC  	A
+	MOV  	R1,A
+	MOV  	A,R7
+	LCALL	?C?CSTPTR
+; 	/* 处理器是按特定的顺序将寄存器存入堆栈的，所以用户在将寄存器存入堆栈的时候也要依照这一顺序 */
+; 	*tstack++=0;					/* PSW 											*/
+			; SOURCE LINE # 81
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0031
+	INC  	tstack?141+01H
+?C0031:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* ACC 											*/
+			; SOURCE LINE # 82
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0032
+	INC  	tstack?141+01H
+?C0032:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* B 											*/
+			; SOURCE LINE # 83
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0033
+	INC  	tstack?141+01H
+?C0033:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* DPL 											*/
+			; SOURCE LINE # 84
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0034
+	INC  	tstack?141+01H
+?C0034:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* DPH 											*/
+			; SOURCE LINE # 85
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0035
+	INC  	tstack?141+01H
+?C0035:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R0 											*/
+			; SOURCE LINE # 86
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0036
+	INC  	tstack?141+01H
+?C0036:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R1 											*/
+			; SOURCE LINE # 87
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0037
+	INC  	tstack?141+01H
+?C0037:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R2 											*/
+			; SOURCE LINE # 88
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0038
+	INC  	tstack?141+01H
+?C0038:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R3 											*/	
+			; SOURCE LINE # 89
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0039
+	INC  	tstack?141+01H
+?C0039:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R4 											*/
+			; SOURCE LINE # 90
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0040
+	INC  	tstack?141+01H
+?C0040:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R5 											*/
+			; SOURCE LINE # 91
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0041
+	INC  	tstack?141+01H
+?C0041:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 	*tstack++=0;					/* R6 											*/
+			; SOURCE LINE # 92
+	MOV  	R3,tstack?141
+	INC  	tstack?141+02H
+	MOV  	A,tstack?141+02H
+	MOV  	R2,tstack?141+01H
+	JNZ  	?C0042
+	INC  	tstack?141+01H
+?C0042:
+	DEC  	A
+	MOV  	R1,A
+	CLR  	A
+	LCALL	?C?CSTPTR
+; 
 ; 
 ; 	max_task++;
-			; SOURCE LINE # 99
+			; SOURCE LINE # 95
 	INC  	max_task
 ; }
-			; SOURCE LINE # 100
+			; SOURCE LINE # 96
 	RET  	
 ; END OF _os_task_create
 
@@ -550,12 +690,15 @@ _os_task_create:
 	RSEG  ?PR?os_start?OS_TASK
 os_start:
 	USING	0
-			; SOURCE LINE # 103
+			; SOURCE LINE # 99
 ; {
-			; SOURCE LINE # 104
+			; SOURCE LINE # 100
+; 	EA = 0;//关中断
+			; SOURCE LINE # 101
+	CLR  	EA
 ; 	// 装载空闲任务
 ; 	os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
-			; SOURCE LINE # 106
+			; SOURCE LINE # 103
 	MOV  	?_os_task_create?BYTE+03H,#00H
 	MOV  	?_os_task_create?BYTE+04H,#HIGH (task_idle_stack)
 	MOV  	?_os_task_create?BYTE+05H,#LOW (task_idle_stack)
@@ -568,47 +711,17 @@ os_start:
 	LCALL	_os_task_create
 ; 
 ; 	task_id = 0;
-			; SOURCE LINE # 108
+			; SOURCE LINE # 105
 	CLR  	A
 	MOV  	task_id,A
-; 	SP = tcb_list[task_id].sp;
-			; SOURCE LINE # 109
-	MOV  	A,task_id
-	MOV  	B,#06H
-	MUL  	AB
-	ADD  	A,#LOW (tcb_list)
-	MOV  	R0,A
-	MOV  	A,@R0
-	MOV  	SP,A
-; 	__asm POP	AR7	;出栈
-	 POP	AR7	;出栈
-; 	__asm POP	AR6
-	 POP	AR6
-; 	__asm POP	AR5
-	 POP	AR5
-; 	__asm POP	AR4
-	 POP	AR4
-; 	__asm POP	AR3
-	 POP	AR3
-; 	__asm POP	AR2
-	 POP	AR2
-; 	__asm POP	AR1
-	 POP	AR1
-; 	__asm POP	AR0
-	 POP	AR0
-; 	__asm POP	PSW
-	 POP	PSW
-; 	__asm POP	DPL
-	 POP	DPL
-; 	__asm POP	DPH
-	 POP	DPH
-; 	__asm POP	B
-	 POP	B
-; 	__asm POP	ACC  
-	 POP	ACC  
+; 
+; 
+; 	EA = 1;//开中断
+			; SOURCE LINE # 108
+	SETB 	EA
 ; 	return;
 ; }
-			; SOURCE LINE # 124
+			; SOURCE LINE # 110
 	RET  	
 ; END OF os_start
 
@@ -617,47 +730,47 @@ os_start:
 	RSEG  ?PR?Delay500ms?OS_TASK
 Delay500ms:
 	USING	0
-			; SOURCE LINE # 125
+			; SOURCE LINE # 111
 ; {
-			; SOURCE LINE # 126
+			; SOURCE LINE # 112
 ; 	unsigned char data i, j, k;
 ; 
 ; 	_nop_();
-			; SOURCE LINE # 129
+			; SOURCE LINE # 115
 	NOP  	
 ; 	_nop_();
-			; SOURCE LINE # 130
+			; SOURCE LINE # 116
 	NOP  	
 ; 	i = 22;
-			; SOURCE LINE # 131
-;---- Variable 'i?344' assigned to Register 'R7' ----
+			; SOURCE LINE # 117
+;---- Variable 'i?343' assigned to Register 'R7' ----
 	MOV  	R7,#016H
 ; 	j = 3;
-			; SOURCE LINE # 132
-;---- Variable 'j?345' assigned to Register 'R6' ----
+			; SOURCE LINE # 118
+;---- Variable 'j?344' assigned to Register 'R6' ----
 	MOV  	R6,#03H
 ; 	k = 227;
-			; SOURCE LINE # 133
-;---- Variable 'k?346' assigned to Register 'R5' ----
+			; SOURCE LINE # 119
+;---- Variable 'k?345' assigned to Register 'R5' ----
 	MOV  	R5,#0E3H
 ; 	do
 ; 	{
-			; SOURCE LINE # 135
+			; SOURCE LINE # 121
 ; 		do
 ; 		{
-			; SOURCE LINE # 137
+			; SOURCE LINE # 123
 ?C0015:
 ; 			while (--k);
-			; SOURCE LINE # 138
+			; SOURCE LINE # 124
 	DJNZ 	R5,?C0015
 ; 		} while (--j);
-			; SOURCE LINE # 139
+			; SOURCE LINE # 125
 	DJNZ 	R6,?C0015
 ; 	} while (--i);
-			; SOURCE LINE # 140
+			; SOURCE LINE # 126
 	DJNZ 	R7,?C0015
 ; }
-			; SOURCE LINE # 141
+			; SOURCE LINE # 127
 	RET  	
 ; END OF Delay500ms
 
@@ -668,11 +781,11 @@ Delay500ms:
 	RSEG  ?PR?_os_delay?OS_TASK
 _os_delay:
 	USING	0
-			; SOURCE LINE # 144
+			; SOURCE LINE # 130
 ; {	
-			; SOURCE LINE # 145
+			; SOURCE LINE # 131
 ; 	tasks = tasks;
-			; SOURCE LINE # 146
+			; SOURCE LINE # 132
 ; //	// 设置延时滴答数
 ; //	tcb_list[task_id].delay_tick 	 = 	tasks;
 ; //	// 将任务设置为阻塞态
@@ -681,7 +794,7 @@ _os_delay:
 ; //	OSCtxSw();
 ; 	//	
 ; 	Delay500ms();
-			; SOURCE LINE # 154
+			; SOURCE LINE # 140
 	LJMP 	Delay500ms
 ; END OF _os_delay
 
@@ -692,19 +805,19 @@ _os_delay:
 	RSEG  ?PR?os_idle_task?OS_TASK
 os_idle_task:
 	USING	0
-			; SOURCE LINE # 157
+			; SOURCE LINE # 143
 ; {
-			; SOURCE LINE # 158
+			; SOURCE LINE # 144
 ?C0019:
 ; 	while(1)
-			; SOURCE LINE # 159
+			; SOURCE LINE # 145
 ; 	{
-			; SOURCE LINE # 160
+			; SOURCE LINE # 146
 ; 		OSCtxSw();
-			; SOURCE LINE # 161
+			; SOURCE LINE # 147
 	LCALL	OSCtxSw
 ; 	}
-			; SOURCE LINE # 162
+			; SOURCE LINE # 148
 	SJMP 	?C0019
 ; END OF os_idle_task
 
@@ -714,49 +827,49 @@ os_idle_task:
 	RSEG  ?PR?time_handleHook?OS_TASK
 time_handleHook:
 	USING	0
-			; SOURCE LINE # 164
+			; SOURCE LINE # 150
 ; {
-			; SOURCE LINE # 165
+			; SOURCE LINE # 151
 ; 	os_uint8_t ti = 0;
-			; SOURCE LINE # 166
+			; SOURCE LINE # 152
 	CLR  	A
-	MOV  	ti?648,A
+	MOV  	ti?647,A
 ; 
 ; 		// 在这里处理遍历延时
 ; 	for(ti = 0; ti<max_task; ti++)
-			; SOURCE LINE # 169
-	MOV  	ti?648,A
+			; SOURCE LINE # 155
+	MOV  	ti?647,A
 ?C0022:
-	MOV  	A,ti?648
+	MOV  	A,ti?647
 	CLR  	C
 	SUBB 	A,max_task
 	JC   	$ + 5H
 	LJMP 	?C0027
 ; 	{
-			; SOURCE LINE # 170
+			; SOURCE LINE # 156
 ; 		if(tcb_list[ti].os_status_type != OS_BLOCKED)
-			; SOURCE LINE # 171
-	MOV  	A,ti?648
-	MOV  	B,#06H
+			; SOURCE LINE # 157
+	MOV  	A,ti?647
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+05H)
+	ADD  	A,#LOW (tcb_list+07H)
 	MOV  	R0,A
 	MOV  	A,@R0
 	XRL  	A,#03H
 	JNZ  	?C0024
 ; 		{
-			; SOURCE LINE # 172
+			; SOURCE LINE # 158
 ; 			continue;
-			; SOURCE LINE # 173
+			; SOURCE LINE # 159
 ; 		}
-			; SOURCE LINE # 174
+			; SOURCE LINE # 160
 ; 		// 设置延时滴答数
 ; 		if((tcb_list[ti].delay_tick - 1) == 0)
-			; SOURCE LINE # 176
-	MOV  	A,ti?648
-	MOV  	B,#06H
+			; SOURCE LINE # 162
+	MOV  	A,ti?647
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+01H)
+	ADD  	A,#LOW (tcb_list+03H)
 	MOV  	R0,A
 	LCALL	?C?LLDIDATA
 	MOV  	A,R7
@@ -780,13 +893,13 @@ time_handleHook:
 	LCALL	?C?ULCMP
 	JNZ  	?C0026
 ; 		{
-			; SOURCE LINE # 177
+			; SOURCE LINE # 163
 ; 			tcb_list[ti].delay_tick = 0;
-			; SOURCE LINE # 178
-	MOV  	A,ti?648
-	MOV  	B,#06H
+			; SOURCE LINE # 164
+	MOV  	A,ti?647
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+01H)
+	ADD  	A,#LOW (tcb_list+03H)
 	MOV  	R0,A
 	LCALL	?C?LSTKIDATA
 	DB   	00H
@@ -795,25 +908,25 @@ time_handleHook:
 	DB   	00H
 ; 			// 将任务设置为阻塞态
 ; 			tcb_list[ti].os_status_type = OS_READY;
-			; SOURCE LINE # 180
-	MOV  	A,ti?648
-	MOV  	B,#06H
+			; SOURCE LINE # 166
+	MOV  	A,ti?647
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+05H)
+	ADD  	A,#LOW (tcb_list+07H)
 	MOV  	R0,A
 	MOV  	@R0,#01H
 ; 			continue;
-			; SOURCE LINE # 181
+			; SOURCE LINE # 167
 	SJMP 	?C0024
 ; 		}
-			; SOURCE LINE # 182
+			; SOURCE LINE # 168
 ?C0026:
 ; 		tcb_list[ti].delay_tick--;
-			; SOURCE LINE # 183
-	MOV  	A,ti?648
-	MOV  	B,#06H
+			; SOURCE LINE # 169
+	MOV  	A,ti?647
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+01H)
+	ADD  	A,#LOW (tcb_list+03H)
 	MOV  	R0,A
 	LCALL	?C?LLDIDATA
 	MOV  	A,R7
@@ -828,19 +941,19 @@ time_handleHook:
 	MOV  	A,R4
 	ADDC 	A,#0FFH
 	MOV  	R4,A
-	MOV  	A,ti?648
-	MOV  	B,#06H
+	MOV  	A,ti?647
+	MOV  	B,#08H
 	MUL  	AB
-	ADD  	A,#LOW (tcb_list+01H)
+	ADD  	A,#LOW (tcb_list+03H)
 	MOV  	R0,A
 	LCALL	?C?LSTIDATA
 ; 	}
-			; SOURCE LINE # 184
+			; SOURCE LINE # 170
 ?C0024:
-	INC  	ti?648
+	INC  	ti?647
 	LJMP 	?C0022
 ; }
-			; SOURCE LINE # 185
+			; SOURCE LINE # 171
 ?C0027:
 	RET  	
 ; END OF time_handleHook

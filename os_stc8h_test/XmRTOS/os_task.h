@@ -1,6 +1,6 @@
 
 #define MAX_TASKS 5       /*任务槽个数.必须和实际任务数一至*/
-#define MAX_TASK_DEP 20   /*最大栈深.最低不得少于2个,保守值为12*/
+#define MAX_TASK_DEP 50   /*最大栈深.最低不得少于2个,保守值为12*/
 typedef     unsigned char    os_uint8_t;	//  8 bits 
 
 typedef     unsigned int     os_uint16_t;	// 16 bits 

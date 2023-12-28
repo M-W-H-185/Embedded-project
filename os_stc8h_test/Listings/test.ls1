@@ -1,16 +1,16 @@
-A51 MACRO ASSEMBLER  TEST                                                                 12/27/2023 23:07:06 PAGE     1
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 10:54:40 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
 OBJECT MODULE PLACED IN .\Objects\test.OBJ
-ASSEMBLER INVOKED BY: D:\Keil_v5_C51\C51\BIN\A51.EXE .\Objects\test.src PR(.\Listings\test.ls1) EP DEBUG
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE .\Objects\test.src PR(.\Listings\test.ls1) EP DEBUG
 
 LOC  OBJ            LINE     SOURCE
 
                        1     ; .\Objects\test.SRC generated from: test.c
                        2     ; COMPILER INVOKED BY:
-                       3     ;        D:\Keil_v5_C51\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DE
-                             BUG OBJECTEXTEND CODE PRINT(.\Listings\test.lst) TABS(2) SRC(.\Objects\test.SRC)
+                       3     ;        C:\Keil_v5\C51\BIN\C51.EXE test.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG 
+                             OBJECTEXTEND CODE PRINT(.\Listings\test.lst) SRC(.\Objects\test.SRC)
                        4     
                        5     
                        6     NAME    TEST
@@ -29,33 +29,33 @@ LOC  OBJ            LINE     SOURCE
                       19     ; {
                       20                             ; SOURCE LINE # 3
                       21     ; 
-                      22     ; 
-                      23     ; __asm PUSH    ACC   ;ѹջ
-0000 C0E0             24              PUSH   ACC   ;ѹջ
-                      25     ; __asm PUSH    B
-0002 C0F0             26              PUSH   B
-                      27     ; __asm PUSH    DPH
-0004 C083             28              PUSH   DPH
-                      29     ; __asm PUSH    DPL
-0006 C082             30              PUSH   DPL
-                      31     ; __asm PUSH    PSW
-0008 C0D0             32              PUSH   PSW
-                      33     ; __asm PUSH    AR0
-000A C000             34              PUSH   AR0
-                      35     ; __asm PUSH    AR1
-000C C001             36              PUSH   AR1
-                      37     ; __asm PUSH    AR2
-000E C002             38              PUSH   AR2
-                      39     ; __asm PUSH    AR3
-0010 C003             40              PUSH   AR3
-                      41     ; __asm PUSH    AR4
-0012 C004             42              PUSH   AR4
-                      43     ; __asm PUSH    AR5
-0014 C005             44              PUSH   AR5
-                      45     ; __asm PUSH    AR6
-0016 C006             46              PUSH   AR6
-                      47     ; __asm PUSH    AR7     
-0018 C007             48              PUSH   AR7     
+                      22     ;       __asm PUSH      ACC   ;ѹջ
+0000 C0E0             23              PUSH   ACC   ;ѹջ
+                      24     ;       __asm PUSH      B
+0002 C0F0             25              PUSH   B
+                      26     ;       __asm PUSH      DPH
+0004 C083             27              PUSH   DPH
+                      28     ;       __asm PUSH      DPL
+0006 C082             29              PUSH   DPL
+                      30     ;       __asm PUSH      PSW
+0008 C0D0             31              PUSH   PSW
+                      32     ;       __asm PUSH      AR0
+000A C000             33              PUSH   AR0
+                      34     ;       __asm PUSH      AR1
+000C C001             35              PUSH   AR1
+                      36     ;       __asm PUSH      AR2
+000E C002             37              PUSH   AR2
+                      38     ;       __asm PUSH      AR3
+0010 C003             39              PUSH   AR3
+                      40     ;       __asm PUSH      AR4
+0012 C004             41              PUSH   AR4
+                      42     ;       __asm PUSH      AR5
+0014 C005             43              PUSH   AR5
+                      44     ;       __asm PUSH      AR6
+0016 C006             45              PUSH   AR6
+                      46     ;       __asm PUSH      AR7     
+0018 C007             47              PUSH   AR7     
+                      48     ;       
                       49     ; }
                       50                             ; SOURCE LINE # 19
 001A 22               51             RET     
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       55     
 ----                  56             RSEG  ?PR?pop_all_?TEST
 0000                  57     pop_all_:
-A51 MACRO ASSEMBLER  TEST                                                                 12/27/2023 23:07:06 PAGE     2
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 10:54:40 PAGE     2
 
                       58             USING   0
                       59                             ; SOURCE LINE # 20
@@ -103,7 +103,7 @@ LOC  OBJ            LINE     SOURCE
                       91     ; END OF pop_all_
                       92     
                       93             END
-A51 MACRO ASSEMBLER  TEST                                                                 12/27/2023 23:07:06 PAGE     3
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 10:54:40 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------

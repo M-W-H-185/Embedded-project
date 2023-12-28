@@ -45,12 +45,20 @@ void OSCtxSw()
 {
 
 	EA = 0;//关中断
-	EA = 0;//关中断
-	EA = 0;//关中断
-	push_all_();
-	tcb_list[task_id].sp = SP;
 
-// 找出就绪态的一个id
+	
+	
+	// 入栈
+	// 入栈
+	
+	
+	
+	
+	
+	
+	
+	tcb_list[task_id].sp = SP;
+	// 找出就绪态的一个id
 	for(ost_i = 0; ost_i < max_task; ost_i++)
 	{
 		if(tcb_list[ost_i].os_status_type == OS_READY)
@@ -64,9 +72,15 @@ void OSCtxSw()
 	{
 		task_id = 0;
 	}
-	
     SP = tcb_list[task_id].sp;
-pop_all_();
+	
+	
+	// 出栈
+	// 出栈
+	
+	
+	
+	
 	EA = 1;//开中断
 }
  
@@ -76,9 +90,19 @@ void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 	tstack[0] = (unsigned int)task & 0xff;
 	tstack[1] = (unsigned int)task >> 8;
 
-	tcb_list[tid].sp 				= tstack + 1;
+	
+	
+	
+	tcb_list[tid].sp 				= tstack + 1;	// 这里加一实际上就是取了将taskck[1]的地址保存了。sp指向它就相当于指向了任务函数
 	tcb_list[tid].os_status_type 	= OS_READY;
 
+	
+	
+	
+	
+	
+	
+	
 	max_task++;
 }
 void os_idle_task(void);
@@ -88,10 +112,12 @@ void os_start()
 	EA = 0;//关中断
 	// 装载空闲任务
 	os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
-
 	task_id = 0;
 	SP = tcb_list[task_id].sp;
-	pop_all_();
+	
+	// 出栈
+	// 出栈
+	
 	EA = 1;//开中断
 	return;
 }
@@ -117,14 +143,13 @@ void Delay500ms(void)	//@11.0592MHz
 void os_delay(os_uint32_t tasks)
 {	
 	tasks = tasks;
-//	// 设置延时滴答数
-//	tcb_list[task_id].delay_tick 	 = 	tasks;
-//	// 将任务设置为阻塞态
-//	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
+	// 设置延时滴答数
+	tcb_list[task_id].delay_tick 	 = 	tasks;
+	// 将任务设置为阻塞态
+	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
 	// 只要任务延时了，就马上切换出去
-//	OSCtxSw();
-	//	
-	Delay500ms();
+	OSCtxSw();
+
 }
 // 空闲函数
 void os_idle_task(void)
@@ -155,4 +180,5 @@ void time_handleHook(void)
 		}
 		tcb_list[ti].delay_tick--;
 	}
+	
 }

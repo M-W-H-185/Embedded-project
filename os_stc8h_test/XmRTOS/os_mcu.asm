@@ -2,64 +2,64 @@ NAME	OS_CPU_A_ASM	; 定义一个名称为 “OS_CPU_A_ASM”汇编段
 
 ;?PR?test?OS_CPU_A_ASM 			SEGMENT CODE ; 这句应该是 在 OS_CPU_A_ASM端里面有一个test函数，放在了code区域
 ;?PR?OSCtxSw?OS_CPU_A_ASM 			SEGMENT CODE ; 这句应该是 在 OS_CPU_A_ASM端里面有一个test函数，放在了code区域
-;?PR?TIMER0_ISR?OS_CPU_A_ASM  	SEGMENT CODE
+?PR?TIMER0_ISR?OS_CPU_A_ASM  	SEGMENT CODE
 	
-	
-?PR?PUSH_ALL_STACK?OS_CPU_A_ASM  	SEGMENT CODE
-?PR?POP_ALL_STACK?OS_CPU_A_ASM  	SEGMENT CODE
-	
+;	
+;?PR?PUSH_ALL_STACK?OS_CPU_A_ASM  	SEGMENT CODE
+;?PR?POP_ALL_STACK?OS_CPU_A_ASM  	SEGMENT CODE
+;	
 	
 ;EXTRN	DATA 	(OS_TCB_SIZE)	; 任务控制结构体的大小
 ;EXTRN	IDATA 	(tcb_list)		; 任务列表
 ;EXTRN	DATA 	(task_id)		; 当前活动任务号
 
-;EXTRN CODE  (_?time0_handle)
+EXTRN CODE  (_?time0_handle)
 
 
 ;PUBLIC	test			; 这里就是将这个test函数公开出去
 ;PUBLIC	OSCtxSw			; 这里就是将这个OSCtxSw函数公开出去
 
-PUBLIC	PUSH_ALL_STACK			; 这里就是将这个test函数公开出去
-PUBLIC	POP_ALL_STACK			; 这里就是将这个test函数公开出去
+;PUBLIC	PUSH_ALL_STACK			; 这里就是将这个test函数公开出去
+;PUBLIC	POP_ALL_STACK			; 这里就是将这个test函数公开出去
 
-RSEG  ?PR?PUSH_ALL_STACK?OS_CPU_A_ASM
+;RSEG  ?PR?PUSH_ALL_STACK?OS_CPU_A_ASM
 
-;定义压栈宏
-PUSH_ALL_STACK:  
-        ;USING 0     ;工作寄存器0  AR0~AR7 对应00~07H地址
-        PUSH PSW
-        PUSH ACC
-        PUSH B
-        PUSH DPL
-        PUSH DPH
-		PUSH 0x00
-		PUSH 0x01
-		PUSH 0x02
-		PUSH 0x03
-		PUSH 0x04
-		PUSH 0x05
-		PUSH 0x06
-		PUSH 0x07
-RET
+;;定义压栈宏
+;PUSH_ALL_STACK:  
+;        ;USING 0     ;工作寄存器0  AR0~AR7 对应00~07H地址
+;        PUSH PSW
+;        PUSH ACC
+;        PUSH B
+;        PUSH DPL
+;        PUSH DPH
+;		PUSH 0x00
+;		PUSH 0x01
+;		PUSH 0x02
+;		PUSH 0x03
+;		PUSH 0x04
+;		PUSH 0x05
+;		PUSH 0x06
+;		PUSH 0x07
+;RET
 
-RSEG  ?PR?POP_ALL_STACK?OS_CPU_A_ASM
-;定义出栈宏
-POP_ALL_STACK:  
-        USING 0     ;工作寄存器0  AR0~AR7 对应00~07H地址
-        POP 0x07
-        POP 0x06
-        POP 0x05
-        POP 0x04
-        POP 0x03
-        POP 0x02
-        POP 0x01
-        POP 0x00
-        POP DPH
-        POP DPL
-        POP B
-        POP ACC
-        POP PSW
-RET
+;RSEG  ?PR?POP_ALL_STACK?OS_CPU_A_ASM
+;;定义出栈宏
+;POP_ALL_STACK:  
+;        USING 0     ;工作寄存器0  AR0~AR7 对应00~07H地址
+;        POP 0x07
+;        POP 0x06
+;        POP 0x05
+;        POP 0x04
+;        POP 0x03
+;        POP 0x02
+;        POP 0x01
+;        POP 0x00
+;        POP DPH
+;        POP DPL
+;        POP B
+;        POP ACC
+;        POP PSW
+;RET
 
 
 
@@ -118,13 +118,13 @@ RET
 
 ; ---------------- 定时器0 相关调用 ----------------
 ; --- 定时器0 中断服务程序 ---
-;RSEG  ?PR?TIMER0_ISR?OS_CPU_A_ASM
-;TIMER0_ISR:     
-	;CLR EA 
+RSEG  ?PR?TIMER0_ISR?OS_CPU_A_ASM
+TIMER0_ISR:     
+	CLR EA 
 
 	;;PUSHALL
 
-	;LCALL _?time0_handle
+	LCALL _?time0_handle
 	;;POPALL
 
 	;;; ----------------------------- 任务切换 -----------------------------
@@ -146,15 +146,15 @@ RET
 	;;MOV  SP,A
 	;;; ----------------------------- 任务切换 -----------------------------
 
-	;SETB EA
+	SETB EA
 
-;;	
-;RETI
+;	
+RETI
 ; --- 定时器0 中断服务程序 ---
 
 
-;CSEG AT 000BH	;定时器T0中断
-;LJMP TIMER0_ISR
+CSEG AT 000BH	;定时器T0中断
+LJMP TIMER0_ISR
 
 ; ---------------- 定时器0 相关调用 ----------------
 

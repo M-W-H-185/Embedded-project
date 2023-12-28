@@ -70,7 +70,7 @@ void time0_handle(void)interrupt 1
 		cut = 0;
 		LED_G = !LED_G;
 	}
-time_handleHook();
+	time_handleHook();
 }
 
 void Timer0_Init(void)		//1∫¡√Î@11.0592MHz
