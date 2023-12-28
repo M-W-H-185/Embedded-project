@@ -1,27 +1,5 @@
 #include "os_task.h"
-
-#include "stc8g.h"
-#include "intrins.h"
-#include "stdio.h"
-#include "string.h"
-
-enum OS_TASK_STATUS_TYPE
-{
-	OS_READY      = 1,	// 就绪态
-	OS_RUNING     = 2,	// 运行态
-	OS_BLOCKED    = 3,	// 阻塞态
-	OS_SUSPENDED  = 4	// 停止态
-
-};
-
-// 任务控制块
-typedef struct os_tcb_t
-{
-	os_uint16_t 			sp;					// sp 堆栈指针存储
-	os_uint32_t 			delay_tick;			// 延时滴答数
-	os_uint8_t 				os_status_type;		// 任务状态
-	os_uint8_t				*stack;				// 任务的私有堆栈
-};
+// 任务创建、切换、延时文件
 
 os_uint8_t data task_id = 0;    /*当前活动任务号*/
 os_uint8_t max_task = 0;
@@ -37,10 +15,17 @@ static os_uint8_t idata public_stack[MAX_TASK_DEP];
 
 /*空闲任务堆栈.*/
 os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];		
+void os_idle_task(void);
 
 
-// 任务切换函数
-void os_switch()
+/***********************************************************************
+*	函数描述：任务调度函数
+*	传入参数：
+*				
+* 返回参数：
+*				void: 无返回值
+***********************************************************************/
+void os_switch(void)
 {
 	// 上面中断已经入栈了
 	os_uint8_t  ost_i = 0;
@@ -75,24 +60,41 @@ void os_switch()
 	
 	// 下面中断汇编已经出栈
 }
- 
-void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
+
+/***********************************************************************
+*	函数描述：创建一个任务
+*	传入参数：
+*				task：		任务函数指针，指向任务的入口函数。
+*				t_stack: 	指向任务函数堆栈指针
+*				tid:			任务槽位置
+* 返回参数：
+*				void: 无返回值
+***********************************************************************/
+void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid)
 {
-	
-	tstack[0] = (unsigned int)task & 0xff;		// DPL
-	tstack[1] = (unsigned int)task >> 8;  		// DPH
+	if((max_task+1) >= MAX_TASKS)
+	{
+		return;
+	}
+	t_stack[0] = (unsigned int)task & 0xff;		// DPL
+	t_stack[1] = (unsigned int)task >> 8;  		// DPH
 
 	tcb_list[tid].sp 				= (public_stack+1);	// 全部指向这个公共的堆栈
 	tcb_list[tid].os_status_type 	= OS_READY;
 
-	tcb_list[tid].stack = tstack;
+	tcb_list[tid].stack = t_stack;
 	
 	
 	max_task++;
 }
-void os_idle_task(void);
-
-void os_start()
+/***********************************************************************
+*	函数描述：启动rtos，开始任务调度
+*	传入参数：
+*				
+* 返回参数：
+*				void: 无返回值
+***********************************************************************/
+void os_start(void)
 {
 	EA = 0;//关中断
 	// 装载空闲任务
@@ -110,8 +112,13 @@ void os_start()
 	return;
 }
 
-
-// 任务延时函数
+/***********************************************************************
+*	函数描述：任务延时函数，调用后马上进行一次任务调度
+*	传入参数：
+*				tasks：需要延时的滴答数。 滴答一次1ms 
+* 返回参数：
+*				void: 无返回值
+***********************************************************************/
 void os_delay(os_uint32_t tasks)
 {	
 	tasks = tasks;
@@ -119,15 +126,30 @@ void os_delay(os_uint32_t tasks)
 	tcb_list[task_id].delay_tick 	 = 	tasks;
 	// 将任务设置为阻塞态
 	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
-	// 只要任务延时了，就马上切换出去
+	// 只要任务延时了，就马上任务调度
 	os_switch();
 
 }
-// 空闲函数
+
+/***********************************************************************
+*	函数描述：空闲任务函数
+*	传入参数：
+*				
+* 返回参数：
+*				void: 无返回值
+***********************************************************************/
 void os_idle_task(void)
 {
 	while(1);
 }
+
+/***********************************************************************
+*	函数描述：系统滴答函数，放入定时器中断中执行。 每次执行代表滴答一次1ms
+*	传入参数：
+*				
+* 返回参数：
+*				void: 无返回值
+***********************************************************************/
 void time_handleHook(void)
 {
 	os_uint8_t ti = 0;

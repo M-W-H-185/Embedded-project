@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     1
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 22:38:21 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -10,155 +10,109 @@ LOC  OBJ            LINE     SOURCE
 
                        1     NAME    OS_CPU_A_ASM    ; ¶¨ÒåÒ»¸öÃû³ÆÎª ¡°OS_CPU_A_ASM¡±»ã±à¶Î
                        2     
-                       3     ;?PR?test?OS_CPU_A_ASM                  SEGMENT CODE ; Õâ¾äÓ¦¸ÃÊÇ ÔÚ OS_CPU_A_ASM¶ËÀïÃæÓÐÒ»
+                       3     ?PR?test?OS_CPU_A_ASM                   SEGMENT CODE ; Õâ¾äÓ¦¸ÃÊÇ ÔÚ OS_CPU_A_ASM¶ËÀïÃæÓÐÒ»
                              ¸ötestº¯Ê£¬·ÅÔÚÁËcodeÇøÓò
-                       4     ;?PR?OSCtxSw?OS_CPU_A_ASM                       SEGMENT CODE ; Õâ¾äÓ¦¸ÃÊÇ ÔÚ OS_CPU_A_ASM¶Ë
-                             ÀïÃæÓÐÒ»¸ötestº¯Ê£¬·ÅÔÚÁËcodeÇøÓò
-                       5     ?PR?TIMER0_ISR?OS_CPU_A_ASM     SEGMENT CODE
-                       6             
-                       7     ;       
-                       8     ;?PR?PUSH_ALL_STACK?OS_CPU_A_ASM        SEGMENT CODE
-                       9     ;?PR?POP_ALL_STACK?OS_CPU_A_ASM         SEGMENT CODE
-                      10     ;       
-                      11             
-                      12     ;EXTRN  DATA    (OS_TCB_SIZE)   ; ÈÎÎñ¿ØÖÆ½á¹¹ÌåµÄ´óÐ¡
-                      13     ;EXTRN  IDATA   (tcb_list)              ; ÈÎÎñÁÐ±í
-                      14     ;EXTRN  DATA    (task_id)               ; µ±Ç°»î¶¯ÈÎÎñºÅ
-                      15     
-                      16     EXTRN CODE  (_?time0_handle)
-                      17     
-                      18     
-                      19     
-                      20     ;PUBLIC test                    ; ÕâÀï¾ÍÊÇ½«Õâ¸ötestº¯Ê¹«¿ª³öÈ¥
-                      21     ;PUBLIC OSCtxSw                 ; ÕâÀï¾ÍÊÇ½«Õâ¸öOSCtxSwº¯Ê¹«¿ª³öÈ¥
-                      22     
-                      23     ;PUBLIC PUSH_ALL_STACK                  ; ÕâÀï¾ÍÊÇ½«Õâ¸ötestº¯Ê¹«¿ª³öÈ¥
-                      24     ;PUBLIC POP_ALL_STACK                   ; ÕâÀï¾ÍÊÇ½«Õâ¸ötestº¯Ê¹«¿ª³öÈ¥
-                      25     
-                      26     ;RSEG  ?PR?PUSH_ALL_STACK?OS_CPU_A_ASM
-                      27     
-                      28     ;¶¨ÒåÑ¹Õ»ºê
-                      29     PUSHALL         MACRO  
-                      30             USING 0     ;¹¤×÷¼Ä´æÆ÷0  AR0~AR7 ¶ÔÓ¦00~07HµØÖ·
-                      31             PUSH PSW
-                      32             PUSH ACC
-                      33             PUSH B
-                      34             PUSH DPL
-                      35             PUSH DPH
-                      36                     PUSH 0x00
-                      37                     PUSH 0x01
-                      38                     PUSH 0x02
-                      39                     PUSH 0x03
-                      40                     PUSH 0x04
-                      41                     PUSH 0x05
-                      42                     PUSH 0x06
-                      43                     PUSH 0x07
-                      44     ENDM
-                      45     
-                      46     ;RSEG  ?PR?POP_ALL_STACK?OS_CPU_A_ASM
-                      47     ;¶¨Òå³öÕ»ºê
-                      48     POPALL MACRO   
-                      49             USING 0     ;¹¤×÷¼Ä´æÆ÷0  AR0~AR7 ¶ÔÓ¦00~07HµØÖ·
-                      50             POP 0x07
-                      51             POP 0x06
-                      52             POP 0x05
-                      53             POP 0x04
-                      54             POP 0x03
-                      55             POP 0x02
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     2
+                       4     ?PR?TIMER0_ISR?OS_CPU_A_ASM     SEGMENT CODE    ; Õâ¾äÓ¦¸ÃÊÇ ÔÚ OS_CPU_A_ASM¶ËÀïÃæÓÐÒ»¸ötes
+                             tº¯Ê£¬·ÅÔÚÁËcodeÇøÓò
+                       5     
+                       6     EXTRN CODE  (_?time0_handle)
+                       7     
+                       8     
+                       9     
+                      10     PUBLIC  test                    ; ÕâÀï¾ÍÊÇ½«Õâ¸ötestº¯Ê¹«¿ª³öÈ¥
+                      11     
+                      12     
+                      13     ;¶¨ÒåÑ¹Õ»ºê
+                      14     PUSHALL         MACRO  
+                      15             USING 0     ;¹¤×÷¼Ä´æÆ÷0  AR0~AR7 ¶ÔÓ¦00~07HµØÖ·
+                      16             PUSH PSW
+                      17             PUSH ACC
+                      18             PUSH B
+                      19             PUSH DPL
+                      20             PUSH DPH
+                      21                     PUSH 0x00
+                      22                     PUSH 0x01
+                      23                     PUSH 0x02
+                      24                     PUSH 0x03
+                      25                     PUSH 0x04
+                      26                     PUSH 0x05
+                      27                     PUSH 0x06
+                      28                     PUSH 0x07
+                      29     ENDM
+                      30     
+                      31     ;¶¨Òå³öÕ»ºê
+                      32     POPALL MACRO   
+                      33             USING 0     ;¹¤×÷¼Ä´æÆ÷0  AR0~AR7 ¶ÔÓ¦00~07HµØÖ·
+                      34             POP 0x07
+                      35             POP 0x06
+                      36             POP 0x05
+                      37             POP 0x04
+                      38             POP 0x03
+                      39             POP 0x02
+                      40             POP 0x01
+                      41             POP 0x00
+                      42             POP DPH
+                      43             POP DPL
+                      44             POP B
+                      45             POP ACC
+                      46             POP PSW
+                      47     ENDM
+                      48     
+                      49     
+                      50     
+                      51     
+                      52     
+                      53     
+                      54     
+                      55     
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 22:38:21 PAGE     2
 
-                      56             POP 0x01
-                      57             POP 0x00
-                      58             POP DPH
-                      59             POP DPL
-                      60             POP B
-                      61             POP ACC
-                      62             POP PSW
-                      63     ENDM
-                      64     
-                      65     
-                      66     
-                      67     
-                      68     
-                      69     
-                      70     
-                      71     
+                      56     
+                      57     ; ---------------- ²âÊÔº¯Ê ----------------
+----                  58     RSEG  ?PR?test?OS_CPU_A_ASM
+0000                  59     test:
+                      60             ;MOV A,task_id
+                      61             ;MOV B,OS_TCB_SIZE
+                      62             ;MUL AB ; ³Ë·¨²Ù×÷.µÍÎ»·Åµ½A ¸ßÎ»·Åµ½B ËùÒÔÈ¡AÖµ¾ÍÊÇÊ×éÆ«ÒÆÁ¿
+                      63             ;MOV R0 ,A      ; ½«Ê×éÆ«ÒÆÁ¿´æµ½R0
+                      64             
+                      65             
+                      66             ;MOV R1 ,#tcb_list      ; tcb_listÊ×éµÄµØÖ·
+                      67             
+                      68             ;MOV A,R0       ; ÓÖ°Ñ r0Ê×éÆ«ÒÆÁ¿´¿µ½A
+                      69             ;ADD A,R1       ; A + R1 A¾ÍÊÇµÍÎ»¼ÆËã½á¹û
+                      70             ;MOV R1,A       ; R1ÏÖÔÚÕâÀï¾ÍÊÇÊ×éÆ«ÒÆºóµÄµØÖ·
+                      71             ;; R1 ¾ÍÊÇÖ¸ÏòspÁË MOV @R1, #0x66       ; Õâ¸ö¾ÍÊÇÊ×é½á¹¹ÌåÀïÃæµÄµÚÒ»¸ö±äÁ¿tcb_list
+                             [].sp = 0x66
                       72     
-                      73     ; ---------------- ²âÊÔº¯Ê ----------------
-                      74     ;RSEG  ?PR?test?OS_CPU_A_ASM
-                      75     ;test:
-                      76             ;;MOV A,task_id
-                      77             ;;MOV B,OS_TCB_SIZE
-                      78             ;;MUL AB ; ³Ë·¨²Ù×÷.µÍÎ»·Åµ½A ¸ßÎ»·Åµ½B ËùÒÔÈ¡AÖµ¾ÍÊÇÊ×éÆ«ÒÆÁ¿
-                      79             ;;MOV R0 ,A     ; ½«Ê×éÆ«ÒÆÁ¿´æµ½R0
-                      80             
-                      81             
-                      82             ;;MOV R1 ,#tcb_list     ; tcb_listÊ×éµÄµØÖ·
-                      83             
-                      84             ;;MOV A,R0      ; ÓÖ°Ñ r0Ê×éÆ«ÒÆÁ¿´¿µ½A
-                      85             ;;ADD A,R1      ; A + R1 A¾ÍÊÇµÍÎ»¼ÆËã½á¹û
-                      86             ;;MOV R1,A      ; R1ÏÖÔÚÕâÀï¾ÍÊÇÊ×éÆ«ÒÆºóµÄµØÖ·
-                      87             ;;; R1 ¾ÍÊÇÖ¸ÏòspÁË MOV @R1, #0x66      ; Õâ¸ö¾ÍÊÇÊ×é½á¹¹ÌåÀïÃæµÄµÚÒ»¸ö±äÁ¿tcb_list
-                             [].sp = 0x66
-                      88     
-                      89     
-                      90             
-                      91     ;RETI
-                      92     ; ---------------- ²âÊÔº¯Ê ----------------
-                      93     
-                      94     ;; ---------------- OSCtxSw() ÈÎÎñ×Ô¶¯·ÅÆúcpu×ÊÔ´ ÑÓÊ±ÓÃµ½ÁË ----------------
-                      95     ;RSEG  ?PR?OSCtxSw?OS_CPU_A_ASM
-                      96     ;OSCtxSw:
-                      97             ;; ----------------------------- ÈÎÎñÇÐ»» -----------------------------
-                      98             ;MOV A,task_id
-                      99             ;MOV B,OS_TCB_SIZE
-                     100             ;MUL AB ; ³Ë·¨²Ù×÷.µÍÎ»·Åµ½A ¸ßÎ»·Åµ½B ËùÒÔÈ¡AÖµ¾ÍÊÇÊ×éÆ«ÒÆÁ¿
-                     101             ;MOV R0 ,A      ; ½«Ê×éÆ«ÒÆÁ¿´æµ½R0
-                     102             
-                     103             
-                     104             ;MOV R1 ,#tcb_list      ; tcb_listÊ×éµÄµØÖ·
-                     105             
-                     106             ;MOV A,R0       ; ÓÖ°Ñ r0Ê×éÆ«ÒÆÁ¿´¿µ½A
-                     107             ;ADD A,R1       ; A + R1 A¾ÍÊÇµÍÎ»¼ÆËã½á¹û
-                     108             ;MOV R1,A       ; R1ÏÖÔÚÕâÀï¾ÍÊÇÊ×éÆ«ÒÆºóµÄµØÖ·
-                     109             ;; R1 ¾ÍÊÇÖ¸ÏòspÁË MOV @R1, #0x66       ; Õâ¸ö¾ÍÊÇÊ×é½á¹¹ÌåÀïÃæµÄµÚÒ»¸ö±äÁ¿tcb_list
-                             [].sp = 0x66
-                     110             ;;»Ö¸´¶ÑÕ»Ö¸ÕëSP
-                     111             ;MOV A,@R1      ; R1ÏÖÔÚÕâÀï¾ÍÊÇÊ×éÆ«ÒÆºóµÄµØÖ·
-                     112     
-                     113             ;MOV  SP,A
-                     114             ;; ----------------------------- ÈÎÎñÇÐ»» -----------------------------
-                     115     ;RETI;
-                     116     ;; ---------------- OSCtxSw() ÈÎÎñÇÐ»»º¯Ê ----------------
-                     117     
-                     118     
-                     119     
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     3
-
-                     120     ; ---------------- ¶¨Ê±Æ÷0 Ïà¹Øµ÷ÓÃ ----------------
-                     121     ; --- ¶¨Ê±Æ÷0 ÖÐ¶Ï·þÎñ³ÌÐò ---
-----                 122     RSEG  ?PR?TIMER0_ISR?OS_CPU_A_ASM
-0000                 123     TIMER0_ISR:     
-0000 C2AF            124             CLR EA 
+                      73     
+                      74             
+0000 32               75     RETI
+                      76     ; ---------------- ²âÊÔº¯Ê ----------------
+                      77     
+                      78     
+                      79     ; ---------------- ¶¨Ê±Æ÷0 Ïà¹Øµ÷ÓÃ ----------------
+                      80     ; --- ¶¨Ê±Æ÷0 ÖÐ¶Ï·þÎñ³ÌÐò ---
+----                  81     RSEG  ?PR?TIMER0_ISR?OS_CPU_A_ASM
+0000                  82     TIMER0_ISR:     
+0000 C2AF             83             CLR EA          ; ¹ØÖÐ¶Ï
+                      84             PUSHALL         ; Ñ¹Õ»
+                      99             
+001C 120000   F      100             LCALL _?time0_handle    ; µ÷ÓÃÖÐ¶Ï´¦Àíº¯Ê
+                     101             
+                     102             POPALL          ; ³öÕ»
+0039 D2AF            117             SETB EA         ; ¿ªÖÐ¶Ï
+                     118             
+003B 32              119     RETI
+                     120     ; --- ¶¨Ê±Æ÷0 ÖÐ¶Ï·þÎñ³ÌÐò ---
+                     121     
+                     122     
+----                 123     CSEG AT 000BH   ;¶¨Ê±Æ÷T0ÖÐ¶Ï
+000B 020000   F      124      LJMP TIMER0_ISR
                      125     
-                     126             PUSHALL
-001C 120000   F      141             LCALL _?time0_handle
-                     142             POPALL
-                     157     
-                     158     
-0039 D2AF            159             SETB EA
-                     160     
-                     161     ;       
-003B 32              162     RETI
-                     163     ; --- ¶¨Ê±Æ÷0 ÖÐ¶Ï·þÎñ³ÌÐò ---
-                     164     
-                     165     
-----                 166     CSEG AT 000BH   ;¶¨Ê±Æ÷T0ÖÐ¶Ï
-000B 020000   F      167     LJMP TIMER0_ISR
-                     168     
-                     169     ; ---------------- ¶¨Ê±Æ÷0 Ïà¹Øµ÷ÓÃ ----------------
-                     170     
-                     171     END
+                     126     ; ---------------- ¶¨Ê±Æ÷0 Ïà¹Øµ÷ÓÃ ----------------
+                     127     
+                     128     END
                                      
                                      
                                      
@@ -176,7 +130,7 @@ LOC  OBJ            LINE     SOURCE
                              ;       MOV R0,#tcb_list+1+4+1; os_status_type ÊÇuint8_t ËùÒÔÊÇÆ«ÒÆÁ¿+1Ìøµ½ÏÂÒ»¸ötcb_list[0
                              ].test_value = 0x88;
                              ;       MOV @R0,#0x88;
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 21:33:29 PAGE     4
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/28/2023 22:38:21 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -184,6 +138,7 @@ SYMBOL TABLE LISTING
 
 N A M E                      T Y P E  V A L U E   ATTRIBUTES
 
+?PR?TEST?OS_CPU_A_ASM . . .  C SEG    0001H       REL=UNIT
 ?PR?TIMER0_ISR?OS_CPU_A_ASM  C SEG    003CH       REL=UNIT
 ACC . . . . . . . . . . . .  D ADDR   00E0H   A   
 B . . . . . . . . . . . . .  D ADDR   00F0H   A   
@@ -192,6 +147,7 @@ DPL . . . . . . . . . . . .  D ADDR   0082H   A
 EA. . . . . . . . . . . . .  B ADDR   00A8H.7 A   
 OS_CPU_A_ASM. . . . . . . .  N NUMB   -----       
 PSW . . . . . . . . . . . .  D ADDR   00D0H   A   
+TEST. . . . . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TEST?OS_CPU_A_ASM
 TIMER0_ISR. . . . . . . . .  C ADDR   0000H   R   SEG=?PR?TIMER0_ISR?OS_CPU_A_ASM
 _?TIME0_HANDLE. . . . . . .  C ADDR   -----       EXT
 

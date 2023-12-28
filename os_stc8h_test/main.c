@@ -11,6 +11,7 @@
 #include "os_task.h"
 
 /* 发光二极管定义 */
+
 sbit LED_R = P0^5;    // 红色LED
 sbit LED_Y = P0^6;    // 黄色LED
 sbit LED_G = P0^7;    // 绿色LED
@@ -84,6 +85,7 @@ void time0_handle(void)large reentrant
 		LED_G = !LED_G;
 	}
 	time_handleHook();
+
 }
 /* 主函数 */
 void main()
