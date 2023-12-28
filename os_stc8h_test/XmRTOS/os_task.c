@@ -3,8 +3,7 @@
 #include "stc8g.h"
 #include "intrins.h"
 #include "stdio.h"
-extern void PUSH_ALL_STACK(void);
-extern void POP_ALL_STACK(void);
+
 enum OS_TASK_STATUS_TYPE
 {
 	OS_READY      = 1,	// 就绪态
@@ -36,16 +35,10 @@ os_uint8_t idata task_idle_stack[MAX_TASK_DEP];
 // 任务切换函数
 void os_switch()
 {
+	// 上面中断已经入栈了
 	os_uint8_t  ost_i = 0;
 
-	EA = 0;//关中断
-
-
-//	// 入栈
-//	PUSH_ALL_STACK();
-//	// 入栈
-
-		
+	
 	
 	tcb_list[task_id].sp = SP;
 	// 找出就绪态的一个id
@@ -63,40 +56,18 @@ void os_switch()
 		task_id = 0;
 	}
     SP = tcb_list[task_id].sp;
+
 	
-//	// 出栈
-//	POP_ALL_STACK();
-//	// 出栈
-	
-	
-	
-	
-	
-	EA = 1;//开中断
+	// 下面中断汇编已经出栈
 }
  
 void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 {
-	tstack[0] = 0x00;							// PSW
 
-	tstack[1] = 0x0A;							// ACC
-	tstack[2] = 0x0B;  							// B
-	tstack[3] = (unsigned int)task & 0xff;		// DPL
-	tstack[4] = (unsigned int)task >> 8;  		// DPH
+	tstack[0] = (unsigned int)task & 0xff;		// DPL
+	tstack[1] = (unsigned int)task >> 8;  		// DPH
 
-	tstack[5] = 0x00;							// R0
-	tstack[6] = 0x01;							// R1						
-	tstack[7] = 0x02;							// R2
-	tstack[8] = 0x03;							// R3
-	tstack[9] = 0x04;							// R4
-	tstack[10] = 0x05;							// R5
-	tstack[11] = 0x06;							// R6
-	tstack[12] = 0x07;							// R7
-
-	
-	
-	
-	tcb_list[tid].sp 				= tstack + 4;	// 这里加4实际上就是取了将taskck[4]的地址保存了。sp指向它就相当于指向了任务函数
+	tcb_list[tid].sp 				= tstack + 1;	// 这里加4实际上就是取了将taskck[4]的地址保存了。sp指向它就相当于指向了任务函数
 	tcb_list[tid].os_status_type 	= OS_READY;
 	tcb_list[tid].stack 			= tstack ;
 	
@@ -123,23 +94,7 @@ void os_start()
 	EA = 1;//开中断
 	return;
 }
-void Delay500ms(void)	//@11.0592MHz
-{
-	unsigned char data i, j, k;
 
-	_nop_();
-	_nop_();
-	i = 22;
-	j = 3;
-	k = 227;
-	do
-	{
-		do
-		{
-			while (--k);
-		} while (--j);
-	} while (--i);
-}
 
 // 任务延时函数
 void os_delay(os_uint32_t tasks)
@@ -156,10 +111,7 @@ void os_delay(os_uint32_t tasks)
 // 空闲函数
 void os_idle_task(void)
 {
-	while(1)
-	{
-		os_switch();
-	}
+	while(1);
 }
 void time_handleHook(void)
 {
@@ -182,5 +134,5 @@ void time_handleHook(void)
 		}
 		tcb_list[ti].delay_tick--;
 	}
-	
+	os_switch();
 }

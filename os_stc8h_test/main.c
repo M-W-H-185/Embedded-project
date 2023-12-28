@@ -37,7 +37,6 @@ void task1()
 		
 		LED_R = 1;
 		os_delay(500);
-		os_switch();
 
 	}
 }
@@ -54,7 +53,6 @@ void task2()
 		LED_Y = 0;
 		os_delay(1000);
 		os_delay(1000);
-		os_switch();
 
 	}
 }
@@ -62,8 +60,9 @@ void task2()
 
 unsigned int cut = 0;
 
-//void time0_handle(void)large reentrant
-void time0_handle(void)interrupt 1
+// 函数冲重入，由汇编代码调用
+void time0_handle(void)large reentrant
+//void time0_handle(void)interrupt 1
 {
 	cut++;
 

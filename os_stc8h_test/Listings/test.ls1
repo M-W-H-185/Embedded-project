@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     1
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 15:21:43 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       55     ;         __asm MOV  A,R6
 001C EE               56              MOV  A,R6
                       57     ;         __asm PUSH ACC
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     2
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 15:21:43 PAGE     2
 
 001D C0E0             58              PUSH ACC
                       59     ;         __asm MOV  A,R7
@@ -133,10 +133,10 @@ LOC  OBJ            LINE     SOURCE
 0022 22              121             RET     
                      122     ; END OF POP_ALL_STACK
                      123     
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     3
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 15:21:43 PAGE     3
 
                      124             END
-A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 14:20:22 PAGE     4
+A51 MACRO ASSEMBLER  TEST                                                                 12/28/2023 15:21:43 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------
