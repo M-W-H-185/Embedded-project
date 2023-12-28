@@ -21,6 +21,7 @@ sbit LED_G = P0^7;    // 绿色LED
 // 任务堆栈区
 os_uint8_t idata task_stack1[MAX_TASK_DEP];			/*任务1堆栈.*/
 os_uint8_t idata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
+os_uint8_t idata task_stack3[MAX_TASK_DEP];			/*任务2堆栈.*/
 // 任务堆栈区
 
 
@@ -56,7 +57,27 @@ void task2()
 
 	}
 }
+void task3()
+{
 
+	while(1)
+	{
+
+	}
+}
+
+
+
+void Timer0_Init(void)		//1毫秒@11.0592MHz
+{
+	AUXR |= 0x80;			//定时器时钟1T模式
+	TMOD &= 0xF0;			//设置定时器模式
+	TL0 = 0xCD;				//设置定时初始值
+	TH0 = 0xD4;				//设置定时初始值
+	TF0 = 0;				//清除TF0标志
+	TR0 = 1;				//定时器0开始计时
+	ET0 = 1;				//使能定时器0中断
+}
 
 unsigned int cut = 0;
 
@@ -73,18 +94,6 @@ void time0_handle(void)large reentrant
 	}
 	time_handleHook();
 }
-
-void Timer0_Init(void)		//1毫秒@11.0592MHz
-{
-	AUXR |= 0x80;			//定时器时钟1T模式
-	TMOD &= 0xF0;			//设置定时器模式
-	TL0 = 0xCD;				//设置定时初始值
-	TH0 = 0xD4;				//设置定时初始值
-	TF0 = 0;				//清除TF0标志
-	TR0 = 1;				//定时器0开始计时
-	ET0 = 1;				//使能定时器0中断
-}
-
 /* 主函数 */
 void main()
 {
@@ -96,6 +105,7 @@ void main()
 
 	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
 	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+	os_task_create(task3, &task_stack3, 3);//将task2函数装入3号槽
 	os_start();
 
 
@@ -106,3 +116,4 @@ void main()
 	
 
 }
+
