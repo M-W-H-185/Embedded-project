@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 1   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE OS_TASK
@@ -13,280 +13,365 @@ line level    source
    3          #include "stc8g.h"
    4          #include "intrins.h"
    5          #include "stdio.h"
-   6          
-   7          enum OS_TASK_STATUS_TYPE
-   8          {
-   9                  OS_READY      = 1,      // ¾ÍÐ÷Ì¬
-  10                  OS_RUNING     = 2,      // ÔËÐÐÌ¬
-  11                  OS_BLOCKED    = 3,      // ×èÈûÌ¬
-  12                  OS_SUSPENDED  = 4       // Í£Ö¹Ì¬
-  13          
-  14          };
-  15          
-  16          // ÈÎÎñ¿ØÖÆ¿é
-  17          typedef struct os_tcb_t
-  18          {
-  19                  os_uint8_t                      sp;                                     // sp ¶ÑÕ»Ö¸Õë´æ´¢
-  20                  os_uint32_t             delay_tick;                     // ÑÓÊ±µÎ´ðÊý
-  21                  os_uint8_t                      os_status_type;         // ÈÎÎñ×´Ì¬
-  22                  os_uint8_t                      *stack;                         // ÈÎÎñ¶ÑÕ»
-  23          
+   6          #include "string.h"
+   7          
+   8          enum OS_TASK_STATUS_TYPE
+   9          {
+  10                  OS_READY      = 1,      // ¾ÍÐ÷Ì¬
+  11                  OS_RUNING     = 2,      // ÔËÐÐÌ¬
+  12                  OS_BLOCKED    = 3,      // ×èÈûÌ¬
+  13                  OS_SUSPENDED  = 4       // Í£Ö¹Ì¬
+  14          
+  15          };
+  16          
+  17          // ÈÎÎñ¿ØÖÆ¿é
+  18          typedef struct os_tcb_t
+  19          {
+  20                  os_uint16_t                     sp;                                     // sp ¶ÑÕ»Ö¸Õë´æ´¢
+  21                  os_uint32_t                     delay_tick;                     // ÑÓÊ±µÎ´ðÊý
+  22                  os_uint8_t                              os_status_type;         // ÈÎÎñ×´Ì¬
+  23                  os_uint8_t                              *stack;                         // ÈÎÎñµÄË½ÓÐ¶ÑÕ»
   24          };
   25          
   26          os_uint8_t data task_id = 0;    /*µ±Ç°»î¶¯ÈÎÎñºÅ*/
   27          os_uint8_t max_task = 0;
   28          
   29          /* ÈÎÎñ¿ØÖÆÁÐ±í */
-  30          struct os_tcb_t idata tcb_list[MAX_TASKS];
-  31          /*¿ÕÏÐÈÎÎñ¶ÑÕ».*/
-  32          os_uint8_t idata task_idle_stack[MAX_TASK_DEP];         
+  30          struct os_tcb_t xdata tcb_list[MAX_TASKS];
+  31          /* ¹«¹²¶ÑÕ» */
+  32          os_uint8_t idata public_stack[MAX_TASK_DEP];
   33          
-  34          
-  35          // ÈÎÎñÇÐ»»º¯Êý
-  36          void os_switch()
-  37          {
-  38   1              // ÉÏÃæÖÐ¶ÏÒÑ¾­ÈëÕ»ÁË
-  39   1              os_uint8_t  ost_i = 0;
-  40   1      
-  41   1              
-  42   1              
-  43   1              tcb_list[task_id].sp = SP;
-  44   1              // ÕÒ³ö¾ÍÐ÷Ì¬µÄÒ»¸öid
-  45   1              for(ost_i = 0; ost_i < max_task; ost_i++)
-  46   1              {
-  47   2                      if(tcb_list[ost_i].os_status_type == OS_READY)
-  48   2                      {
-  49   3                              task_id = ost_i;
-  50   3                              continue;
-  51   3      
-  52   3                      }
-  53   2              }
-  54   1              if(task_id == max_task)
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 2   
+  34          /*¿ÕÏÐÈÎÎñ¶ÑÕ».*/
+  35          os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];         
+  36          
+  37          
+  38          // ÈÎÎñÇÐ»»º¯Êý
+  39          void os_switch()
+  40          {
+  41   1              // ÉÏÃæÖÐ¶ÏÒÑ¾­ÈëÕ»ÁË
+  42   1              os_uint8_t  ost_i = 0;
+  43   1      
+  44   1              // ÒÑ¾­ÈëÕ»µ½ÁË¹«¹²¶ÑÕ»ÄÚÁË
+  45   1              // ½«¹«¹²¶ÑÕ»¿½±´µ½ÈÎÎñ¶ÑÕ»ÄÚ
+  46   1              memcpy(tcb_list[task_id].stack, public_stack,MAX_TASK_DEP);
+  47   1              
+  48   1              
+  49   1              tcb_list[task_id].sp = SP;
+  50   1              // ÕÒ³ö¾ÍÐ÷Ì¬µÄÒ»¸öid
+  51   1              for(ost_i = 0; ost_i < max_task; ost_i++)
+  52   1              {
+  53   2                      if(tcb_list[ost_i].os_status_type == OS_READY)
+  54   2                      {
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 2   
 
-  55   1              {
-  56   2                      task_id = 0;
-  57   2              }
-  58   1          SP = tcb_list[task_id].sp;
-  59   1      
-  60   1              
-  61   1              // ÏÂÃæÖÐ¶Ï»ã±àÒÑ¾­³öÕ»
-  62   1      }
-  63           
-  64          void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
-  65          {
-  66   1      
-  67   1              tstack[0] = (unsigned int)task & 0xff;          // DPL
-  68   1              tstack[1] = (unsigned int)task >> 8;            // DPH
-  69   1      
-  70   1              tcb_list[tid].sp                                = tstack + 1;   // ÕâÀï¼Ó4Êµ¼ÊÉÏ¾ÍÊÇÈ¡ÁË½«taskck[4]µÄµØÖ·±£´æÁË¡£spÖ¸ÏòËü¾ÍÏàµ±ÓÚÖ¸ÏòÁ
-             -ËÈÎÎñº¯Êý
-*** WARNING C260 IN LINE 70 OF XmRTOS\os_task.c: '=': pointer truncation
-  71   1              tcb_list[tid].os_status_type    = OS_READY;
-  72   1              tcb_list[tid].stack                     = tstack ;
-  73   1              
-  74   1              
+  55   3                              task_id = ost_i;
+  56   3                              continue;
+  57   3      
+  58   3                      }
+  59   2              }
+  60   1              if(task_id == max_task)
+  61   1              {
+  62   2                      task_id = 0;
+  63   2              }
+  64   1              // ½«ÈÎÎñ¶ÑÕ»¿½±´µ½¹«¹²¶ÑÕ»ÀïÃæ
+  65   1              memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
+  66   1              
+  67   1          SP = tcb_list[task_id].sp;
+  68   1      
+  69   1              
+  70   1              // ÏÂÃæÖÐ¶Ï»ã±àÒÑ¾­³öÕ»
+  71   1      }
+  72           
+  73          void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
+  74          {
   75   1              
-  76   1              
-  77   1              
-  78   1              
-  79   1              max_task++;
-  80   1      }
-  81          void os_idle_task(void);
-  82          
-  83          void os_start()
-  84          {
-  85   1              EA = 0;//¹ØÖÐ¶Ï
-  86   1              // ×°ÔØ¿ÕÏÐÈÎÎñ
-  87   1              os_task_create(os_idle_task, &task_idle_stack, 0);//½«task1º¯Êý×°Èë0ºÅ²Û
-  88   1              
-  89   1              // ¿ÕÏÐÈÎÎñÏÈÔËÐÐ
-  90   1              task_id = 0;
-  91   1              SP = tcb_list[task_id].sp;
-  92   1              
-  93   1      
-  94   1              EA = 1;//¿ªÖÐ¶Ï
-  95   1              return;
-  96   1      }
-  97          
-  98          
-  99          // ÈÎÎñÑÓÊ±º¯Êý
- 100          void os_delay(os_uint32_t tasks)
- 101          {       
- 102   1              tasks = tasks;
- 103   1              // ÉèÖÃÑÓÊ±µÎ´ðÊý
- 104   1              tcb_list[task_id].delay_tick     =      tasks;
- 105   1              // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
- 106   1              tcb_list[task_id].os_status_type =      OS_BLOCKED;
- 107   1              // Ö»ÒªÈÎÎñÑÓÊ±ÁË£¬¾ÍÂíÉÏÇÐ»»³öÈ¥
- 108   1              os_switch();
- 109   1      
- 110   1      }
- 111          // ¿ÕÏÐº¯Êý
- 112          void os_idle_task(void)
- 113          {
- 114   1              while(1);
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 3   
+  76   1              tstack[0] = (unsigned int)task & 0xff;          // DPL
+  77   1              tstack[1] = (unsigned int)task >> 8;            // DPH
+  78   1      
+  79   1              tcb_list[tid].sp                                = (public_stack+1);     // È«²¿Ö¸ÏòÕâ¸ö¹«¹²µÄ¶ÑÕ»
+  80   1              tcb_list[tid].os_status_type    = OS_READY;
+  81   1      
+  82   1              tcb_list[tid].stack = tstack;
+  83   1              
+  84   1              
+  85   1              max_task++;
+  86   1      }
+  87          void os_idle_task(void);
+  88          
+  89          void os_start()
+  90          {
+  91   1              EA = 0;//¹ØÖÐ¶Ï
+  92   1              // ×°ÔØ¿ÕÏÐÈÎÎñ
+  93   1              os_task_create(os_idle_task, &task_idle_stack, 0);//½«task1º¯Êý×°Èë0ºÅ²Û
+  94   1              
+  95   1              // ¿ÕÏÐÈÎÎñÏÈÔËÐÐ
+  96   1              task_id = 0;
+  97   1              // ½«ÈÎÎñ¶ÑÕ»¿½±´µ½¹«¹²¶ÑÕ»ÀïÃæ
+  98   1              memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
+  99   1              
+ 100   1              SP = tcb_list[task_id].sp;
+ 101   1              
+ 102   1      
+ 103   1              EA = 1;//¿ªÖÐ¶Ï
+ 104   1              return;
+ 105   1      }
+ 106          
+ 107          
+ 108          // ÈÎÎñÑÓÊ±º¯Êý
+ 109          void os_delay(os_uint32_t tasks)
+ 110          {       
+ 111   1              tasks = tasks;
+ 112   1              // ÉèÖÃÑÓÊ±µÎ´ðÊý
+ 113   1              tcb_list[task_id].delay_tick     =      tasks;
+ 114   1              // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
+ 115   1              tcb_list[task_id].os_status_type =      OS_BLOCKED;
+ 116   1              // Ö»ÒªÈÎÎñÑÓÊ±ÁË£¬¾ÍÂíÉÏÇÐ»»³öÈ¥
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 3   
 
- 115   1      }
- 116          void time_handleHook(void)
- 117          {
- 118   1              os_uint8_t ti = 0;
- 119   1      
- 120   1              // ÔÚÕâÀï´¦Àí±éÀúÑÓÊ±
- 121   1              for(ti = 0; ti<max_task; ti++)
- 122   1              {
- 123   2                      if(tcb_list[ti].os_status_type != OS_BLOCKED)
- 124   2                      {
- 125   3                              continue;
- 126   3                      }
- 127   2                      // ÉèÖÃÑÓÊ±µÎ´ðÊý
- 128   2                      if((tcb_list[ti].delay_tick - 1) == 0)
- 129   2                      {
- 130   3                              tcb_list[ti].delay_tick = 0;
- 131   3                              // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
- 132   3                              tcb_list[ti].os_status_type = OS_READY;
- 133   3                              continue;
- 134   3                      }
- 135   2                      tcb_list[ti].delay_tick--;
- 136   2              }
- 137   1              os_switch();
- 138   1      }
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 4   
+ 117   1              os_switch();
+ 118   1      
+ 119   1      }
+ 120          // ¿ÕÏÐº¯Êý
+ 121          void os_idle_task(void)
+ 122          {
+ 123   1              while(1);
+ 124   1      }
+ 125          void time_handleHook(void)
+ 126          {
+ 127   1              os_uint8_t ti = 0;
+ 128   1      
+ 129   1              // ÔÚÕâÀï´¦Àí±éÀúÑÓÊ±
+ 130   1              for(ti = 0; ti<max_task; ti++)
+ 131   1              {
+ 132   2                      if(tcb_list[ti].os_status_type != OS_BLOCKED)
+ 133   2                      {
+ 134   3                              continue;
+ 135   3                      }
+ 136   2                      // ÉèÖÃÑÓÊ±µÎ´ðÊý
+ 137   2                      if((tcb_list[ti].delay_tick - 1) == 0)
+ 138   2                      {
+ 139   3                              tcb_list[ti].delay_tick = 0;
+ 140   3                              // ½«ÈÎÎñÉèÖÃÎª×èÈûÌ¬
+ 141   3                              tcb_list[ti].os_status_type = OS_READY;
+ 142   3                              continue;
+ 143   3                      }
+ 144   2                      tcb_list[ti].delay_tick--;
+ 145   2              }
+ 146   1              os_switch();
+ 147   1      }
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
 
              ; FUNCTION os_switch (BEGIN)
-                                           ; SOURCE LINE # 36
-                                           ; SOURCE LINE # 37
                                            ; SOURCE LINE # 39
+                                           ; SOURCE LINE # 40
+                                           ; SOURCE LINE # 42
 ;---- Variable 'ost_i' assigned to Register 'R7' ----
 0000 E4                CLR     A
-0001 FF                MOV     R7,A
-                                           ; SOURCE LINE # 43
-0002 E500        R     MOV     A,task_id
-0004 75F009            MOV     B,#09H
-0007 A4                MUL     AB
-0008 2400        R     ADD     A,#LOW tcb_list
-000A F8                MOV     R0,A
-000B A681              MOV     @R0,SP
-                                           ; SOURCE LINE # 45
-000D         ?C0001:
-000D EF                MOV     A,R7
-000E C3                CLR     C
-000F 9500        R     SUBB    A,max_task
-0011 5011              JNC     ?C0002
                                            ; SOURCE LINE # 46
-                                           ; SOURCE LINE # 47
-0013 EF                MOV     A,R7
-0014 75F009            MOV     B,#09H
-0017 A4                MUL     AB
-0018 2400        R     ADD     A,#LOW tcb_list+05H
-001A F8                MOV     R0,A
-001B E6                MOV     A,@R0
-001C B40102            CJNE    A,#01H,?C0003
-                                           ; SOURCE LINE # 48
+0001 E500        R     MOV     A,task_id
+0003 75F00A            MOV     B,#0AH
+0006 A4                MUL     AB
+0007 2400        R     ADD     A,#LOW tcb_list+07H
+0009 F582              MOV     DPL,A
+000B E4                CLR     A
+000C 3400        R     ADDC    A,#HIGH tcb_list+07H
+000E F583              MOV     DPH,A
+0010 E0                MOVX    A,@DPTR
+0011 FB                MOV     R3,A
+0012 A3                INC     DPTR
+0013 E0                MOVX    A,@DPTR
+0014 FA                MOV     R2,A
+0015 A3                INC     DPTR
+0016 E0                MOVX    A,@DPTR
+0017 F8                MOV     R0,A
+0018 AC02              MOV     R4,AR2
+001A AD03              MOV     R5,AR3
+001C 7B00              MOV     R3,#00H
+001E 7A00        R     MOV     R2,#HIGH public_stack
+0020 7900        R     MOV     R1,#LOW public_stack
+0022 7E00              MOV     R6,#00H
+0024 7F14              MOV     R7,#014H
+0026 120000      E     LCALL   ?C?COPY
                                            ; SOURCE LINE # 49
-001F 8F00        R     MOV     task_id,R7
-                                           ; SOURCE LINE # 50
+0029 AF81              MOV     R7,SP
+002B E500        R     MOV     A,task_id
+002D 75F00A            MOV     B,#0AH
+0030 A4                MUL     AB
+0031 2400        R     ADD     A,#LOW tcb_list
+0033 F582              MOV     DPL,A
+0035 E4                CLR     A
+0036 3400        R     ADDC    A,#HIGH tcb_list
+0038 F583              MOV     DPH,A
+003A E4                CLR     A
+003B F0                MOVX    @DPTR,A
+003C A3                INC     DPTR
+003D EF                MOV     A,R7
+003E F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 51
+003F E4                CLR     A
+0040 FF                MOV     R7,A
+0041         ?C0001:
+0041 EF                MOV     A,R7
+0042 C3                CLR     C
+0043 9500        R     SUBB    A,max_task
+0045 5017              JNC     ?C0002
                                            ; SOURCE LINE # 52
                                            ; SOURCE LINE # 53
-0021         ?C0003:
-0021 0F                INC     R7
-0022 80E9              SJMP    ?C0001
-0024         ?C0002:
-                                           ; SOURCE LINE # 54
-0024 E500        R     MOV     A,task_id
-0026 B50003      R     CJNE    A,max_task,?C0005
-                                           ; SOURCE LINE # 55
-                                           ; SOURCE LINE # 56
-0029 E4                CLR     A
-002A F500        R     MOV     task_id,A
-                                           ; SOURCE LINE # 57
-002C         ?C0005:
-                                           ; SOURCE LINE # 58
-002C E500        R     MOV     A,task_id
-002E 75F009            MOV     B,#09H
-0031 A4                MUL     AB
-0032 2400        R     ADD     A,#LOW tcb_list
-0034 F8                MOV     R0,A
-0035 E6                MOV     A,@R0
-0036 F581              MOV     SP,A
-                                           ; SOURCE LINE # 62
-0038 22                RET     
-             ; FUNCTION os_switch (END)
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 5   
+0047 EF                MOV     A,R7
+0048 75F00A            MOV     B,#0AH
+004B A4                MUL     AB
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 5   
 
+004C 2400        R     ADD     A,#LOW tcb_list+06H
+004E F582              MOV     DPL,A
+0050 E4                CLR     A
+0051 3400        R     ADDC    A,#HIGH tcb_list+06H
+0053 F583              MOV     DPH,A
+0055 E0                MOVX    A,@DPTR
+0056 B40102            CJNE    A,#01H,?C0003
+                                           ; SOURCE LINE # 54
+                                           ; SOURCE LINE # 55
+0059 8F00        R     MOV     task_id,R7
+                                           ; SOURCE LINE # 56
+                                           ; SOURCE LINE # 58
+                                           ; SOURCE LINE # 59
+005B         ?C0003:
+005B 0F                INC     R7
+005C 80E3              SJMP    ?C0001
+005E         ?C0002:
+                                           ; SOURCE LINE # 60
+005E E500        R     MOV     A,task_id
+0060 B50003      R     CJNE    A,max_task,?C0005
+                                           ; SOURCE LINE # 61
+                                           ; SOURCE LINE # 62
+0063 E4                CLR     A
+0064 F500        R     MOV     task_id,A
+                                           ; SOURCE LINE # 63
+0066         ?C0005:
+                                           ; SOURCE LINE # 65
+0066 E500        R     MOV     A,task_id
+0068 75F00A            MOV     B,#0AH
+006B A4                MUL     AB
+006C 2400        R     ADD     A,#LOW tcb_list+07H
+006E F582              MOV     DPL,A
+0070 E4                CLR     A
+0071 3400        R     ADDC    A,#HIGH tcb_list+07H
+0073 F583              MOV     DPH,A
+0075 E0                MOVX    A,@DPTR
+0076 FB                MOV     R3,A
+0077 A3                INC     DPTR
+0078 E0                MOVX    A,@DPTR
+0079 FA                MOV     R2,A
+007A A3                INC     DPTR
+007B E0                MOVX    A,@DPTR
+007C F9                MOV     R1,A
+007D 7800        R     MOV     R0,#LOW public_stack
+007F 7C00        R     MOV     R4,#HIGH public_stack
+0081 7D00              MOV     R5,#00H
+0083 7E00              MOV     R6,#00H
+0085 7F14              MOV     R7,#014H
+0087 120000      E     LCALL   ?C?COPY
+                                           ; SOURCE LINE # 67
+008A E500        R     MOV     A,task_id
+008C 75F00A            MOV     B,#0AH
+008F A4                MUL     AB
+0090 2400        R     ADD     A,#LOW tcb_list
+0092 F582              MOV     DPL,A
+0094 E4                CLR     A
+0095 3400        R     ADDC    A,#HIGH tcb_list
+0097 F583              MOV     DPH,A
+0099 A3                INC     DPTR
+009A E0                MOVX    A,@DPTR
+009B F581              MOV     SP,A
+                                           ; SOURCE LINE # 71
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 6   
+
+009D 22                RET     
+             ; FUNCTION os_switch (END)
 
              ; FUNCTION _os_task_create (BEGIN)
-                                           ; SOURCE LINE # 64
+                                           ; SOURCE LINE # 73
 0000 8B00        R     MOV     task,R3
 0002 8A00        R     MOV     task+01H,R2
 0004 8900        R     MOV     task+02H,R1
-                                           ; SOURCE LINE # 65
-                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 74
+                                           ; SOURCE LINE # 76
 0006 AF01              MOV     R7,AR1
 0008 EF                MOV     A,R7
 0009 AB00        R     MOV     R3,tstack
 000B AA00        R     MOV     R2,tstack+01H
 000D A900        R     MOV     R1,tstack+02H
 000F 120000      E     LCALL   ?C?CSTPTR
-                                           ; SOURCE LINE # 68
+                                           ; SOURCE LINE # 77
 0012 E500        R     MOV     A,task+01H
 0014 AB00        R     MOV     R3,tstack
 0016 AA00        R     MOV     R2,tstack+01H
 0018 A900        R     MOV     R1,tstack+02H
 001A 900001            MOV     DPTR,#01H
 001D 120000      E     LCALL   ?C?CSTOPTR
-                                           ; SOURCE LINE # 70
-0020 E9                MOV     A,R1
-0021 2401              ADD     A,#01H
-0023 F9                MOV     R1,A
-0024 E4                CLR     A
-0025 3A                ADDC    A,R2
-0026 AE00        R     MOV     R6,tid+01H
-0028 EE                MOV     A,R6
-0029 75F009            MOV     B,#09H
-002C A4                MUL     AB
-002D 2400        R     ADD     A,#LOW tcb_list
-002F F8                MOV     R0,A
-0030 A601              MOV     @R0,AR1
-                                           ; SOURCE LINE # 71
-0032 EE                MOV     A,R6
-0033 75F009            MOV     B,#09H
-0036 A4                MUL     AB
-0037 2400        R     ADD     A,#LOW tcb_list+05H
-0039 F8                MOV     R0,A
-003A 7601              MOV     @R0,#01H
-                                           ; SOURCE LINE # 72
-003C AA00        R     MOV     R2,tstack+01H
-003E A900        R     MOV     R1,tstack+02H
-0040 EE                MOV     A,R6
-0041 75F009            MOV     B,#09H
-0044 A4                MUL     AB
-0045 2400        R     ADD     A,#LOW tcb_list+06H
-0047 F8                MOV     R0,A
-0048 A600        R     MOV     @R0,tstack
-004A 08                INC     R0
-004B A602              MOV     @R0,AR2
-004D 08                INC     R0
-004E A601              MOV     @R0,AR1
                                            ; SOURCE LINE # 79
-0050 0500        R     INC     max_task
+0020 900000      R     MOV     DPTR,#tcb_list
+0023 75F00A            MOV     B,#0AH
+0026 E500        R     MOV     A,tid+01H
+0028 120000      E     LCALL   ?C?OFFXADD
+002B E500        R     MOV     A,tid
+002D 75F00A            MOV     B,#0AH
+0030 A4                MUL     AB
+0031 2583              ADD     A,DPH
+0033 F583              MOV     DPH,A
+0035 7400        R     MOV     A,#HIGH public_stack+01H
+0037 F0                MOVX    @DPTR,A
+0038 A3                INC     DPTR
+0039 7400        R     MOV     A,#LOW public_stack+01H
+003B F0                MOVX    @DPTR,A
                                            ; SOURCE LINE # 80
-0052 22                RET     
+003C 900000      R     MOV     DPTR,#tcb_list+06H
+003F 75F00A            MOV     B,#0AH
+0042 E500        R     MOV     A,tid+01H
+0044 120000      E     LCALL   ?C?OFFXADD
+0047 E500        R     MOV     A,tid
+0049 75F00A            MOV     B,#0AH
+004C A4                MUL     AB
+004D 2583              ADD     A,DPH
+004F F583              MOV     DPH,A
+0051 7401              MOV     A,#01H
+0053 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 82
+0054 900000      R     MOV     DPTR,#tcb_list+07H
+0057 75F00A            MOV     B,#0AH
+005A E500        R     MOV     A,tid+01H
+005C 120000      E     LCALL   ?C?OFFXADD
+005F E500        R     MOV     A,tid
+0061 75F00A            MOV     B,#0AH
+0064 A4                MUL     AB
+0065 2583              ADD     A,DPH
+0067 F583              MOV     DPH,A
+0069 E500        R     MOV     A,tstack
+006B F0                MOVX    @DPTR,A
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 7   
+
+006C A3                INC     DPTR
+006D E500        R     MOV     A,tstack+01H
+006F F0                MOVX    @DPTR,A
+0070 A3                INC     DPTR
+0071 E500        R     MOV     A,tstack+02H
+0073 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 85
+0074 0500        R     INC     max_task
+                                           ; SOURCE LINE # 86
+0076 22                RET     
              ; FUNCTION _os_task_create (END)
 
              ; FUNCTION os_start (BEGIN)
-                                           ; SOURCE LINE # 83
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 6   
-
-                                           ; SOURCE LINE # 84
-                                           ; SOURCE LINE # 85
+                                           ; SOURCE LINE # 89
+                                           ; SOURCE LINE # 90
+                                           ; SOURCE LINE # 91
 0000 C2AF              CLR     EA
-                                           ; SOURCE LINE # 87
-0002 750000      R     MOV     ?_os_task_create?BYTE+03H,#00H
+                                           ; SOURCE LINE # 93
+0002 750001      R     MOV     ?_os_task_create?BYTE+03H,#01H
 0005 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_idle_stack
 0008 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_idle_stack
 000B E4                CLR     A
@@ -296,63 +381,97 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0012 7A00        R     MOV     R2,#HIGH os_idle_task
 0014 7900        R     MOV     R1,#LOW os_idle_task
 0016 120000      R     LCALL   _os_task_create
-                                           ; SOURCE LINE # 90
+                                           ; SOURCE LINE # 96
 0019 E4                CLR     A
 001A F500        R     MOV     task_id,A
-                                           ; SOURCE LINE # 91
+                                           ; SOURCE LINE # 98
 001C E500        R     MOV     A,task_id
-001E 75F009            MOV     B,#09H
+001E 75F00A            MOV     B,#0AH
 0021 A4                MUL     AB
-0022 2400        R     ADD     A,#LOW tcb_list
-0024 F8                MOV     R0,A
-0025 E6                MOV     A,@R0
-0026 F581              MOV     SP,A
-                                           ; SOURCE LINE # 94
-0028 D2AF              SETB    EA
-                                           ; SOURCE LINE # 96
-002A 22                RET     
+0022 2400        R     ADD     A,#LOW tcb_list+07H
+0024 F582              MOV     DPL,A
+0026 E4                CLR     A
+0027 3400        R     ADDC    A,#HIGH tcb_list+07H
+0029 F583              MOV     DPH,A
+002B E0                MOVX    A,@DPTR
+002C FB                MOV     R3,A
+002D A3                INC     DPTR
+002E E0                MOVX    A,@DPTR
+002F FA                MOV     R2,A
+0030 A3                INC     DPTR
+0031 E0                MOVX    A,@DPTR
+0032 F9                MOV     R1,A
+0033 7800        R     MOV     R0,#LOW public_stack
+0035 7C00        R     MOV     R4,#HIGH public_stack
+0037 7D00              MOV     R5,#00H
+0039 7E00              MOV     R6,#00H
+003B 7F14              MOV     R7,#014H
+003D 120000      E     LCALL   ?C?COPY
+                                           ; SOURCE LINE # 100
+0040 E500        R     MOV     A,task_id
+0042 75F00A            MOV     B,#0AH
+0045 A4                MUL     AB
+0046 2400        R     ADD     A,#LOW tcb_list
+0048 F582              MOV     DPL,A
+004A E4                CLR     A
+004B 3400        R     ADDC    A,#HIGH tcb_list
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 8   
+
+004D F583              MOV     DPH,A
+004F A3                INC     DPTR
+0050 E0                MOVX    A,@DPTR
+0051 F581              MOV     SP,A
+                                           ; SOURCE LINE # 103
+0053 D2AF              SETB    EA
+                                           ; SOURCE LINE # 105
+0055 22                RET     
              ; FUNCTION os_start (END)
 
              ; FUNCTION _os_delay (BEGIN)
-                                           ; SOURCE LINE # 100
+                                           ; SOURCE LINE # 109
 ;---- Variable 'tasks' assigned to Register 'R4/R5/R6/R7' ----
-                                           ; SOURCE LINE # 101
-                                           ; SOURCE LINE # 102
-                                           ; SOURCE LINE # 104
+                                           ; SOURCE LINE # 110
+                                           ; SOURCE LINE # 111
+                                           ; SOURCE LINE # 113
 0000 E500        R     MOV     A,task_id
-0002 75F009            MOV     B,#09H
+0002 75F00A            MOV     B,#0AH
 0005 A4                MUL     AB
-0006 2400        R     ADD     A,#LOW tcb_list+01H
-0008 F8                MOV     R0,A
-0009 120000      E     LCALL   ?C?LSTIDATA
-                                           ; SOURCE LINE # 106
-000C E500        R     MOV     A,task_id
-000E 75F009            MOV     B,#09H
-0011 A4                MUL     AB
-0012 2400        R     ADD     A,#LOW tcb_list+05H
-0014 F8                MOV     R0,A
-0015 7603              MOV     @R0,#03H
-                                           ; SOURCE LINE # 108
-0017 020000      R     LJMP    os_switch
+0006 2400        R     ADD     A,#LOW tcb_list+02H
+0008 F582              MOV     DPL,A
+000A E4                CLR     A
+000B 3400        R     ADDC    A,#HIGH tcb_list+02H
+000D F583              MOV     DPH,A
+000F 120000      E     LCALL   ?C?LSTXDATA
+                                           ; SOURCE LINE # 115
+0012 E500        R     MOV     A,task_id
+0014 75F00A            MOV     B,#0AH
+0017 A4                MUL     AB
+0018 2400        R     ADD     A,#LOW tcb_list+06H
+001A F582              MOV     DPL,A
+001C E4                CLR     A
+001D 3400        R     ADDC    A,#HIGH tcb_list+06H
+001F F583              MOV     DPH,A
+0021 7403              MOV     A,#03H
+0023 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 117
+0024 020000      R     LJMP    os_switch
              ; FUNCTION _os_delay (END)
 
              ; FUNCTION os_idle_task (BEGIN)
-                                           ; SOURCE LINE # 112
-                                           ; SOURCE LINE # 113
+                                           ; SOURCE LINE # 121
+                                           ; SOURCE LINE # 122
 0000         ?C0010:
-                                           ; SOURCE LINE # 114
+                                           ; SOURCE LINE # 123
 0000 80FE              SJMP    ?C0010
              ; FUNCTION os_idle_task (END)
 
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 7   
-
              ; FUNCTION time_handleHook (BEGIN)
-                                           ; SOURCE LINE # 116
-                                           ; SOURCE LINE # 117
-                                           ; SOURCE LINE # 118
+                                           ; SOURCE LINE # 125
+                                           ; SOURCE LINE # 126
+                                           ; SOURCE LINE # 127
 0000 E4                CLR     A
 0001 F500        R     MOV     ti,A
-                                           ; SOURCE LINE # 121
+                                           ; SOURCE LINE # 130
 0003 F500        R     MOV     ti,A
 0005         ?C0013:
 0005 E500        R     MOV     A,ti
@@ -360,116 +479,156 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0008 9500        R     SUBB    A,max_task
 000A 4003              JC      $ + 5H
 000C 020000      R     LJMP    ?C0014
-                                           ; SOURCE LINE # 122
-                                           ; SOURCE LINE # 123
-000F E500        R     MOV     A,ti
-0011 75F009            MOV     B,#09H
-0014 A4                MUL     AB
-0015 2400        R     ADD     A,#LOW tcb_list+05H
-0017 F8                MOV     R0,A
-0018 E6                MOV     A,@R0
-0019 6403              XRL     A,#03H
-001B 706C              JNZ     ?C0015
-                                           ; SOURCE LINE # 124
-                                           ; SOURCE LINE # 125
-                                           ; SOURCE LINE # 126
-                                           ; SOURCE LINE # 128
-001D E500        R     MOV     A,ti
-001F 75F009            MOV     B,#09H
-0022 A4                MUL     AB
-0023 2400        R     ADD     A,#LOW tcb_list+01H
-0025 F8                MOV     R0,A
-0026 120000      E     LCALL   ?C?LLDIDATA
-0029 EF                MOV     A,R7
-002A 24FF              ADD     A,#0FFH
-002C FF                MOV     R7,A
-002D EE                MOV     A,R6
-002E 34FF              ADDC    A,#0FFH
-0030 FE                MOV     R6,A
-0031 ED                MOV     A,R5
-0032 34FF              ADDC    A,#0FFH
-0034 FD                MOV     R5,A
-0035 EC                MOV     A,R4
-0036 34FF              ADDC    A,#0FFH
-0038 FC                MOV     R4,A
-0039 E4                CLR     A
-003A FB                MOV     R3,A
-003B FA                MOV     R2,A
-003C F9                MOV     R1,A
-003D F8                MOV     R0,A
-003E C3                CLR     C
-003F 120000      E     LCALL   ?C?ULCMP
-0042 701D              JNZ     ?C0017
-                                           ; SOURCE LINE # 129
-                                           ; SOURCE LINE # 130
-0044 E500        R     MOV     A,ti
-0046 75F009            MOV     B,#09H
-0049 A4                MUL     AB
-004A 2400        R     ADD     A,#LOW tcb_list+01H
-004C F8                MOV     R0,A
-004D 120000      E     LCALL   ?C?LSTKIDATA
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 15:49:27 PAGE 8   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 9   
 
-0050 00                DB      00H
-0051 00                DB      00H
-0052 00                DB      00H
-0053 00                DB      00H
+                                           ; SOURCE LINE # 131
                                            ; SOURCE LINE # 132
-0054 E500        R     MOV     A,ti
-0056 75F009            MOV     B,#09H
-0059 A4                MUL     AB
-005A 2400        R     ADD     A,#LOW tcb_list+05H
-005C F8                MOV     R0,A
-005D 7601              MOV     @R0,#01H
+000F E500        R     MOV     A,ti
+0011 75F00A            MOV     B,#0AH
+0014 A4                MUL     AB
+0015 2400        R     ADD     A,#LOW tcb_list+06H
+0017 F582              MOV     DPL,A
+0019 E4                CLR     A
+001A 3400        R     ADDC    A,#HIGH tcb_list+06H
+001C F583              MOV     DPH,A
+001E E0                MOVX    A,@DPTR
+001F 6403              XRL     A,#03H
+0021 6003              JZ      $ + 5H
+0023 020000      R     LJMP    ?C0015
                                            ; SOURCE LINE # 133
-005F 8028              SJMP    ?C0015
                                            ; SOURCE LINE # 134
-0061         ?C0017:
                                            ; SOURCE LINE # 135
-0061 E500        R     MOV     A,ti
-0063 75F009            MOV     B,#09H
-0066 A4                MUL     AB
-0067 2400        R     ADD     A,#LOW tcb_list+01H
-0069 F8                MOV     R0,A
-006A 120000      E     LCALL   ?C?LLDIDATA
-006D EF                MOV     A,R7
-006E 24FF              ADD     A,#0FFH
-0070 FF                MOV     R7,A
-0071 EE                MOV     A,R6
-0072 34FF              ADDC    A,#0FFH
-0074 FE                MOV     R6,A
-0075 ED                MOV     A,R5
-0076 34FF              ADDC    A,#0FFH
-0078 FD                MOV     R5,A
-0079 EC                MOV     A,R4
-007A 34FF              ADDC    A,#0FFH
-007C FC                MOV     R4,A
-007D E500        R     MOV     A,ti
-007F 75F009            MOV     B,#09H
-0082 A4                MUL     AB
-0083 2400        R     ADD     A,#LOW tcb_list+01H
-0085 F8                MOV     R0,A
-0086 120000      E     LCALL   ?C?LSTIDATA
-                                           ; SOURCE LINE # 136
-0089         ?C0015:
-0089 0500        R     INC     ti
-008B 020000      R     LJMP    ?C0013
-008E         ?C0014:
                                            ; SOURCE LINE # 137
-008E 020000      R     LJMP    os_switch
+0026 E500        R     MOV     A,ti
+0028 75F00A            MOV     B,#0AH
+002B A4                MUL     AB
+002C 2400        R     ADD     A,#LOW tcb_list+02H
+002E F582              MOV     DPL,A
+0030 E4                CLR     A
+0031 3400        R     ADDC    A,#HIGH tcb_list+02H
+0033 F583              MOV     DPH,A
+0035 E0                MOVX    A,@DPTR
+0036 FC                MOV     R4,A
+0037 A3                INC     DPTR
+0038 E0                MOVX    A,@DPTR
+0039 FD                MOV     R5,A
+003A A3                INC     DPTR
+003B E0                MOVX    A,@DPTR
+003C FE                MOV     R6,A
+003D A3                INC     DPTR
+003E E0                MOVX    A,@DPTR
+003F 24FF              ADD     A,#0FFH
+0041 FF                MOV     R7,A
+0042 EE                MOV     A,R6
+0043 34FF              ADDC    A,#0FFH
+0045 FE                MOV     R6,A
+0046 ED                MOV     A,R5
+0047 34FF              ADDC    A,#0FFH
+0049 FD                MOV     R5,A
+004A EC                MOV     A,R4
+004B 34FF              ADDC    A,#0FFH
+004D FC                MOV     R4,A
+004E E4                CLR     A
+004F FB                MOV     R3,A
+0050 FA                MOV     R2,A
+0051 F9                MOV     R1,A
+0052 F8                MOV     R0,A
+0053 C3                CLR     C
+0054 120000      E     LCALL   ?C?ULCMP
+0057 702A              JNZ     ?C0017
+                                           ; SOURCE LINE # 138
+                                           ; SOURCE LINE # 139
+0059 E500        R     MOV     A,ti
+005B 75F00A            MOV     B,#0AH
+005E A4                MUL     AB
+005F 2400        R     ADD     A,#LOW tcb_list+02H
+0061 F582              MOV     DPL,A
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 10  
+
+0063 E4                CLR     A
+0064 3400        R     ADDC    A,#HIGH tcb_list+02H
+0066 F583              MOV     DPH,A
+0068 120000      E     LCALL   ?C?LSTKXDATA
+006B 00                DB      00H
+006C 00                DB      00H
+006D 00                DB      00H
+006E 00                DB      00H
+                                           ; SOURCE LINE # 141
+006F E500        R     MOV     A,ti
+0071 75F00A            MOV     B,#0AH
+0074 A4                MUL     AB
+0075 2400        R     ADD     A,#LOW tcb_list+06H
+0077 F582              MOV     DPL,A
+0079 E4                CLR     A
+007A 3400        R     ADDC    A,#HIGH tcb_list+06H
+007C F583              MOV     DPH,A
+007E 7401              MOV     A,#01H
+0080 F0                MOVX    @DPTR,A
+                                           ; SOURCE LINE # 142
+0081 803A              SJMP    ?C0015
+                                           ; SOURCE LINE # 143
+0083         ?C0017:
+                                           ; SOURCE LINE # 144
+0083 E500        R     MOV     A,ti
+0085 75F00A            MOV     B,#0AH
+0088 A4                MUL     AB
+0089 2400        R     ADD     A,#LOW tcb_list+02H
+008B F582              MOV     DPL,A
+008D E4                CLR     A
+008E 3400        R     ADDC    A,#HIGH tcb_list+02H
+0090 F583              MOV     DPH,A
+0092 E0                MOVX    A,@DPTR
+0093 FC                MOV     R4,A
+0094 A3                INC     DPTR
+0095 E0                MOVX    A,@DPTR
+0096 FD                MOV     R5,A
+0097 A3                INC     DPTR
+0098 E0                MOVX    A,@DPTR
+0099 FE                MOV     R6,A
+009A A3                INC     DPTR
+009B E0                MOVX    A,@DPTR
+009C 24FF              ADD     A,#0FFH
+009E FF                MOV     R7,A
+009F EE                MOV     A,R6
+00A0 34FF              ADDC    A,#0FFH
+00A2 FE                MOV     R6,A
+00A3 ED                MOV     A,R5
+00A4 34FF              ADDC    A,#0FFH
+00A6 FD                MOV     R5,A
+00A7 EC                MOV     A,R4
+00A8 34FF              ADDC    A,#0FFH
+00AA FC                MOV     R4,A
+00AB E500        R     MOV     A,ti
+00AD 75F00A            MOV     B,#0AH
+00B0 A4                MUL     AB
+00B1 2400        R     ADD     A,#LOW tcb_list+02H
+00B3 F582              MOV     DPL,A
+00B5 E4                CLR     A
+00B6 3400        R     ADDC    A,#HIGH tcb_list+02H
+00B8 F583              MOV     DPH,A
+00BA 120000      E     LCALL   ?C?LSTXDATA
+C51 COMPILER V9.60.7.0   OS_TASK                                                           12/28/2023 17:30:45 PAGE 11  
+
+                                           ; SOURCE LINE # 145
+00BD         ?C0015:
+00BD 0500        R     INC     ti
+00BF 020000      R     LJMP    ?C0013
+00C2         ?C0014:
+                                           ; SOURCE LINE # 146
+00C2 020000      R     LJMP    os_switch
              ; FUNCTION time_handleHook (END)
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    356    ----
+   CODE SIZE        =    601    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =   ----    ----
+   XDATA SIZE       =     70    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =      2       9
-   IDATA SIZE       =     65    ----
+   IDATA SIZE       =     20    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

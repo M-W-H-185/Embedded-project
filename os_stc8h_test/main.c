@@ -19,9 +19,8 @@ sbit LED_G = P0^7;    // 绿色LED
 
 
 // 任务堆栈区
-os_uint8_t idata task_stack1[MAX_TASK_DEP];			/*任务1堆栈.*/
-os_uint8_t idata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
-os_uint8_t idata task_stack3[MAX_TASK_DEP];			/*任务2堆栈.*/
+os_uint8_t xdata task_stack1[MAX_TASK_DEP];			/*任务1堆栈.*/
+os_uint8_t xdata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
 // 任务堆栈区
 
 
@@ -31,13 +30,13 @@ void task1()
 	while(1)
 	{
 		LED_R = 1;
-		os_delay(500);
+		os_delay(100);
 
 		LED_R = 0;
-		os_delay(500);
+		os_delay(100);
 		
 		LED_R = 1;
-		os_delay(500);
+		os_delay(100);
 
 	}
 }
@@ -54,14 +53,6 @@ void task2()
 		LED_Y = 0;
 		os_delay(1000);
 		os_delay(1000);
-
-	}
-}
-void task3()
-{
-
-	while(1)
-	{
 
 	}
 }
@@ -105,7 +96,6 @@ void main()
 
 	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
 	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
-	os_task_create(task3, &task_stack3, 3);//将task2函数装入3号槽
 	os_start();
 
 

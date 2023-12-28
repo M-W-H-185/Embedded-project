@@ -3,6 +3,7 @@
 #include "stc8g.h"
 #include "intrins.h"
 #include "stdio.h"
+#include "string.h"
 
 enum OS_TASK_STATUS_TYPE
 {
@@ -16,20 +17,22 @@ enum OS_TASK_STATUS_TYPE
 // 任务控制块
 typedef struct os_tcb_t
 {
-	os_uint8_t 			sp;					// sp 堆栈指针存储
-	os_uint32_t 		delay_tick;			// 延时滴答数
-	os_uint8_t 			os_status_type;		// 任务状态
-	os_uint8_t			*stack;				// 任务堆栈
-
+	os_uint16_t 			sp;					// sp 堆栈指针存储
+	os_uint32_t 			delay_tick;			// 延时滴答数
+	os_uint8_t 				os_status_type;		// 任务状态
+	os_uint8_t				*stack;				// 任务的私有堆栈
 };
 
 os_uint8_t data task_id = 0;    /*当前活动任务号*/
 os_uint8_t max_task = 0;
 
 /* 任务控制列表 */
-struct os_tcb_t idata tcb_list[MAX_TASKS];
+struct os_tcb_t xdata tcb_list[MAX_TASKS];
+/* 公共堆栈 */
+os_uint8_t idata public_stack[MAX_TASK_DEP];
+
 /*空闲任务堆栈.*/
-os_uint8_t idata task_idle_stack[MAX_TASK_DEP];		
+os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];		
 
 
 // 任务切换函数
@@ -38,6 +41,9 @@ void os_switch()
 	// 上面中断已经入栈了
 	os_uint8_t  ost_i = 0;
 
+	// 已经入栈到了公共堆栈内了
+	// 将公共堆栈拷贝到任务堆栈内
+	memcpy(tcb_list[task_id].stack, public_stack,MAX_TASK_DEP);
 	
 	
 	tcb_list[task_id].sp = SP;
@@ -55,6 +61,9 @@ void os_switch()
 	{
 		task_id = 0;
 	}
+	// 将任务堆栈拷贝到公共堆栈里面
+	memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
+	
     SP = tcb_list[task_id].sp;
 
 	
@@ -63,17 +72,14 @@ void os_switch()
  
 void os_task_create(void(*task)(void) ,os_uint8_t *tstack,int tid)
 {
-
+	
 	tstack[0] = (unsigned int)task & 0xff;		// DPL
 	tstack[1] = (unsigned int)task >> 8;  		// DPH
 
-	tcb_list[tid].sp 				= tstack + 1;	// 这里加4实际上就是取了将taskck[4]的地址保存了。sp指向它就相当于指向了任务函数
+	tcb_list[tid].sp 				= (public_stack+1);	// 全部指向这个公共的堆栈
 	tcb_list[tid].os_status_type 	= OS_READY;
-	tcb_list[tid].stack 			= tstack ;
-	
-	
-	
-	
+
+	tcb_list[tid].stack = tstack;
 	
 	
 	max_task++;
@@ -88,6 +94,9 @@ void os_start()
 	
 	// 空闲任务先运行
 	task_id = 0;
+	// 将任务堆栈拷贝到公共堆栈里面
+	memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
+	
 	SP = tcb_list[task_id].sp;
 	
 
