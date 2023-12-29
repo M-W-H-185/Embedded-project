@@ -87,15 +87,122 @@ void time0_handle(void)large reentrant
 	time_handleHook();
 
 }
+
+// 空缓冲区： 在初始化时，头指针和尾指针都指向同一个位置，即缓冲区的起始位置。这时可以通过判断头指针和尾指针是否相等来判断缓冲区是否为空。
+// 满缓冲区： 当尾指针移动到头指针的前一个位置时，说明缓冲区已满。如果没有预留一个位置，头尾指针会重叠，无法准确判断是空还是满。
+// 消息队列
+typedef struct QueueHandle_t
+{
+	os_uint8_t *r_;		// 下一个要被读取的元素
+	os_uint8_t *w_;		// 下一个要被写入的位置
+	os_uint8_t 	length;		// 长度
+	os_uint8_t 	itemSize;	// 单个数据项的大小
+	os_uint8_t 	buff[6];
+}QueueHandle;
+
+// 创建一个环形缓冲区
+// 没有动态分配，所以只是单纯指向一下
+void queue_created(QueueHandle *queue){
+
+	queue->r_ = &queue->buff[0];	// 默认指向buff的0
+	queue->w_ = &queue->buff[0];	// 默认指向buff的0
+	queue->length = 6;
+	return;
+}
+// 队列写
+void queue_write(QueueHandle *queue, os_uint8_t _data)
+{	os_uint8_t *next_w = queue->w_ + 1;	// 下一次写入的位置
+	
+	// 下一次写入的位置等于 读取 的位置 表示满了
+	if( next_w == queue->r_ )
+	{
+		return;
+	}
+	// 溢出咯
+	if( next_w >= &queue->buff[queue->length] )
+	{
+		// 溢出暂时不跳到 数组0吧
+		return;
+	}
+	
+	// 写入数据并更新尾指针
+	*queue->w_ = _data;
+	queue->w_ = next_w;
+	
+	return;
+}
+// 队列读
+void queue_read(QueueHandle *queue, os_uint8_t *_data)
+{
+	os_uint8_t *next_r = queue->r_ + 1;	// 下一次读取的位置
+	
+	
+	
+	
+	// 读取到头了。代表读位置和写位置都到头了溢出了。两个一起滚回去 数组0
+	if( next_r >= &queue->buff[queue->length - 1] && ( queue->w_ >= &queue->buff[queue->length - 1] )    )
+	{
+		queue->r_ = &queue->buff[0];	
+		queue->w_ = &queue->buff[0];	
+		// 返回溢出状态
+		return;
+	}
+	
+	
+	// 读取数据并更新头指针
+	*_data = *queue->r_;
+	queue->r_ = next_r;
+	
+	// 下一次读取的位置等于 写入 的位置 表示是空的
+	if(next_r == queue->w_)
+	{
+		return;
+	}
+
+
+
+
+	
+	return;
+}
+
+QueueHandle xdata queue_1 ;
+
+
 /* 主函数 */
 void main()
 {
+	volatile  os_uint8_t test_data = 0xff;
+	
+	// 初始化一个队列
+	queue_created(&queue_1);
+	queue_write(&queue_1,1);
+	queue_write(&queue_1,2);
+	queue_write(&queue_1,3);
+	queue_write(&queue_1,4);
+	queue_write(&queue_1,5);
+	
+	queue_write(&queue_1,6);
+	queue_write(&queue_1,7);	
+	
+	queue_read(&queue_1, &test_data);
+	queue_read(&queue_1, &test_data);
+	queue_read(&queue_1, &test_data);
+	queue_read(&queue_1, &test_data);
+	queue_read(&queue_1, &test_data);
+	queue_read(&queue_1, &test_data);
+	
+	queue_read(&queue_1, &test_data);
+	queue_read(&queue_1, &test_data);	
+
+	queue_write(&queue_1,0x33);
+
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
 	Timer0_Init();
 	EA = 1;
 	P_SW2 |= (1<<7);
-
+	
 	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
 	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
 	os_start();
