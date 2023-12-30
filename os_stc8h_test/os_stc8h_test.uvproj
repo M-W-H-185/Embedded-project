@@ -402,14 +402,14 @@
               <FilePath>.\XmRTOS\os_mcu.asm</FilePath>
             </File>
             <File>
-              <FileName>os_queue.c</FileName>
+              <FileName>ringBuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\XmRTOS\os_queue.c</FilePath>
+              <FilePath>.\XmRTOS\ringBuffer.c</FilePath>
             </File>
             <File>
-              <FileName>os_queue.h</FileName>
+              <FileName>ringBuffer.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\XmRTOS\os_queue.h</FilePath>
+              <FilePath>.\XmRTOS\ringBuffer.h</FilePath>
             </File>
           </Files>
         </Group>

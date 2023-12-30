@@ -2,6 +2,6 @@
 ".\Objects\main.obj",
 ".\Objects\os_task.obj",
 ".\Objects\os_mcu.obj",
-".\Objects\os_queue.obj" 
+".\Objects\ringBuffer.obj" 
 TO ".\Objects\ºôÎüµÆpwm" 
 PRINT(".\Listings\ºôÎüµÆpwm.m51") RAMSIZE(256) 

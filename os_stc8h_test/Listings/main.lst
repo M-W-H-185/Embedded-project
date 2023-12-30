@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -19,7 +19,7 @@ line level    source
    9          #include "intrins.h"
   10          #include "stdio.h"
   11          #include "os_task.h"
-  12          #include "os_queue.h"
+  12          #include "ringBuffer.h"
   13          /* 发光二极管定义 */
   14          
   15          sbit LED_R = P0^5;    // 红色LED
@@ -62,7 +62,7 @@ line level    source
   52   2                      os_delay(1000);
   53   2                      
   54   2                      LED_Y = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 2   
 
   55   2                      os_delay(1000);
   56   2                      os_delay(1000);
@@ -101,75 +101,83 @@ line level    source
   89   1      }
   90          
   91          
-  92          QueueHandle xdata queue_1 ;
-  93          
+  92          RingBufferHandle xdata queue_1 ;
+  93          os_uint8_t xdata queue_buff[6];
   94          
   95          /* 主函数 */
   96          void main()
   97          {
-  98   1              volatile  os_uint8_t test_data = 0xff;
-  99   1              
- 100   1              // 初始化一个队列
- 101   1              queue_created(&queue_1);
- 102   1              // 写五次 是成功的
- 103   1              queue_write(&queue_1,1);
- 104   1              queue_write(&queue_1,2);
- 105   1              queue_write(&queue_1,3);
- 106   1              queue_write(&queue_1,4);
- 107   1              queue_write(&queue_1,5);
- 108   1              // 写五次 是成功的
- 109   1              
- 110   1              // 写五次后 失败
- 111   1              queue_write(&queue_1,6);
- 112   1              queue_write(&queue_1,7);        
- 113   1              // 写五次后 失败
- 114   1      
- 115   1              // 读五次 成功
- 116   1              queue_read(&queue_1, &test_data);
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 3   
+  98   1              
+  99   1              volatile  os_uint8_t test_data = 0xff;
+ 100   1              volatile  os_uint8_t w_data = 0;
+ 101   1              
+ 102   1              // 初始化一个队列
+ 103   1              ringbuffer_created(&queue_1,&queue_buff,6,sizeof(os_uint8_t));
+ 104   1              // 写五次 是成功的
+ 105   1              w_data++;
+ 106   1              ringbuffer_write(&queue_1,&w_data);
+ 107   1              w_data++;
+ 108   1              ringbuffer_write(&queue_1,&w_data);
+ 109   1              w_data++;
+ 110   1              ringbuffer_write(&queue_1,&w_data);
+ 111   1              w_data++;
+ 112   1              ringbuffer_write(&queue_1,&w_data);
+ 113   1              w_data++;
+ 114   1              ringbuffer_write(&queue_1,&w_data);
+ 115   1              // 写五次 是成功的
+ 116   1              
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 3   
 
- 117   1              queue_read(&queue_1, &test_data);
- 118   1              queue_read(&queue_1, &test_data);
- 119   1              queue_read(&queue_1, &test_data);
- 120   1              queue_read(&queue_1, &test_data);
- 121   1              queue_read(&queue_1, &test_data);
+ 117   1              // 写五次后 失败
+ 118   1              ringbuffer_write(&queue_1,&(os_uint8_t *)6);
+ 119   1              ringbuffer_write(&queue_1,&(os_uint8_t *)7);    
+ 120   1              // 写五次后 失败
+ 121   1      
  122   1              // 读五次 成功
- 123   1      
- 124   1              // 读五次后 第一次读 失败并让 读和写指正回到数组0
- 125   1              queue_read(&queue_1, &test_data);
- 126   1              // 读五次后 第二次读 读和写重合  缓冲区数据为空
- 127   1              queue_read(&queue_1, &test_data);       
- 128   1      
- 129   1      
- 130   1              // 这两句后 缓冲区数据为空
- 131   1              
- 132   1              // 写一次成功
- 133   1              queue_write(&queue_1,0x33);
- 134   1              // 读一次成功
- 135   1              queue_read(&queue_1, &test_data);       
- 136   1              
+ 123   1              ringbuffer_read(&queue_1, &test_data);
+ 124   1              ringbuffer_read(&queue_1, &test_data);
+ 125   1              ringbuffer_read(&queue_1, &test_data);
+ 126   1              ringbuffer_read(&queue_1, &test_data);
+ 127   1              ringbuffer_read(&queue_1, &test_data);
+ 128   1              ringbuffer_read(&queue_1, &test_data);
+ 129   1              // 读五次 成功
+ 130   1      
+ 131   1              // 读五次后 第一次读 失败并让 读和写指正回到数组0
+ 132   1              ringbuffer_read(&queue_1, &test_data);
+ 133   1              // 读五次后 第二次读 读和写重合  缓冲区数据为空
+ 134   1              ringbuffer_read(&queue_1, &test_data);  
+ 135   1      
+ 136   1      
  137   1              // 这两句后 缓冲区数据为空
- 138   1      
- 139   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
- 140   1              P0M1 = 0x00;
- 141   1              Timer0_Init();
- 142   1              EA = 1;
- 143   1              P_SW2 |= (1<<7);
+ 138   1              
+ 139   1              // 写一次成功
+ 140   1              w_data = 0x33;
+ 141   1              ringbuffer_write(&queue_1,&w_data);
+ 142   1              // 读一次成功
+ 143   1              ringbuffer_read(&queue_1, &test_data);  
  144   1              
- 145   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
- 146   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
- 147   1              os_start();
- 148   1      
- 149   1      
- 150   1              while(1)
- 151   1              {
- 152   2      
- 153   2              }
- 154   1              
- 155   1      
- 156   1      }
- 157          
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 4   
+ 145   1              // 这两句后 缓冲区数据为空
+ 146   1      
+ 147   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+ 148   1              P0M1 = 0x00;
+ 149   1              Timer0_Init();
+ 150   1              EA = 1;
+ 151   1              P_SW2 |= (1<<7);
+ 152   1              
+ 153   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
+ 154   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+ 155   1              os_start();
+ 156   1      
+ 157   1      
+ 158   1              while(1)
+ 159   1              {
+ 160   2      
+ 161   2              }
+ 162   1              
+ 163   1      
+ 164   1      }
+ 165          
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -233,7 +241,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 55
 001A 7FE8              MOV     R7,#0E8H
 001C 7E03              MOV     R6,#03H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 5   
 
 001E 7D00              MOV     R5,#00H
 0020 7C00              MOV     R4,#00H
@@ -297,187 +305,225 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION main (BEGIN)
                                            ; SOURCE LINE # 96
                                            ; SOURCE LINE # 97
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 6   
 
-                                           ; SOURCE LINE # 98
+                                           ; SOURCE LINE # 99
 0000 7500FF      R     MOV     test_data,#0FFH
-                                           ; SOURCE LINE # 101
-0003 7B01              MOV     R3,#01H
-0005 7A00        R     MOV     R2,#HIGH queue_1
-0007 7900        R     MOV     R1,#LOW queue_1
-0009 120000      E     LCALL   _queue_created
+                                           ; SOURCE LINE # 100
+0003 E4                CLR     A
+0004 F500        R     MOV     w_data,A
                                            ; SOURCE LINE # 103
-000C 7B01              MOV     R3,#01H
-000E 7A00        R     MOV     R2,#HIGH queue_1
-0010 7900        R     MOV     R1,#LOW queue_1
-0012 7D01              MOV     R5,#01H
-0014 120000      E     LCALL   _queue_write
-                                           ; SOURCE LINE # 104
-0017 7B01              MOV     R3,#01H
-0019 7A00        R     MOV     R2,#HIGH queue_1
-001B 7900        R     MOV     R1,#LOW queue_1
-001D 7D02              MOV     R5,#02H
-001F 120000      E     LCALL   _queue_write
+0006 750001      E     MOV     ?_ringbuffer_created?BYTE+03H,#01H
+0009 750000      R     MOV     ?_ringbuffer_created?BYTE+04H,#HIGH queue_buff
+000C 750000      R     MOV     ?_ringbuffer_created?BYTE+05H,#LOW queue_buff
+000F 750006      E     MOV     ?_ringbuffer_created?BYTE+06H,#06H
+0012 750001      E     MOV     ?_ringbuffer_created?BYTE+07H,#01H
+0015 7B01              MOV     R3,#01H
+0017 7A00        R     MOV     R2,#HIGH queue_1
+0019 7900        R     MOV     R1,#LOW queue_1
+001B 120000      E     LCALL   _ringbuffer_created
                                            ; SOURCE LINE # 105
-0022 7B01              MOV     R3,#01H
-0024 7A00        R     MOV     R2,#HIGH queue_1
-0026 7900        R     MOV     R1,#LOW queue_1
-0028 7D03              MOV     R5,#03H
-002A 120000      E     LCALL   _queue_write
+001E 0500        R     INC     w_data
                                            ; SOURCE LINE # 106
-002D 7B01              MOV     R3,#01H
-002F 7A00        R     MOV     R2,#HIGH queue_1
-0031 7900        R     MOV     R1,#LOW queue_1
-0033 7D04              MOV     R5,#04H
-0035 120000      E     LCALL   _queue_write
+0020 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+0023 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
+0026 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
+0029 7B01              MOV     R3,#01H
+002B 7A00        R     MOV     R2,#HIGH queue_1
+002D 7900        R     MOV     R1,#LOW queue_1
+002F 120000      E     LCALL   _ringbuffer_write
                                            ; SOURCE LINE # 107
-0038 7B01              MOV     R3,#01H
-003A 7A00        R     MOV     R2,#HIGH queue_1
-003C 7900        R     MOV     R1,#LOW queue_1
-003E 7D05              MOV     R5,#05H
-0040 120000      E     LCALL   _queue_write
+0032 0500        R     INC     w_data
+                                           ; SOURCE LINE # 108
+0034 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+0037 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
+003A 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
+003D 7B01              MOV     R3,#01H
+003F 7A00        R     MOV     R2,#HIGH queue_1
+0041 7900        R     MOV     R1,#LOW queue_1
+0043 120000      E     LCALL   _ringbuffer_write
+                                           ; SOURCE LINE # 109
+0046 0500        R     INC     w_data
+                                           ; SOURCE LINE # 110
+0048 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+004B 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
+004E 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
+0051 7B01              MOV     R3,#01H
+0053 7A00        R     MOV     R2,#HIGH queue_1
+0055 7900        R     MOV     R1,#LOW queue_1
+0057 120000      E     LCALL   _ringbuffer_write
                                            ; SOURCE LINE # 111
-0043 7B01              MOV     R3,#01H
-0045 7A00        R     MOV     R2,#HIGH queue_1
-0047 7900        R     MOV     R1,#LOW queue_1
-0049 7D06              MOV     R5,#06H
-004B 120000      E     LCALL   _queue_write
+005A 0500        R     INC     w_data
                                            ; SOURCE LINE # 112
-004E 7B01              MOV     R3,#01H
-0050 7A00        R     MOV     R2,#HIGH queue_1
-0052 7900        R     MOV     R1,#LOW queue_1
-0054 7D07              MOV     R5,#07H
-0056 120000      E     LCALL   _queue_write
-                                           ; SOURCE LINE # 116
-0059 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-005C 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-005F 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-0062 7B01              MOV     R3,#01H
-0064 7A00        R     MOV     R2,#HIGH queue_1
-0066 7900        R     MOV     R1,#LOW queue_1
-0068 120000      E     LCALL   _queue_read
-                                           ; SOURCE LINE # 117
-006B 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-006E 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-0071 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-0074 7B01              MOV     R3,#01H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 7   
+005C 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+005F 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
+0062 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
+0065 7B01              MOV     R3,#01H
+0067 7A00        R     MOV     R2,#HIGH queue_1
+0069 7900        R     MOV     R1,#LOW queue_1
+006B 120000      E     LCALL   _ringbuffer_write
+                                           ; SOURCE LINE # 113
+006E 0500        R     INC     w_data
+                                           ; SOURCE LINE # 114
+0070 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+0073 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
+0076 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
+0079 7B01              MOV     R3,#01H
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 7   
 
-0076 7A00        R     MOV     R2,#HIGH queue_1
-0078 7900        R     MOV     R1,#LOW queue_1
-007A 120000      E     LCALL   _queue_read
+007B 7A00        R     MOV     R2,#HIGH queue_1
+007D 7900        R     MOV     R1,#LOW queue_1
+007F 120000      E     LCALL   _ringbuffer_write
                                            ; SOURCE LINE # 118
-007D 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-0080 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-0083 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-0086 7B01              MOV     R3,#01H
-0088 7A00        R     MOV     R2,#HIGH queue_1
-008A 7900        R     MOV     R1,#LOW queue_1
-008C 120000      E     LCALL   _queue_read
+0082 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+0085 750000      E     MOV     ?_ringbuffer_write?BYTE+04H,#00H
+0088 750006      E     MOV     ?_ringbuffer_write?BYTE+05H,#06H
+008B 7B01              MOV     R3,#01H
+008D 7A00        R     MOV     R2,#HIGH queue_1
+008F 7900        R     MOV     R1,#LOW queue_1
+0091 120000      E     LCALL   _ringbuffer_write
                                            ; SOURCE LINE # 119
-008F 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-0092 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-0095 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-0098 7B01              MOV     R3,#01H
-009A 7A00        R     MOV     R2,#HIGH queue_1
-009C 7900        R     MOV     R1,#LOW queue_1
-009E 120000      E     LCALL   _queue_read
-                                           ; SOURCE LINE # 120
-00A1 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-00A4 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-00A7 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-00AA 7B01              MOV     R3,#01H
-00AC 7A00        R     MOV     R2,#HIGH queue_1
-00AE 7900        R     MOV     R1,#LOW queue_1
-00B0 120000      E     LCALL   _queue_read
-                                           ; SOURCE LINE # 121
-00B3 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-00B6 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-00B9 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-00BC 7B01              MOV     R3,#01H
-00BE 7A00        R     MOV     R2,#HIGH queue_1
-00C0 7900        R     MOV     R1,#LOW queue_1
-00C2 120000      E     LCALL   _queue_read
+0094 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+0097 750000      E     MOV     ?_ringbuffer_write?BYTE+04H,#00H
+009A 750007      E     MOV     ?_ringbuffer_write?BYTE+05H,#07H
+009D 7B01              MOV     R3,#01H
+009F 7A00        R     MOV     R2,#HIGH queue_1
+00A1 7900        R     MOV     R1,#LOW queue_1
+00A3 120000      E     LCALL   _ringbuffer_write
+                                           ; SOURCE LINE # 123
+00A6 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+00A9 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+00AC 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+00AF 7B01              MOV     R3,#01H
+00B1 7A00        R     MOV     R2,#HIGH queue_1
+00B3 7900        R     MOV     R1,#LOW queue_1
+00B5 120000      E     LCALL   _ringbuffer_read
+                                           ; SOURCE LINE # 124
+00B8 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+00BB 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+00BE 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+00C1 7B01              MOV     R3,#01H
+00C3 7A00        R     MOV     R2,#HIGH queue_1
+00C5 7900        R     MOV     R1,#LOW queue_1
+00C7 120000      E     LCALL   _ringbuffer_read
                                            ; SOURCE LINE # 125
-00C5 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-00C8 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-00CB 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-00CE 7B01              MOV     R3,#01H
-00D0 7A00        R     MOV     R2,#HIGH queue_1
-00D2 7900        R     MOV     R1,#LOW queue_1
-00D4 120000      E     LCALL   _queue_read
+00CA 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+00CD 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+00D0 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+00D3 7B01              MOV     R3,#01H
+00D5 7A00        R     MOV     R2,#HIGH queue_1
+00D7 7900        R     MOV     R1,#LOW queue_1
+00D9 120000      E     LCALL   _ringbuffer_read
+                                           ; SOURCE LINE # 126
+00DC 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+00DF 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+00E2 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+00E5 7B01              MOV     R3,#01H
+00E7 7A00        R     MOV     R2,#HIGH queue_1
+00E9 7900        R     MOV     R1,#LOW queue_1
+00EB 120000      E     LCALL   _ringbuffer_read
                                            ; SOURCE LINE # 127
-00D7 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-00DA 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-00DD 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-00E0 7B01              MOV     R3,#01H
-00E2 7A00        R     MOV     R2,#HIGH queue_1
-00E4 7900        R     MOV     R1,#LOW queue_1
-00E6 120000      E     LCALL   _queue_read
-                                           ; SOURCE LINE # 133
-00E9 7B01              MOV     R3,#01H
-00EB 7A00        R     MOV     R2,#HIGH queue_1
-00ED 7900        R     MOV     R1,#LOW queue_1
-00EF 7D33              MOV     R5,#033H
-00F1 120000      E     LCALL   _queue_write
-                                           ; SOURCE LINE # 135
-00F4 750000      E     MOV     ?_queue_read?BYTE+03H,#00H
-00F7 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
-00FA 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
-00FD 7B01              MOV     R3,#01H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:20:45 PAGE 8   
+00EE 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+00F1 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+00F4 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+00F7 7B01              MOV     R3,#01H
+00F9 7A00        R     MOV     R2,#HIGH queue_1
+00FB 7900        R     MOV     R1,#LOW queue_1
+00FD 120000      E     LCALL   _ringbuffer_read
+                                           ; SOURCE LINE # 128
+0100 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+0103 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 8   
 
-00FF 7A00        R     MOV     R2,#HIGH queue_1
-0101 7900        R     MOV     R1,#LOW queue_1
-0103 120000      E     LCALL   _queue_read
-                                           ; SOURCE LINE # 139
-0106 E4                CLR     A
-0107 F594              MOV     P0M0,A
+0106 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+0109 7B01              MOV     R3,#01H
+010B 7A00        R     MOV     R2,#HIGH queue_1
+010D 7900        R     MOV     R1,#LOW queue_1
+010F 120000      E     LCALL   _ringbuffer_read
+                                           ; SOURCE LINE # 132
+0112 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+0115 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+0118 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+011B 7B01              MOV     R3,#01H
+011D 7A00        R     MOV     R2,#HIGH queue_1
+011F 7900        R     MOV     R1,#LOW queue_1
+0121 120000      E     LCALL   _ringbuffer_read
+                                           ; SOURCE LINE # 134
+0124 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+0127 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+012A 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+012D 7B01              MOV     R3,#01H
+012F 7A00        R     MOV     R2,#HIGH queue_1
+0131 7900        R     MOV     R1,#LOW queue_1
+0133 120000      E     LCALL   _ringbuffer_read
                                            ; SOURCE LINE # 140
-0109 F593              MOV     P0M1,A
+0136 750033      R     MOV     w_data,#033H
                                            ; SOURCE LINE # 141
-010B 120000      R     LCALL   Timer0_Init
-                                           ; SOURCE LINE # 142
-010E D2AF              SETB    EA
+0139 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
+013C 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
+013F 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
+0142 7B01              MOV     R3,#01H
+0144 7A00        R     MOV     R2,#HIGH queue_1
+0146 7900        R     MOV     R1,#LOW queue_1
+0148 120000      E     LCALL   _ringbuffer_write
                                            ; SOURCE LINE # 143
-0110 43BA80            ORL     P_SW2,#080H
-                                           ; SOURCE LINE # 145
-0113 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
-0116 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
-0119 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
-011C F500        E     MOV     ?_os_task_create?BYTE+06H,A
-011E 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
-0121 7BFF              MOV     R3,#0FFH
-0123 7A00        R     MOV     R2,#HIGH task1
-0125 7900        R     MOV     R1,#LOW task1
-0127 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 146
-012A 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
-012D 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
-0130 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
-0133 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
-0136 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
-0139 7BFF              MOV     R3,#0FFH
-013B 7A00        R     MOV     R2,#HIGH task2
-013D 7900        R     MOV     R1,#LOW task2
-013F 120000      E     LCALL   _os_task_create
+014B 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
+014E 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
+0151 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
+0154 7B01              MOV     R3,#01H
+0156 7A00        R     MOV     R2,#HIGH queue_1
+0158 7900        R     MOV     R1,#LOW queue_1
+015A 120000      E     LCALL   _ringbuffer_read
                                            ; SOURCE LINE # 147
-0142 120000      E     LCALL   os_start
-0145         ?C0010:
+015D E4                CLR     A
+015E F594              MOV     P0M0,A
+                                           ; SOURCE LINE # 148
+0160 F593              MOV     P0M1,A
+                                           ; SOURCE LINE # 149
+0162 120000      R     LCALL   Timer0_Init
                                            ; SOURCE LINE # 150
+0165 D2AF              SETB    EA
                                            ; SOURCE LINE # 151
+0167 43BA80            ORL     P_SW2,#080H
                                            ; SOURCE LINE # 153
-0145 80FE              SJMP    ?C0010
+016A 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
+016D 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
+0170 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
+0173 F500        E     MOV     ?_os_task_create?BYTE+06H,A
+0175 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
+0178 7BFF              MOV     R3,#0FFH
+017A 7A00        R     MOV     R2,#HIGH task1
+017C 7900        R     MOV     R1,#LOW task1
+017E 120000      E     LCALL   _os_task_create
+                                           ; SOURCE LINE # 154
+0181 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 14:54:04 PAGE 9   
+
+0184 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
+0187 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
+018A 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
+018D 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
+0190 7BFF              MOV     R3,#0FFH
+0192 7A00        R     MOV     R2,#HIGH task2
+0194 7900        R     MOV     R1,#LOW task2
+0196 120000      E     LCALL   _os_task_create
+                                           ; SOURCE LINE # 155
+0199 120000      E     LCALL   os_start
+019C         ?C0010:
+                                           ; SOURCE LINE # 158
+                                           ; SOURCE LINE # 159
+                                           ; SOURCE LINE # 161
+019C 80FE              SJMP    ?C0010
              ; FUNCTION main (END)
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    463    ----
+   CODE SIZE        =    550    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     54    ----
+   XDATA SIZE       =     57    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      2       1
+   DATA SIZE        =      2       2
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
