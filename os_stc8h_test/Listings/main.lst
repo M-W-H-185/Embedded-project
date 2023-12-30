@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   52   2                      os_delay(1000);
   53   2                      
   54   2                      LED_Y = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 2   
 
   55   2                      os_delay(1000);
   56   2                      os_delay(1000);
@@ -107,8 +107,8 @@ line level    source
   93          // 消息队列
   94          typedef struct QueueHandle_t
   95          {
-  96                  os_uint8_t *r_;         // 下一个要被读取的元素
-  97                  os_uint8_t *w_;         // 下一个要被写入的位置
+  96                  os_uint8_t *r_;                 // 下一次要被读取的元素
+  97                  os_uint8_t *w_;                 // 下一次要被写入的位置
   98                  os_uint8_t      length;         // 长度
   99                  os_uint8_t      itemSize;       // 单个数据项的大小
  100                  os_uint8_t      buff[6];
@@ -123,10 +123,10 @@ line level    source
  109   1              queue->length = 6;
  110   1              return;
  111   1      }
- 112          // 队列写
+ 112          // 队列写 写入满不重新开始写，需要等待读完
  113          void queue_write(QueueHandle *queue, os_uint8_t _data)
  114          {       os_uint8_t *next_w = queue->w_ + 1;     // 下一次写入的位置
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 3   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 3   
 
  115   1              
  116   1              // 下一次写入的位置等于 读取 的位置 表示满了
@@ -147,94 +147,111 @@ line level    source
  131   1              
  132   1              return;
  133   1      }
- 134          // 队列读
+ 134          // 队列读 读和写都到头了 重新回到数组0  ； 当前读和下次写位置重合表示空
  135          void queue_read(QueueHandle *queue, os_uint8_t *_data)
  136          {
  137   1              os_uint8_t *next_r = queue->r_ + 1;     // 下一次读取的位置
- 138   1              
+ 138   1      
  139   1              
- 140   1              
- 141   1              
- 142   1              // 读取到头了。代表读位置和写位置都到头了溢出了。两个一起滚回去 数组0
- 143   1              if( next_r >= &queue->buff[queue->length - 1] && ( queue->w_ >= &queue->buff[queue->length - 1] )    )
- 144   1              {
- 145   2                      queue->r_ = &queue->buff[0];    
- 146   2                      queue->w_ = &queue->buff[0];    
- 147   2                      // 返回溢出状态
- 148   2                      return;
- 149   2              }
- 150   1              
- 151   1              
- 152   1              // 读取数据并更新头指针
- 153   1              *_data = *queue->r_;
- 154   1              queue->r_ = next_r;
- 155   1              
- 156   1              // 下一次读取的位置等于 写入 的位置 表示是空的
- 157   1              if(next_r == queue->w_)
- 158   1              {
- 159   2                      return;
- 160   2              }
- 161   1      
+ 140   1              // 读取到头了。代表读位置和写位置都到头了溢出了。两个一起滚回去 数组0
+ 141   1              if( next_r >= &queue->buff[queue->length - 1] && ( queue->w_ >= &queue->buff[queue->length - 1] )    )
+ 142   1              {
+ 143   2                      // 到了这里算是 环形缓冲区的最后一位的前一位数据  读取数据后 更新写入和读取指针 
+ 144   2                      *_data = *queue->r_;
+ 145   2                      
+ 146   2              
+ 147   2                      queue->r_ = &queue->buff[0];    
+ 148   2                      queue->w_ = &queue->buff[0];    
+ 149   2                      // 返回溢出状态
+ 150   2                      return;
+ 151   2              }
+ 152   1              
+ 153   1              // 当前读取位置 和 下一次写入位置重合 表示空
+ 154   1              if(queue->r_ == queue->w_)
+ 155   1              {
+ 156   2                      return;
+ 157   2              }
+ 158   1              // 读取数据并更新头指针
+ 159   1              *_data = *queue->r_;
+ 160   1              queue->r_ = next_r;
+ 161   1              
  162   1      
  163   1      
  164   1      
- 165   1              
- 166   1              return;
- 167   1      }
- 168          
- 169          QueueHandle xdata queue_1 ;
- 170          
+ 165   1      
+ 166   1              
+ 167   1              return;
+ 168   1      }
+ 169          
+ 170          QueueHandle xdata queue_1 ;
  171          
- 172          /* 主函数 */
- 173          void main()
- 174          {
- 175   1              volatile  os_uint8_t test_data = 0xff;
- 176   1              
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 4   
+ 172          
+ 173          /* 主函数 */
+ 174          void main()
+ 175          {
+ 176   1              volatile  os_uint8_t test_data = 0xff;
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 4   
 
- 177   1              // 初始化一个队列
- 178   1              queue_created(&queue_1);
- 179   1              queue_write(&queue_1,1);
- 180   1              queue_write(&queue_1,2);
- 181   1              queue_write(&queue_1,3);
- 182   1              queue_write(&queue_1,4);
- 183   1              queue_write(&queue_1,5);
- 184   1              
- 185   1              queue_write(&queue_1,6);
- 186   1              queue_write(&queue_1,7);        
+ 177   1              
+ 178   1              // 初始化一个队列
+ 179   1              queue_created(&queue_1);
+ 180   1              // 写五次 是成功的
+ 181   1              queue_write(&queue_1,1);
+ 182   1              queue_write(&queue_1,2);
+ 183   1              queue_write(&queue_1,3);
+ 184   1              queue_write(&queue_1,4);
+ 185   1              queue_write(&queue_1,5);
+ 186   1              // 写五次 是成功的
  187   1              
- 188   1              queue_read(&queue_1, &test_data);
- 189   1              queue_read(&queue_1, &test_data);
- 190   1              queue_read(&queue_1, &test_data);
- 191   1              queue_read(&queue_1, &test_data);
- 192   1              queue_read(&queue_1, &test_data);
- 193   1              queue_read(&queue_1, &test_data);
- 194   1              
+ 188   1              // 写五次后 失败
+ 189   1              queue_write(&queue_1,6);
+ 190   1              queue_write(&queue_1,7);        
+ 191   1              // 写五次后 失败
+ 192   1      
+ 193   1              // 读五次 成功
+ 194   1              queue_read(&queue_1, &test_data);
  195   1              queue_read(&queue_1, &test_data);
- 196   1              queue_read(&queue_1, &test_data);       
- 197   1      
- 198   1              queue_write(&queue_1,0x33);
- 199   1      
- 200   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
- 201   1              P0M1 = 0x00;
- 202   1              Timer0_Init();
- 203   1              EA = 1;
- 204   1              P_SW2 |= (1<<7);
- 205   1              
- 206   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
- 207   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
- 208   1              os_start();
- 209   1      
- 210   1      
- 211   1              while(1)
- 212   1              {
- 213   2      
- 214   2              }
- 215   1              
+ 196   1              queue_read(&queue_1, &test_data);
+ 197   1              queue_read(&queue_1, &test_data);
+ 198   1              queue_read(&queue_1, &test_data);
+ 199   1              queue_read(&queue_1, &test_data);
+ 200   1              // 读五次 成功
+ 201   1      
+ 202   1              // 读五次后 第一次读 失败并让 读和写指正回到数组0
+ 203   1              queue_read(&queue_1, &test_data);
+ 204   1              // 读五次后 第二次读 读和写重合  缓冲区数据为空
+ 205   1              queue_read(&queue_1, &test_data);       
+ 206   1      
+ 207   1      
+ 208   1              // 这两句后 缓冲区数据为空
+ 209   1              
+ 210   1              // 写一次成功
+ 211   1              queue_write(&queue_1,0x33);
+ 212   1              // 读一次成功
+ 213   1              queue_read(&queue_1, &test_data);       
+ 214   1              
+ 215   1              // 这两句后 缓冲区数据为空
  216   1      
- 217   1      }
- 218          
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 5   
+ 217   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+ 218   1              P0M1 = 0x00;
+ 219   1              Timer0_Init();
+ 220   1              EA = 1;
+ 221   1              P_SW2 |= (1<<7);
+ 222   1              
+ 223   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
+ 224   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+ 225   1              os_start();
+ 226   1      
+ 227   1      
+ 228   1              while(1)
+ 229   1              {
+ 230   2      
+ 231   2              }
+ 232   1              
+ 233   1      
+ 234   1      }
+ 235          
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 5   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -298,7 +315,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 55
 001A 7FE8              MOV     R7,#0E8H
 001C 7E03              MOV     R6,#03H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 6   
 
 001E 7D00              MOV     R5,#00H
 0020 7C00              MOV     R4,#00H
@@ -362,7 +379,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _queue_created (BEGIN)
                                            ; SOURCE LINE # 105
 0000 8B00        R     MOV     queue,R3
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 7   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 7   
 
 0002 8A00        R     MOV     queue+01H,R2
 0004 8900        R     MOV     queue+02H,R1
@@ -403,8 +420,8 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0040 020000      E     LJMP    ?C?CSTOPTR
              ; FUNCTION _queue_created (END)
 
-             ; FUNCTION L?0028 (BEGIN)
-0000         L?0029:
+             ; FUNCTION L?0029 (BEGIN)
+0000         L?0030:
 0000 7B01              MOV     R3,#01H
 0002 7A00        R     MOV     R2,#HIGH queue_1
 0004 7900        R     MOV     R1,#LOW queue_1
@@ -426,7 +443,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0019 8B00        R     MOV     next_w,R3
 001B F500        R     MOV     next_w+01H,A
 001D 8900        R     MOV     next_w+02H,R1
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 8   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 8   
 
                                            ; SOURCE LINE # 117
 001F AB00        R     MOV     R3,queue
@@ -490,7 +507,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0078 AA00        R     MOV     R2,next_w+01H
 007A A900        R     MOV     R1,next_w+02H
 007C C003              PUSH    AR3
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 9   
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 9   
 
 007E C002              PUSH    AR2
 0080 C001              PUSH    AR1
@@ -504,8 +521,8 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 008E 22                RET     
              ; FUNCTION _queue_write (END)
 
-             ; FUNCTION L?0026 (BEGIN)
-0000         L?0027:
+             ; FUNCTION L?0027 (BEGIN)
+0000         L?0028:
 0000 750000      R     MOV     ?_queue_read?BYTE+03H,#00H
 0003 750000      R     MOV     ?_queue_read?BYTE+04H,#HIGH test_data
 0006 750000      R     MOV     ?_queue_read?BYTE+05H,#LOW test_data
@@ -528,7 +545,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 001E 8B00        R     MOV     next_r,R3
 0020 F500        R     MOV     next_r+01H,A
 0022 8900        R     MOV     next_r+02H,R1
-                                           ; SOURCE LINE # 143
+                                           ; SOURCE LINE # 141
 0024 AB00        R     MOV     R3,queue
 0026 AA00        R     MOV     R2,queue+01H
 0028 A900        R     MOV     R1,queue+02H
@@ -553,8 +570,8 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0045 E500        R     MOV     A,next_r+01H
 0047 9583              SUBB    A,DPH
 0049         ?C0024:
-0049 405B              JC      ?C0014
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 10  
+0049 4070              JC      ?C0014
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 10  
 
 004B E500        R     MOV     A,queue+02H
 004D 2F                ADD     A,R7
@@ -578,167 +595,205 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 006D EA                MOV     A,R2
 006E 9583              SUBB    A,DPH
 0070         ?C0025:
-0070 4034              JC      ?C0014
+0070 4049              JC      ?C0014
+                                           ; SOURCE LINE # 142
                                            ; SOURCE LINE # 144
-                                           ; SOURCE LINE # 145
 0072 AB00        R     MOV     R3,queue
-0074 E500        R     MOV     A,queue+02H
-0076 2408              ADD     A,#08H
-0078 F9                MOV     R1,A
-0079 E4                CLR     A
-007A 3500        R     ADDC    A,queue+01H
-007C FA                MOV     R2,A
-007D C003              PUSH    AR3
-007F C002              PUSH    AR2
-0081 C001              PUSH    AR1
-0083 AA00        R     MOV     R2,queue+01H
-0085 A900        R     MOV     R1,queue+02H
-0087 120000      E     LCALL   ?C?PSTPTR
-                                           ; SOURCE LINE # 146
-008A AB00        R     MOV     R3,queue
-008C E500        R     MOV     A,queue+02H
-008E 2408              ADD     A,#08H
-0090 F9                MOV     R1,A
-0091 E4                CLR     A
-0092 3500        R     ADDC    A,queue+01H
-0094 FA                MOV     R2,A
-0095 C003              PUSH    AR3
-0097 C002              PUSH    AR2
-0099 C001              PUSH    AR1
-009B AA00        R     MOV     R2,queue+01H
-009D A900        R     MOV     R1,queue+02H
-009F 900003            MOV     DPTR,#03H
-00A2 120000      E     LCALL   ?C?PSTOPTR
-00A5 22                RET     
-                                           ; SOURCE LINE # 149
-00A6         ?C0014:
-                                           ; SOURCE LINE # 153
-00A6 AB00        R     MOV     R3,queue
-00A8 AA00        R     MOV     R2,queue+01H
-00AA A900        R     MOV     R1,queue+02H
-00AC 120000      E     LCALL   ?C?PLDPTR
-00AF 120000      E     LCALL   ?C?CLDPTR
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 11  
+0074 AA00        R     MOV     R2,queue+01H
+0076 A900        R     MOV     R1,queue+02H
+0078 120000      E     LCALL   ?C?PLDPTR
+007B 120000      E     LCALL   ?C?CLDPTR
+007E AB00        R     MOV     R3,_data
+0080 AA00        R     MOV     R2,_data+01H
+0082 A900        R     MOV     R1,_data+02H
+0084 120000      E     LCALL   ?C?CSTPTR
+                                           ; SOURCE LINE # 147
+0087 AB00        R     MOV     R3,queue
+0089 E500        R     MOV     A,queue+02H
+008B 2408              ADD     A,#08H
+008D F9                MOV     R1,A
+008E E4                CLR     A
+008F 3500        R     ADDC    A,queue+01H
+0091 FA                MOV     R2,A
+0092 C003              PUSH    AR3
+0094 C002              PUSH    AR2
+0096 C001              PUSH    AR1
+0098 AA00        R     MOV     R2,queue+01H
+009A A900        R     MOV     R1,queue+02H
+009C 120000      E     LCALL   ?C?PSTPTR
+                                           ; SOURCE LINE # 148
+009F AB00        R     MOV     R3,queue
+00A1 E500        R     MOV     A,queue+02H
+00A3 2408              ADD     A,#08H
+00A5 F9                MOV     R1,A
+00A6 E4                CLR     A
+00A7 3500        R     ADDC    A,queue+01H
+00A9 FA                MOV     R2,A
+00AA C003              PUSH    AR3
+00AC C002              PUSH    AR2
+00AE C001              PUSH    AR1
+00B0 AA00        R     MOV     R2,queue+01H
+00B2 A900        R     MOV     R1,queue+02H
+00B4 900003            MOV     DPTR,#03H
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 11  
 
-00B2 AB00        R     MOV     R3,_data
-00B4 AA00        R     MOV     R2,_data+01H
-00B6 A900        R     MOV     R1,_data+02H
-00B8 120000      E     LCALL   ?C?CSTPTR
+00B7 120000      E     LCALL   ?C?PSTOPTR
+00BA 22                RET     
+                                           ; SOURCE LINE # 151
+00BB         ?C0014:
                                            ; SOURCE LINE # 154
-00BB AB00        R     MOV     R3,next_r
-00BD AA00        R     MOV     R2,next_r+01H
-00BF A900        R     MOV     R1,next_r+02H
-00C1 C003              PUSH    AR3
-00C3 C002              PUSH    AR2
-00C5 C001              PUSH    AR1
-00C7 AB00        R     MOV     R3,queue
-00C9 AA00        R     MOV     R2,queue+01H
-00CB A900        R     MOV     R1,queue+02H
-00CD 120000      E     LCALL   ?C?PSTPTR
+00BB AB00        R     MOV     R3,queue
+00BD AA00        R     MOV     R2,queue+01H
+00BF A900        R     MOV     R1,queue+02H
+00C1 900003            MOV     DPTR,#03H
+00C4 120000      E     LCALL   ?C?PLDOPTR
+00C7 C003              PUSH    AR3
+00C9 C002              PUSH    AR2
+00CB C001              PUSH    AR1
+00CD AB00        R     MOV     R3,queue
+00CF AA00        R     MOV     R2,queue+01H
+00D1 A900        R     MOV     R1,queue+02H
+00D3 120000      E     LCALL   ?C?PLDPTR
+00D6 D082              POP     DPL
+00D8 D083              POP     DPH
+00DA D0E0              POP     ACC
+00DC 6B                XRL     A,R3
+00DD 7008              JNZ     ?C0026
+00DF E9                MOV     A,R1
+00E0 6582              XRL     A,DPL
+00E2 7003              JNZ     ?C0026
+00E4 EA                MOV     A,R2
+00E5 6583              XRL     A,DPH
+00E7         ?C0026:
+00E7 602A              JZ      ?C0015
+                                           ; SOURCE LINE # 155
                                            ; SOURCE LINE # 157
-                                           ; SOURCE LINE # 158
+                                           ; SOURCE LINE # 159
+00E9 AB00        R     MOV     R3,queue
+00EB AA00        R     MOV     R2,queue+01H
+00ED A900        R     MOV     R1,queue+02H
+00EF 120000      E     LCALL   ?C?PLDPTR
+00F2 120000      E     LCALL   ?C?CLDPTR
+00F5 AB00        R     MOV     R3,_data
+00F7 AA00        R     MOV     R2,_data+01H
+00F9 A900        R     MOV     R1,_data+02H
+00FB 120000      E     LCALL   ?C?CSTPTR
                                            ; SOURCE LINE # 160
-                                           ; SOURCE LINE # 167
-00D0         ?C0015:
-00D0 22                RET     
+00FE AB00        R     MOV     R3,next_r
+0100 AA00        R     MOV     R2,next_r+01H
+0102 A900        R     MOV     R1,next_r+02H
+0104 C003              PUSH    AR3
+0106 C002              PUSH    AR2
+0108 C001              PUSH    AR1
+010A AB00        R     MOV     R3,queue
+010C AA00        R     MOV     R2,queue+01H
+010E A900        R     MOV     R1,queue+02H
+0110 120000      E     LCALL   ?C?PSTPTR
+                                           ; SOURCE LINE # 168
+0113         ?C0015:
+0113 22                RET     
              ; FUNCTION _queue_read (END)
 
              ; FUNCTION main (BEGIN)
-                                           ; SOURCE LINE # 173
                                            ; SOURCE LINE # 174
                                            ; SOURCE LINE # 175
+                                           ; SOURCE LINE # 176
 0000 7500FF      R     MOV     test_data,#0FFH
-                                           ; SOURCE LINE # 178
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 12  
+
+                                           ; SOURCE LINE # 179
 0003 7B01              MOV     R3,#01H
 0005 7A00        R     MOV     R2,#HIGH queue_1
 0007 7900        R     MOV     R1,#LOW queue_1
 0009 120000      R     LCALL   _queue_created
-                                           ; SOURCE LINE # 179
+                                           ; SOURCE LINE # 181
 000C 7B01              MOV     R3,#01H
 000E 7A00        R     MOV     R2,#HIGH queue_1
 0010 7900        R     MOV     R1,#LOW queue_1
 0012 7D01              MOV     R5,#01H
 0014 120000      R     LCALL   _queue_write
-                                           ; SOURCE LINE # 180
-0017 120000      R     LCALL   L?0028
-                                           ; SOURCE LINE # 181
-001A 120000      R     LCALL   L?0028
                                            ; SOURCE LINE # 182
-001D 120000      R     LCALL   L?0029
+0017 120000      R     LCALL   L?0029
                                            ; SOURCE LINE # 183
-0020 120000      R     LCALL   L?0029
+001A 120000      R     LCALL   L?0029
+                                           ; SOURCE LINE # 184
+001D 120000      R     LCALL   L?0030
                                            ; SOURCE LINE # 185
-0023 120000      R     LCALL   L?0029
-                                           ; SOURCE LINE # 186
-0026 120000      R     LCALL   L?0029
-                                           ; SOURCE LINE # 188
-0029 120000      R     LCALL   L?0026
+0020 120000      R     LCALL   L?0030
                                            ; SOURCE LINE # 189
-002C 120000      R     LCALL   L?0026
+0023 120000      R     LCALL   L?0030
                                            ; SOURCE LINE # 190
-002F 120000      R     LCALL   L?0027
-                                           ; SOURCE LINE # 191
-0032 120000      R     LCALL   L?0027
-                                           ; SOURCE LINE # 192
-0035 120000      R     LCALL   L?0027
-                                           ; SOURCE LINE # 193
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 12  
-
-0038 120000      R     LCALL   L?0027
+0026 120000      R     LCALL   L?0030
+                                           ; SOURCE LINE # 194
+0029 120000      R     LCALL   L?0027
                                            ; SOURCE LINE # 195
-003B 120000      R     LCALL   L?0027
+002C 120000      R     LCALL   L?0027
                                            ; SOURCE LINE # 196
-003E 120000      R     LCALL   L?0027
+002F 120000      R     LCALL   L?0028
+                                           ; SOURCE LINE # 197
+0032 120000      R     LCALL   L?0028
                                            ; SOURCE LINE # 198
+0035 120000      R     LCALL   L?0028
+                                           ; SOURCE LINE # 199
+0038 120000      R     LCALL   L?0028
+                                           ; SOURCE LINE # 203
+003B 120000      R     LCALL   L?0028
+                                           ; SOURCE LINE # 205
+003E 120000      R     LCALL   L?0028
+                                           ; SOURCE LINE # 211
 0041 7B01              MOV     R3,#01H
 0043 7A00        R     MOV     R2,#HIGH queue_1
 0045 7900        R     MOV     R1,#LOW queue_1
 0047 7D33              MOV     R5,#033H
 0049 120000      R     LCALL   _queue_write
-                                           ; SOURCE LINE # 200
-004C E4                CLR     A
-004D F594              MOV     P0M0,A
-                                           ; SOURCE LINE # 201
-004F F593              MOV     P0M1,A
-                                           ; SOURCE LINE # 202
-0051 120000      R     LCALL   Timer0_Init
-                                           ; SOURCE LINE # 203
-0054 D2AF              SETB    EA
-                                           ; SOURCE LINE # 204
-0056 43BA80            ORL     P_SW2,#080H
-                                           ; SOURCE LINE # 206
-0059 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
-005C 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
-005F 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
-0062 F500        E     MOV     ?_os_task_create?BYTE+06H,A
-0064 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
-0067 7BFF              MOV     R3,#0FFH
-0069 7A00        R     MOV     R2,#HIGH task1
-006B 7900        R     MOV     R1,#LOW task1
-006D 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 207
-0070 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
-0073 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
-0076 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
-0079 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
-007C 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
-007F 7BFF              MOV     R3,#0FFH
-0081 7A00        R     MOV     R2,#HIGH task2
-0083 7900        R     MOV     R1,#LOW task2
-0085 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 208
-0088 120000      E     LCALL   os_start
-008B         ?C0017:
-                                           ; SOURCE LINE # 211
-                                           ; SOURCE LINE # 212
-                                           ; SOURCE LINE # 214
-008B 80FE              SJMP    ?C0017
+                                           ; SOURCE LINE # 213
+004C 120000      R     LCALL   L?0028
+                                           ; SOURCE LINE # 217
+004F E4                CLR     A
+0050 F594              MOV     P0M0,A
+                                           ; SOURCE LINE # 218
+0052 F593              MOV     P0M1,A
+                                           ; SOURCE LINE # 219
+0054 120000      R     LCALL   Timer0_Init
+                                           ; SOURCE LINE # 220
+0057 D2AF              SETB    EA
+                                           ; SOURCE LINE # 221
+0059 43BA80            ORL     P_SW2,#080H
+                                           ; SOURCE LINE # 223
+005C 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
+005F 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
+0062 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
+C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 11:11:47 PAGE 13  
+
+0065 F500        E     MOV     ?_os_task_create?BYTE+06H,A
+0067 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
+006A 7BFF              MOV     R3,#0FFH
+006C 7A00        R     MOV     R2,#HIGH task1
+006E 7900        R     MOV     R1,#LOW task1
+0070 120000      E     LCALL   _os_task_create
+                                           ; SOURCE LINE # 224
+0073 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
+0076 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
+0079 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
+007C 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
+007F 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
+0082 7BFF              MOV     R3,#0FFH
+0084 7A00        R     MOV     R2,#HIGH task2
+0086 7900        R     MOV     R1,#LOW task2
+0088 120000      E     LCALL   _os_task_create
+                                           ; SOURCE LINE # 225
+008B 120000      E     LCALL   os_start
+008E         ?C0017:
+                                           ; SOURCE LINE # 228
+                                           ; SOURCE LINE # 229
+                                           ; SOURCE LINE # 231
+008E 80FE              SJMP    ?C0017
              ; FUNCTION main (END)
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    696    ----
+   CODE SIZE        =    766    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =     54    ----
    PDATA SIZE       =   ----    ----
@@ -746,8 +801,6 @@ MODULE INFORMATION:   STATIC OVERLAYABLE
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
-
-C51 COMPILER V9.60.7.0   MAIN                                                              12/29/2023 17:21:33 PAGE 13  
 
 
 C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

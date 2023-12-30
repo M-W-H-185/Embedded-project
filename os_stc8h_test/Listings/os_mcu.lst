@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/29/2023 17:21:33 PAGE     1
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/30/2023 11:11:47 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.7.0
@@ -65,7 +65,7 @@ LOC  OBJ            LINE     SOURCE
                       53     
                       54     
                       55     
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/29/2023 17:21:33 PAGE     2
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/30/2023 11:11:47 PAGE     2
 
                       56     
                       57     ; ---------------- ²âÊÔº¯Ê ----------------
@@ -130,7 +130,7 @@ LOC  OBJ            LINE     SOURCE
                              ;       MOV R0,#tcb_list+1+4+1; os_status_type ÊÇuint8_t ËùÒÔÊÇÆ«ÒÆÁ¿+1Ìøµ½ÏÂÒ»¸ötcb_list[0
                              ].test_value = 0x88;
                              ;       MOV @R0,#0x88;
-A51 MACRO ASSEMBLER  OS_MCU                                                               12/29/2023 17:21:33 PAGE     3
+A51 MACRO ASSEMBLER  OS_MCU                                                               12/30/2023 11:11:47 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------
