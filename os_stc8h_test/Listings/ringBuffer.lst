@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 1   
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE RINGBUFFER
@@ -14,12 +14,12 @@ line level    source
    4          *       »·ÐÎÊý×é ×îºóÒ»Î»±£Áô
    5          *       ¿Õ»º³åÇø£º ÔÚ³õÊ¼»¯Ê±£¬¶ÁÖ¸ÕëºÍÐ´Ö¸Õë¶¼Ö¸ÏòÍ¬Ò»¸öÎ»ÖÃ£¬¼´»º³åÇøµÄÆðÊ¼Î»ÖÃ¡£ÕâÊ±¿ÉÒÔÍ¨¹ýÅÐ¶ÏÍ·Ö¸ÕëºÍÎ²Ö¸Õ
              -ëÊÇ·ñÏàµÈÀ´ÅÐ¶Ï»º³åÇøÊÇ·ñÎª¿Õ¡£
-   6          *       Âú»º³åÇø£º ¶ÁºÍÐ´Ö¸ÕëÖ¸Ïò Êý×émax-1µÄÊ±ºò´ú±íÂúÁË
-   7          */
-   8          
+   6          *       Âú»º³åÇø£º ¶ÁÖ¸Õë > Ð´Ö¸ÕëµÄÊ±ºò ±íÊ¾»º³åÇøÒÑ¾­ÂúÁË¡£
+   7          *       Ð´Ö¸ÕëÊÇ²»»áµ½´ïÊý×é×îºóÒ»Î»µÄ£¬ÔÚ¶ÁµÄÊ±ºònext_rÖ¸Ïò×îºóÒ»Î»µÄÊ±ºò´ú±í»º³åÇøÒÑÂú
+   8          */
    9          // ´´½¨Ò»¸ö»·ÐÎ»º³åÇø²Ù×÷¾ä±ú
-  10          void ringbuffer_created(RingBufferHandle *ring_buffer, void *buff, os_uint8_t buff_size, os_uint8_t itemSi
-             -ze)
+  10          os_uint8_t ringbuffer_created(RingBufferHandle *ring_buffer, void *buff, os_uint8_t buff_size, os_uint8_t 
+             -itemSize)
   11          {
   12   1      
   13   1              
@@ -30,64 +30,63 @@ line level    source
   18   1              ring_buffer->buff               = buff;
   19   1      
   20   1              
-  21   1              return;
+  21   1              return RINGBUFF_SUCCESS;
   22   1      }
   23          
   24          // »º³åÇøÐ´ Ð´ÈëÂú²»ÖØÐÂ¿ªÊ¼Ð´£¬ÐèÒªµÈ´ý¶ÁÍê
-  25          void ringbuffer_write(RingBufferHandle *ring_buffer, void *_data)
+  25          os_uint8_t ringbuffer_write(RingBufferHandle *ring_buffer, void *_data)
   26          {               
   27   1              os_uint8_t *next_w = ring_buffer->w_ + ring_buffer->itemSize;  // ÏÂÒ»´ÎÐ´ÈëµÄÎ»ÖÃ
   28   1              // ÏÂÒ»´ÎÐ´ÈëµÄÎ»ÖÃµÈÓÚ ¶ÁÈ¡ µÄÎ»ÖÃ ±íÊ¾ÂúÁË
   29   1          if (next_w == ring_buffer->r_) {
-  30   2                      // ÂúÁË
-  31   2              return; 
+  30   2                      // Òç³ö
+  31   2              return RINGBUFF_WRITE_OVERFLOW; 
   32   2      
   33   2          }
-  34   1      
+  34   1              // Ð´Ò»¸öÐ´ÈëÖ¸Ïò Êý×é×îºóÒ»Î»±íÊ¾Òç³ö
   35   1          if (next_w >= (os_uint8_t *)(ring_buffer->buff + ring_buffer->buff_size)) {
   36   2                      // Òç³ö
-  37   2              return; 
+  37   2              return RINGBUFF_WRITE_OVERFLOW; 
   38   2          }
   39   1      
   40   1          memcpy((void *)ring_buffer->w_, _data, ring_buffer->itemSize); // Ð´ÈëÊý¾Ý
   41   1          ring_buffer->w_ = next_w; // ¸üÐÂÐ´Èë Î²Ö¸Õë
-  42   1              return;
+  42   1              return RINGBUFF_SUCCESS;
   43   1      }
-  44          // »º³åÇø¶Á ¶ÁºÍÐ´¶¼µ½Í·ÁË ÖØÐÂ»Øµ½Êý×é0  £» µ±Ç°¶ÁºÍÏÂ´ÎÐ´Î»ÖÃÖØºÏ±íÊ¾¿Õ
-  45          void ringbuffer_read(RingBufferHandle *ring_buffer, void *_data)
-  46          {
-  47   1      
-  48   1              // ÏÂÒ»´Î¶ÁÈ¡µÄÎ»ÖÃ
-  49   1          os_uint8_t *next_r = (os_uint8_t *)ring_buffer->r_ + ring_buffer->itemSize;  
-  50   1              // ¶ÁÈ¡µ½Í·ÁË¡£´ú±í¶ÁÎ»ÖÃºÍÐ´Î»ÖÃ¶¼µ½ »·ÐÎÊý×éµÄ×îºóÒ»Î»-1  ´ú±íÒç³öÁË¡£Á½¸öÒ»Æð¹ö»ØÈ¥ Êý×é0
-  51   1          if (
-  52   1                              next_r >= (os_uint8_t *)(ring_buffer->buff + (ring_buffer->buff_size - 1) )
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 2   
+  44          
+  45          // »º³åÇø¶Á ¶ÁºÍÐ´¶¼µ½Í·ÁË ÖØÐÂ»Øµ½Êý×é0  £» µ±Ç°¶ÁºÍÏÂ´ÎÐ´Î»ÖÃÖØºÏ±íÊ¾¿Õ
+  46          os_uint8_t ringbuffer_read(RingBufferHandle *ring_buffer, void *_data)
+  47          {
+  48   1      
+  49   1              // ÏÂÒ»´Î¶ÁÈ¡µÄÎ»ÖÃ
+  50   1          os_uint8_t *next_r  = (os_uint8_t *)ring_buffer->r_ + ring_buffer->itemSize;  
+  51   1              // ÏÂÒ»´Î¶ÁÖ¸Õë > Ð´Ö¸Õë ²¢ÇÒ  ÏÂÒ»´Î µÈÓÚ Êý×é×îÎ²²¿µÄÊ±ºò Êý×éÒç³ö
+  52   1          if (
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 2   
 
-  53   1                                      && 
-  54   1                              ring_buffer->w_ >= (os_uint8_t *)(ring_buffer->buff + (ring_buffer->buff_size - 1) )
-  55   1                      ) 
-  56   1              {
-  57   2              memcpy(_data, ring_buffer->r_, ring_buffer->itemSize);
-  58   2                      // ½«¶ÁÐ´Ö¸Õë Ö¸ÏòÊý¾ÝÆðÊ¼Î» Êý×é0
-  59   2              ring_buffer->r_ = ring_buffer->buff; 
-  60   2              ring_buffer->w_ = ring_buffer->buff; 
-  61   2              return; // Òç³ö×´Ì¬
-  62   2          }
-  63   1              
-  64   1              // µ±Ç°¶ÁÈ¡Î»ÖÃ ºÍ ÏÂÒ»´ÎÐ´ÈëÎ»ÖÃÖØºÏ ±íÊ¾¿Õ
-  65   1          if (ring_buffer->r_ == ring_buffer->w_) {
-  66   2              return; // ¿Õ
-  67   2          }
-  68   1              
-  69   1              // ¶ÁÈ¡Êý¾Ý²¢¸üÐÂ¶ÁÖ¸Õë
-  70   1          memcpy(_data, ring_buffer->r_, ring_buffer->itemSize); // ¶ÁÈ¡Êý¾Ý
-  71   1          ring_buffer->r_ = next_r; // ¸üÐÂ¶ÁÖ¸Õë
-  72   1      
-  73   1              
-  74   1              return;
-  75   1      }
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 3   
+  53   1                              next_r > ring_buffer->w_ && next_r == (os_uint8_t *)(ring_buffer->buff + (ring_buffer->buff_size ) )
+  54   1                      ) 
+  55   1              {
+  56   2              memcpy(_data, ring_buffer->r_, ring_buffer->itemSize);
+  57   2                      // ½«¶ÁÐ´Ö¸Õë Ö¸ÏòÊý¾ÝÆðÊ¼Î» Êý×é0
+  58   2              ring_buffer->r_ = ring_buffer->buff; 
+  59   2              ring_buffer->w_ = ring_buffer->buff; 
+  60   2              return RINGBUFF_READ_NULL; // ËãÊÇÒç³öÒ²Ëã¿Õ¡£¿Õ°ÉËã
+  61   2          }
+  62   1              
+  63   1              // µ±Ç°¶ÁÈ¡Î»ÖÃ ºÍ ÏÂÒ»´ÎÐ´ÈëÎ»ÖÃÖØºÏ ±íÊ¾¿Õ
+  64   1          if (ring_buffer->r_ == ring_buffer->w_) {
+  65   2              return RINGBUFF_READ_NULL; // ¿Õ
+  66   2          }
+  67   1              
+  68   1              // ¶ÁÈ¡Êý¾Ý²¢¸üÐÂ¶ÁÖ¸Õë
+  69   1          memcpy(_data, ring_buffer->r_, ring_buffer->itemSize); // ¶ÁÈ¡Êý¾Ý
+  70   1          ring_buffer->r_ = next_r; // ¸üÐÂ¶ÁÖ¸Õë
+  71   1      
+  72   1              
+  73   1              return RINGBUFF_SUCCESS;
+  74   1      }
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -144,15 +143,17 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0059 A900        R     MOV     R1,ring_buffer+02H
 005B 900008            MOV     DPTR,#08H
 005E 120000      E     LCALL   ?C?PSTOPTR
+                                           ; SOURCE LINE # 21
+0061 7F01              MOV     R7,#01H
                                            ; SOURCE LINE # 22
-0061 22                RET     
+0063 22                RET     
              ; FUNCTION _ringbuffer_created (END)
 
              ; FUNCTION _ringbuffer_write (BEGIN)
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 4   
+
                                            ; SOURCE LINE # 25
 0000 8B00        R     MOV     ring_buffer,R3
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 4   
-
 0002 8A00        R     MOV     ring_buffer+01H,R2
 0004 8900        R     MOV     ring_buffer+02H,R1
                                            ; SOURCE LINE # 26
@@ -167,7 +168,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0016 A900        R     MOV     R1,ring_buffer+02H
 0018 900007            MOV     DPTR,#07H
 001B 120000      E     LCALL   ?C?CLDOPTR
-001E FF                MOV     R7,A
+001E FE                MOV     R6,A
 001F 7C00              MOV     R4,#00H
 0021 D001              POP     AR1
 0023 D002              POP     AR2
@@ -195,261 +196,270 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0049 E500        R     MOV     A,next_w+01H
 004B 6583              XRL     A,DPH
 004D         ?C0008:
-004D 606F              JZ      ?C0003
+004D 7003              JNZ     ?C0002
+                                           ; SOURCE LINE # 31
+004F 7F02              MOV     R7,#02H
+0051 22                RET     
                                            ; SOURCE LINE # 33
+0052         ?C0002:
                                            ; SOURCE LINE # 35
-004F AB00        R     MOV     R3,ring_buffer
-0051 AA00        R     MOV     R2,ring_buffer+01H
-0053 A900        R     MOV     R1,ring_buffer+02H
-0055 900008            MOV     DPTR,#08H
-0058 120000      E     LCALL   ?C?PLDOPTR
-005B C003              PUSH    AR3
-005D C002              PUSH    AR2
-005F C001              PUSH    AR1
-0061 AB00        R     MOV     R3,ring_buffer
-0063 AA00        R     MOV     R2,ring_buffer+01H
-0065 A900        R     MOV     R1,ring_buffer+02H
-0067 900006            MOV     DPTR,#06H
-006A 120000      E     LCALL   ?C?CLDOPTR
-006D 7C00              MOV     R4,#00H
-006F D001              POP     AR1
-0071 D002              POP     AR2
-0073 D003              POP     AR3
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 5   
+0052 AB00        R     MOV     R3,ring_buffer
+0054 AA00        R     MOV     R2,ring_buffer+01H
+0056 A900        R     MOV     R1,ring_buffer+02H
+0058 900008            MOV     DPTR,#08H
+005B 120000      E     LCALL   ?C?PLDOPTR
+005E C003              PUSH    AR3
+0060 C002              PUSH    AR2
+0062 C001              PUSH    AR1
+0064 AB00        R     MOV     R3,ring_buffer
+0066 AA00        R     MOV     R2,ring_buffer+01H
+0068 A900        R     MOV     R1,ring_buffer+02H
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 5   
 
-0075 29                ADD     A,R1
-0076 F9                MOV     R1,A
-0077 EC                MOV     A,R4
-0078 3A                ADDC    A,R2
-0079 FA                MOV     R2,A
-007A 8A83              MOV     DPH,R2
-007C 8982              MOV     DPL,R1
-007E C3                CLR     C
-007F E500        R     MOV     A,next_w+02H
-0081 9582              SUBB    A,DPL
-0083 E500        R     MOV     A,next_w+01H
-0085 9583              SUBB    A,DPH
-0087         ?C0009:
-0087 5035              JNC     ?C0003
+006A 900006            MOV     DPTR,#06H
+006D 120000      E     LCALL   ?C?CLDOPTR
+0070 7C00              MOV     R4,#00H
+0072 D001              POP     AR1
+0074 D002              POP     AR2
+0076 D003              POP     AR3
+0078 29                ADD     A,R1
+0079 F9                MOV     R1,A
+007A EC                MOV     A,R4
+007B 3A                ADDC    A,R2
+007C FA                MOV     R2,A
+007D 8A83              MOV     DPH,R2
+007F 8982              MOV     DPL,R1
+0081 C3                CLR     C
+0082 E500        R     MOV     A,next_w+02H
+0084 9582              SUBB    A,DPL
+0086 E500        R     MOV     A,next_w+01H
+0088 9583              SUBB    A,DPH
+008A         ?C0009:
+008A 4003              JC      ?C0004
+                                           ; SOURCE LINE # 37
+008C 7F02              MOV     R7,#02H
+008E 22                RET     
                                            ; SOURCE LINE # 38
+008F         ?C0004:
                                            ; SOURCE LINE # 40
-0089 7E00              MOV     R6,#00H
-008B AB00        R     MOV     R3,ring_buffer
-008D AA00        R     MOV     R2,ring_buffer+01H
-008F A900        R     MOV     R1,ring_buffer+02H
-0091 900003            MOV     DPTR,#03H
-0094 120000      E     LCALL   ?C?PLDOPTR
-0097 A801              MOV     R0,AR1
-0099 AC02              MOV     R4,AR2
-009B AD03              MOV     R5,AR3
-009D AB00        R     MOV     R3,_data
-009F AA00        R     MOV     R2,_data+01H
-00A1 A900        R     MOV     R1,_data+02H
-00A3 120000      E     LCALL   ?C?COPY
+008F EE                MOV     A,R6
+0090 FF                MOV     R7,A
+0091 7E00              MOV     R6,#00H
+0093 AB00        R     MOV     R3,ring_buffer
+0095 AA00        R     MOV     R2,ring_buffer+01H
+0097 A900        R     MOV     R1,ring_buffer+02H
+0099 900003            MOV     DPTR,#03H
+009C 120000      E     LCALL   ?C?PLDOPTR
+009F A801              MOV     R0,AR1
+00A1 AC02              MOV     R4,AR2
+00A3 AD03              MOV     R5,AR3
+00A5 AB00        R     MOV     R3,_data
+00A7 AA00        R     MOV     R2,_data+01H
+00A9 A900        R     MOV     R1,_data+02H
+00AB 120000      E     LCALL   ?C?COPY
                                            ; SOURCE LINE # 41
-00A6 AB00        R     MOV     R3,next_w
-00A8 AA00        R     MOV     R2,next_w+01H
-00AA A900        R     MOV     R1,next_w+02H
-00AC C003              PUSH    AR3
-00AE C002              PUSH    AR2
-00B0 C001              PUSH    AR1
-00B2 AB00        R     MOV     R3,ring_buffer
-00B4 AA00        R     MOV     R2,ring_buffer+01H
-00B6 A900        R     MOV     R1,ring_buffer+02H
-00B8 900003            MOV     DPTR,#03H
-00BB 120000      E     LCALL   ?C?PSTOPTR
+00AE AB00        R     MOV     R3,next_w
+00B0 AA00        R     MOV     R2,next_w+01H
+00B2 A900        R     MOV     R1,next_w+02H
+00B4 C003              PUSH    AR3
+00B6 C002              PUSH    AR2
+00B8 C001              PUSH    AR1
+00BA AB00        R     MOV     R3,ring_buffer
+00BC AA00        R     MOV     R2,ring_buffer+01H
+00BE A900        R     MOV     R1,ring_buffer+02H
+00C0 900003            MOV     DPTR,#03H
+00C3 120000      E     LCALL   ?C?PSTOPTR
+                                           ; SOURCE LINE # 42
+00C6 7F01              MOV     R7,#01H
                                            ; SOURCE LINE # 43
-00BE         ?C0003:
-00BE 22                RET     
+00C8         ?C0003:
+00C8 22                RET     
              ; FUNCTION _ringbuffer_write (END)
 
              ; FUNCTION _ringbuffer_read (BEGIN)
-                                           ; SOURCE LINE # 45
+                                           ; SOURCE LINE # 46
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 6   
+
 0000 8B00        R     MOV     ring_buffer,R3
 0002 8A00        R     MOV     ring_buffer+01H,R2
 0004 8900        R     MOV     ring_buffer+02H,R1
-                                           ; SOURCE LINE # 46
-                                           ; SOURCE LINE # 49
+                                           ; SOURCE LINE # 47
+                                           ; SOURCE LINE # 50
 0006 900007            MOV     DPTR,#07H
 0009 120000      E     LCALL   ?C?CLDOPTR
 000C FF                MOV     R7,A
-000D 7E00              MOV     R6,#00H
-000F 120000      E     LCALL   ?C?PLDPTR
-0012 E9                MOV     A,R1
-0013 2F                ADD     A,R7
-0014 F9                MOV     R1,A
-0015 EE                MOV     A,R6
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 6   
-
-0016 3A                ADDC    A,R2
-0017 8B00        R     MOV     next_r,R3
-0019 F500        R     MOV     next_r+01H,A
-001B 8900        R     MOV     next_r+02H,R1
-                                           ; SOURCE LINE # 54
-001D AB00        R     MOV     R3,ring_buffer
-001F AA00        R     MOV     R2,ring_buffer+01H
-0021 A900        R     MOV     R1,ring_buffer+02H
-0023 900006            MOV     DPTR,#06H
-0026 120000      E     LCALL   ?C?CLDOPTR
-0029 24FF              ADD     A,#0FFH
-002B FF                MOV     R7,A
-002C EE                MOV     A,R6
-002D 34FF              ADDC    A,#0FFH
-002F FE                MOV     R6,A
-0030 900008            MOV     DPTR,#08H
-0033 120000      E     LCALL   ?C?PLDOPTR
-0036 E9                MOV     A,R1
-0037 2F                ADD     A,R7
-0038 F9                MOV     R1,A
-0039 EA                MOV     A,R2
-003A 3E                ADDC    A,R6
-003B FA                MOV     R2,A
-003C 8A83              MOV     DPH,R2
-003E 8982              MOV     DPL,R1
-0040 C3                CLR     C
-0041 E500        R     MOV     A,next_r+02H
-0043 9582              SUBB    A,DPL
-0045 E500        R     MOV     A,next_r+01H
-0047 9583              SUBB    A,DPH
-0049         ?C0010:
-0049 5003              JNC     $ + 5H
-004B 020000      R     LJMP    ?C0005
+000D FD                MOV     R5,A
+000E 7C00              MOV     R4,#00H
+0010 120000      E     LCALL   ?C?PLDPTR
+0013 E9                MOV     A,R1
+0014 2D                ADD     A,R5
+0015 F9                MOV     R1,A
+0016 EC                MOV     A,R4
+0017 3A                ADDC    A,R2
+0018 8B00        R     MOV     next_r,R3
+001A F500        R     MOV     next_r+01H,A
+001C 8900        R     MOV     next_r+02H,R1
+                                           ; SOURCE LINE # 53
+001E AB00        R     MOV     R3,ring_buffer
+0020 AA00        R     MOV     R2,ring_buffer+01H
+0022 A900        R     MOV     R1,ring_buffer+02H
+0024 900003            MOV     DPTR,#03H
+0027 120000      E     LCALL   ?C?PLDOPTR
+002A 8A83              MOV     DPH,R2
+002C 8982              MOV     DPL,R1
+002E D3                SETB    C
+002F E500        R     MOV     A,next_r+02H
+0031 9582              SUBB    A,DPL
+0033 E500        R     MOV     A,next_r+01H
+0035 9583              SUBB    A,DPH
+0037         ?C0010:
+0037 5003              JNC     $ + 5H
+0039 020000      R     LJMP    ?C0005
+003C AB00        R     MOV     R3,ring_buffer
+003E AA00        R     MOV     R2,ring_buffer+01H
+0040 A900        R     MOV     R1,ring_buffer+02H
+0042 900008            MOV     DPTR,#08H
+0045 120000      E     LCALL   ?C?PLDOPTR
+0048 C003              PUSH    AR3
+004A C002              PUSH    AR2
+004C C001              PUSH    AR1
 004E AB00        R     MOV     R3,ring_buffer
 0050 AA00        R     MOV     R2,ring_buffer+01H
 0052 A900        R     MOV     R1,ring_buffer+02H
-0054 900008            MOV     DPTR,#08H
-0057 120000      E     LCALL   ?C?PLDOPTR
-005A E9                MOV     A,R1
-005B 2F                ADD     A,R7
-005C F9                MOV     R1,A
-005D EA                MOV     A,R2
-005E 3E                ADDC    A,R6
-005F FA                MOV     R2,A
-0060 C003              PUSH    AR3
-0062 C002              PUSH    AR2
-0064 C001              PUSH    AR1
-0066 AB00        R     MOV     R3,ring_buffer
-0068 AA00        R     MOV     R2,ring_buffer+01H
-006A A900        R     MOV     R1,ring_buffer+02H
-006C 900003            MOV     DPTR,#03H
-006F 120000      E     LCALL   ?C?PLDOPTR
-0072 C3                CLR     C
-0073 D082              POP     DPL
-0075 D083              POP     DPH
-0077 D0E0              POP     ACC
-0079 E9                MOV     A,R1
-007A 9582              SUBB    A,DPL
-007C EA                MOV     A,R2
-007D 9583              SUBB    A,DPH
-007F         ?C0011:
-007F 4055              JC      ?C0005
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 7   
+0054 900006            MOV     DPTR,#06H
+0057 120000      E     LCALL   ?C?CLDOPTR
+005A D001              POP     AR1
+005C D002              POP     AR2
+005E D003              POP     AR3
+0060 29                ADD     A,R1
+0061 F9                MOV     R1,A
+0062 EC                MOV     A,R4
+0063 3A                ADDC    A,R2
+0064 FA                MOV     R2,A
+0065 E500        R     MOV     A,next_r
+0067 850083      R     MOV     DPH,next_r+01H
+006A 850082      R     MOV     DPL,next_r+02H
+006D 6B                XRL     A,R3
+006E 7008              JNZ     ?C0011
+0070 E9                MOV     A,R1
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 7   
 
+0071 6582              XRL     A,DPL
+0073 7003              JNZ     ?C0011
+0075 EA                MOV     A,R2
+0076 6583              XRL     A,DPH
+0078         ?C0011:
+0078 704F              JNZ     ?C0005
+                                           ; SOURCE LINE # 55
                                            ; SOURCE LINE # 56
-                                           ; SOURCE LINE # 57
-0081 AB00        R     MOV     R3,ring_buffer
-0083 AA00        R     MOV     R2,ring_buffer+01H
-0085 A900        R     MOV     R1,ring_buffer+02H
-0087 900007            MOV     DPTR,#07H
-008A 120000      E     LCALL   ?C?CLDOPTR
-008D FF                MOV     R7,A
-008E 7E00              MOV     R6,#00H
-0090 120000      E     LCALL   ?C?PLDPTR
-0093 A800        R     MOV     R0,_data+02H
-0095 AC00        R     MOV     R4,_data+01H
-0097 AD00        R     MOV     R5,_data
-0099 120000      E     LCALL   ?C?COPY
+007A AB00        R     MOV     R3,ring_buffer
+007C AA00        R     MOV     R2,ring_buffer+01H
+007E A900        R     MOV     R1,ring_buffer+02H
+0080 FE                MOV     R6,A
+0081 120000      E     LCALL   ?C?PLDPTR
+0084 A800        R     MOV     R0,_data+02H
+0086 AC00        R     MOV     R4,_data+01H
+0088 AD00        R     MOV     R5,_data
+008A 120000      E     LCALL   ?C?COPY
+                                           ; SOURCE LINE # 58
+008D AB00        R     MOV     R3,ring_buffer
+008F AA00        R     MOV     R2,ring_buffer+01H
+0091 A900        R     MOV     R1,ring_buffer+02H
+0093 900008            MOV     DPTR,#08H
+0096 120000      E     LCALL   ?C?PLDOPTR
+0099 C003              PUSH    AR3
+009B C002              PUSH    AR2
+009D C001              PUSH    AR1
+009F AB00        R     MOV     R3,ring_buffer
+00A1 AA00        R     MOV     R2,ring_buffer+01H
+00A3 A900        R     MOV     R1,ring_buffer+02H
+00A5 120000      E     LCALL   ?C?PSTPTR
                                            ; SOURCE LINE # 59
-009C AB00        R     MOV     R3,ring_buffer
-009E AA00        R     MOV     R2,ring_buffer+01H
-00A0 A900        R     MOV     R1,ring_buffer+02H
-00A2 900008            MOV     DPTR,#08H
-00A5 120000      E     LCALL   ?C?PLDOPTR
-00A8 C003              PUSH    AR3
-00AA C002              PUSH    AR2
-00AC C001              PUSH    AR1
-00AE AB00        R     MOV     R3,ring_buffer
-00B0 AA00        R     MOV     R2,ring_buffer+01H
-00B2 A900        R     MOV     R1,ring_buffer+02H
-00B4 120000      E     LCALL   ?C?PSTPTR
+00A8 AB00        R     MOV     R3,ring_buffer
+00AA AA00        R     MOV     R2,ring_buffer+01H
+00AC A900        R     MOV     R1,ring_buffer+02H
+00AE 900008            MOV     DPTR,#08H
+00B1 120000      E     LCALL   ?C?PLDOPTR
+00B4 C003              PUSH    AR3
+00B6 C002              PUSH    AR2
+00B8 C001              PUSH    AR1
+00BA AB00        R     MOV     R3,ring_buffer
+00BC AA00        R     MOV     R2,ring_buffer+01H
+00BE A900        R     MOV     R1,ring_buffer+02H
+00C0 900003            MOV     DPTR,#03H
+00C3 120000      E     LCALL   ?C?PSTOPTR
                                            ; SOURCE LINE # 60
-00B7 AB00        R     MOV     R3,ring_buffer
-00B9 AA00        R     MOV     R2,ring_buffer+01H
-00BB A900        R     MOV     R1,ring_buffer+02H
-00BD 900008            MOV     DPTR,#08H
-00C0 120000      E     LCALL   ?C?PLDOPTR
-00C3 C003              PUSH    AR3
-00C5 C002              PUSH    AR2
-00C7 C001              PUSH    AR1
+00C6 7F03              MOV     R7,#03H
+00C8 22                RET     
+                                           ; SOURCE LINE # 61
+00C9         ?C0005:
+                                           ; SOURCE LINE # 64
 00C9 AB00        R     MOV     R3,ring_buffer
 00CB AA00        R     MOV     R2,ring_buffer+01H
 00CD A900        R     MOV     R1,ring_buffer+02H
 00CF 900003            MOV     DPTR,#03H
-00D2 120000      E     LCALL   ?C?PSTOPTR
-00D5 22                RET     
-                                           ; SOURCE LINE # 62
-00D6         ?C0005:
-                                           ; SOURCE LINE # 65
-00D6 AB00        R     MOV     R3,ring_buffer
-00D8 AA00        R     MOV     R2,ring_buffer+01H
-00DA A900        R     MOV     R1,ring_buffer+02H
-00DC 900003            MOV     DPTR,#03H
-00DF 120000      E     LCALL   ?C?PLDOPTR
-00E2 C003              PUSH    AR3
-00E4 C002              PUSH    AR2
-00E6 C001              PUSH    AR1
-00E8 AB00        R     MOV     R3,ring_buffer
-00EA AA00        R     MOV     R2,ring_buffer+01H
-00EC A900        R     MOV     R1,ring_buffer+02H
-00EE 120000      E     LCALL   ?C?PLDPTR
-00F1 D082              POP     DPL
-00F3 D083              POP     DPH
-00F5 D0E0              POP     ACC
-00F7 6B                XRL     A,R3
-00F8 7008              JNZ     ?C0012
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 14:54:04 PAGE 8   
+00D2 120000      E     LCALL   ?C?PLDOPTR
+00D5 C003              PUSH    AR3
+00D7 C002              PUSH    AR2
+00D9 C001              PUSH    AR1
+00DB AB00        R     MOV     R3,ring_buffer
+00DD AA00        R     MOV     R2,ring_buffer+01H
+00DF A900        R     MOV     R1,ring_buffer+02H
+00E1 120000      E     LCALL   ?C?PLDPTR
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        12/30/2023 15:42:51 PAGE 8   
 
-00FA E9                MOV     A,R1
-00FB 6582              XRL     A,DPL
-00FD 7003              JNZ     ?C0012
-00FF EA                MOV     A,R2
-0100 6583              XRL     A,DPH
-0102         ?C0012:
-0102 6030              JZ      ?C0006
-                                           ; SOURCE LINE # 67
+00E4 D082              POP     DPL
+00E6 D083              POP     DPH
+00E8 D0E0              POP     ACC
+00EA 6B                XRL     A,R3
+00EB 7008              JNZ     ?C0012
+00ED E9                MOV     A,R1
+00EE 6582              XRL     A,DPL
+00F0 7003              JNZ     ?C0012
+00F2 EA                MOV     A,R2
+00F3 6583              XRL     A,DPH
+00F5         ?C0012:
+00F5 7003              JNZ     ?C0007
+                                           ; SOURCE LINE # 65
+00F7 7F03              MOV     R7,#03H
+00F9 22                RET     
+                                           ; SOURCE LINE # 66
+00FA         ?C0007:
+                                           ; SOURCE LINE # 69
+00FA AB00        R     MOV     R3,ring_buffer
+00FC AA00        R     MOV     R2,ring_buffer+01H
+00FE A900        R     MOV     R1,ring_buffer+02H
+0100 900007            MOV     DPTR,#07H
+0103 120000      E     LCALL   ?C?CLDOPTR
+0106 FF                MOV     R7,A
+0107 7E00              MOV     R6,#00H
+0109 120000      E     LCALL   ?C?PLDPTR
+010C A800        R     MOV     R0,_data+02H
+010E AC00        R     MOV     R4,_data+01H
+0110 AD00        R     MOV     R5,_data
+0112 120000      E     LCALL   ?C?COPY
                                            ; SOURCE LINE # 70
-0104 AB00        R     MOV     R3,ring_buffer
-0106 AA00        R     MOV     R2,ring_buffer+01H
-0108 A900        R     MOV     R1,ring_buffer+02H
-010A 900007            MOV     DPTR,#07H
-010D 120000      E     LCALL   ?C?CLDOPTR
-0110 FF                MOV     R7,A
-0111 7E00              MOV     R6,#00H
-0113 120000      E     LCALL   ?C?PLDPTR
-0116 A800        R     MOV     R0,_data+02H
-0118 AC00        R     MOV     R4,_data+01H
-011A AD00        R     MOV     R5,_data
-011C 120000      E     LCALL   ?C?COPY
-                                           ; SOURCE LINE # 71
-011F AB00        R     MOV     R3,next_r
-0121 AA00        R     MOV     R2,next_r+01H
-0123 A900        R     MOV     R1,next_r+02H
-0125 C003              PUSH    AR3
-0127 C002              PUSH    AR2
-0129 C001              PUSH    AR1
-012B AB00        R     MOV     R3,ring_buffer
-012D AA00        R     MOV     R2,ring_buffer+01H
-012F A900        R     MOV     R1,ring_buffer+02H
-0131 120000      E     LCALL   ?C?PSTPTR
-                                           ; SOURCE LINE # 75
-0134         ?C0006:
-0134 22                RET     
+0115 AB00        R     MOV     R3,next_r
+0117 AA00        R     MOV     R2,next_r+01H
+0119 A900        R     MOV     R1,next_r+02H
+011B C003              PUSH    AR3
+011D C002              PUSH    AR2
+011F C001              PUSH    AR1
+0121 AB00        R     MOV     R3,ring_buffer
+0123 AA00        R     MOV     R2,ring_buffer+01H
+0125 A900        R     MOV     R1,ring_buffer+02H
+0127 120000      E     LCALL   ?C?PSTPTR
+                                           ; SOURCE LINE # 73
+012A 7F01              MOV     R7,#01H
+                                           ; SOURCE LINE # 74
+012C         ?C0006:
+012C 22                RET     
              ; FUNCTION _ringbuffer_read (END)
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    598    ----
+   CODE SIZE        =    602    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
