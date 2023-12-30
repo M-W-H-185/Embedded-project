@@ -401,6 +401,16 @@
               <FileType>2</FileType>
               <FilePath>.\XmRTOS\os_mcu.asm</FilePath>
             </File>
+            <File>
+              <FileName>os_queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\XmRTOS\os_queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>os_queue.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\XmRTOS\os_queue.h</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
