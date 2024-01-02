@@ -324,7 +324,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\XmRTOS</IncludePath>
+              <IncludePath>.\XmRTOS;.\XmRTOS\utils</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -386,6 +386,31 @@
               <FileType>1</FileType>
               <FilePath>.\main.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>utils</GroupName>
+          <Files>
+            <File>
+              <FileName>ringBuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\XmRTOS\utils\ringBuffer.c</FilePath>
+            </File>
+            <File>
+              <FileName>ringBuffer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\XmRTOS\utils\ringBuffer.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>os</GroupName>
+          <Files>
+            <File>
+              <FileName>os_mcu.asm</FileName>
+              <FileType>2</FileType>
+              <FilePath>.\XmRTOS\os_mcu.asm</FilePath>
+            </File>
             <File>
               <FileName>os_task.c</FileName>
               <FileType>1</FileType>
@@ -397,19 +422,14 @@
               <FilePath>.\XmRTOS\os_task.h</FilePath>
             </File>
             <File>
-              <FileName>os_mcu.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\XmRTOS\os_mcu.asm</FilePath>
-            </File>
-            <File>
-              <FileName>ringBuffer.c</FileName>
+              <FileName>os_queue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\XmRTOS\ringBuffer.c</FilePath>
+              <FilePath>.\XmRTOS\os_queue.c</FilePath>
             </File>
             <File>
-              <FileName>ringBuffer.h</FileName>
+              <FileName>os_queue.h</FileName>
               <FileType>5</FileType>
-              <FilePath>.\XmRTOS\ringBuffer.h</FilePath>
+              <FilePath>.\XmRTOS\os_queue.h</FilePath>
             </File>
           </Files>
         </Group>

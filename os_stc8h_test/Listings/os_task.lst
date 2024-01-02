@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 1   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE OS_TASK
 OBJECT MODULE PLACED IN .\Objects\os_task.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE XmRTOS\os_task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTE
-                    -XTEND CODE PRINT(.\Listings\os_task.lst) OBJECT(.\Objects\os_task.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE XmRTOS\os_task.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils
+                    -) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_task.lst) OBJECT(.\Objects\os_task.obj)
 
 line level    source
 
@@ -62,7 +62,7 @@ line level    source
   52   2              }
   53   1              // 先将下一个id的sp指向到SP
   54   1              SP = tcb_list[task_id].sp;
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 2   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 2   
 
   55   1      
   56   1              // 将任务堆栈拷贝到公共堆栈里面
@@ -126,7 +126,7 @@ line level    source
  114          
  115          /***********************************************************************
  116          *       函数描述：任务延时函数，调用后马上进行一次任务调度
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 3   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 3   
 
  117          *       传入参数：
  118          *                               tasks：需要延时的滴答数。 滴答一次1ms 
@@ -187,7 +187,7 @@ line level    source
  173   2              }
  174   1              os_switch();
  175   1      }
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 4   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -251,7 +251,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0047 EF                MOV     A,R7
 0048 75F00A            MOV     B,#0AH
 004B A4                MUL     AB
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 5   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 5   
 
 004C 2400        R     ADD     A,#LOW tcb_list+06H
 004E F582              MOV     DPL,A
@@ -315,7 +315,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0098 7F14              MOV     R7,#014H
 009A 020000      E     LJMP    ?C?COPY
              ; FUNCTION os_switch (END)
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 6   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 6   
 
 
              ; FUNCTION _os_task_create (BEGIN)
@@ -379,7 +379,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 005F A4                MUL     AB
 0060 2583              ADD     A,DPH
 0062 F583              MOV     DPH,A
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 7   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 7   
 
 0064 7401              MOV     A,#01H
 0066 F0                MOVX    @DPTR,A
@@ -443,7 +443,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 002F FA                MOV     R2,A
 0030 A3                INC     DPTR
 0031 E0                MOVX    A,@DPTR
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 8   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 8   
 
 0032 F9                MOV     R1,A
 0033 7800        R     MOV     R0,#LOW public_stack
@@ -507,7 +507,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 143
 0000 80FE              SJMP    ?C0011
              ; FUNCTION os_idle_task (END)
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 9   
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 9   
 
 
              ; FUNCTION time_handleHook (BEGIN)
@@ -571,7 +571,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 004A EC                MOV     A,R4
 004B 34FF              ADDC    A,#0FFH
 004D FC                MOV     R4,A
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 10  
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 10  
 
 004E E4                CLR     A
 004F FB                MOV     R3,A
@@ -635,7 +635,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 009F EE                MOV     A,R6
 00A0 34FF              ADDC    A,#0FFH
 00A2 FE                MOV     R6,A
-C51 COMPILER V9.60.7.0   OS_TASK                                                           12/30/2023 15:42:51 PAGE 11  
+C51 COMPILER V9.60.7.0   OS_TASK                                                           01/02/2024 10:05:03 PAGE 11  
 
 00A3 ED                MOV     A,R5
 00A4 34FF              ADDC    A,#0FFH

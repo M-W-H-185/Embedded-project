@@ -9,7 +9,7 @@
 #include "intrins.h"
 #include "stdio.h"
 #include "os_task.h"
-#include "ringBuffer.h"
+#include "os_queue.h"
 /* 发光二极管定义 */
 
 sbit LED_R = P0^5;    // 红色LED
@@ -72,7 +72,6 @@ void Timer0_Init(void)		//1毫秒@11.0592MHz
 }
 
 unsigned int cut = 0;
-
 // 函数冲重入，由汇编代码调用
 void time0_handle(void)large reentrant
 //void time0_handle(void)interrupt 1
@@ -89,60 +88,14 @@ void time0_handle(void)large reentrant
 }
 
 
-RingBufferHandle xdata queue_1 ;
-os_uint8_t xdata queue_buff[6];
+
+
 
 /* 主函数 */
 void main()
 {
 	
-	volatile  os_uint8_t test_data = 0xff;
-	volatile  os_uint8_t w_data = 0;
-	
-	// 初始化一个队列
-	ringbuffer_created(&queue_1,&queue_buff,6,sizeof(os_uint8_t));
-	// 写五次 是成功的
-	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
-	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
-	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
-	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
-	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
-	// 写五次 是成功的
-	
-	// 写五次后 失败
-	ringbuffer_write(&queue_1,&(os_uint8_t *)6);
-	ringbuffer_write(&queue_1,&(os_uint8_t *)7);	
-	// 写五次后 失败
 
-	// 读五次 成功
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	// 读五次 成功
-
-	// 读五次后 第一次读 失败并让 读和写指正回到数组0
-	ringbuffer_read(&queue_1, &test_data);
-	// 读五次后 第二次读 读和写重合  缓冲区数据为空
-	ringbuffer_read(&queue_1, &test_data);	
-
-
-	// 这两句后 缓冲区数据为空
-	
-	// 写一次成功
-	w_data = 0x33;
-	ringbuffer_write(&queue_1,&w_data);
-	// 读一次成功
-	ringbuffer_read(&queue_1, &test_data);	
-	
-	// 这两句后 缓冲区数据为空
 
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;

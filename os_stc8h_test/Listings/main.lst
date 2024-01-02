@@ -1,10 +1,10 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
 OBJECT MODULE PLACED IN .\Objects\main.obj
-COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS) DEBUG OBJECTEXTEND CODE
-                    - PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils) DEBUG OB
+                    -JECTEXTEND CODE PRINT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
 
 line level    source
 
@@ -19,7 +19,7 @@ line level    source
    9          #include "intrins.h"
   10          #include "stdio.h"
   11          #include "os_task.h"
-  12          #include "ringBuffer.h"
+  12          #include "os_queue.h"
   13          /* 发光二极管定义 */
   14          
   15          sbit LED_R = P0^5;    // 红色LED
@@ -62,7 +62,7 @@ line level    source
   52   2                      os_delay(1000);
   53   2                      
   54   2                      LED_Y = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 2   
 
   55   2                      os_delay(1000);
   56   2                      os_delay(1000);
@@ -84,100 +84,53 @@ line level    source
   72   1      }
   73          
   74          unsigned int cut = 0;
-  75          
-  76          // 函数冲重入，由汇编代码调用
-  77          void time0_handle(void)large reentrant
-  78          //void time0_handle(void)interrupt 1
-  79          {
-  80   1              cut++;
-  81   1      
-  82   1              if(cut == 500)
-  83   1              {
-  84   2                      cut = 0;
-  85   2                      LED_G = !LED_G;
-  86   2              }
-  87   1              time_handleHook();
-  88   1      
-  89   1      }
+  75          // 函数冲重入，由汇编代码调用
+  76          void time0_handle(void)large reentrant
+  77          //void time0_handle(void)interrupt 1
+  78          {
+  79   1              cut++;
+  80   1      
+  81   1              if(cut == 500)
+  82   1              {
+  83   2                      cut = 0;
+  84   2                      LED_G = !LED_G;
+  85   2              }
+  86   1              time_handleHook();
+  87   1      
+  88   1      }
+  89          
   90          
   91          
-  92          RingBufferHandle xdata queue_1 ;
-  93          os_uint8_t xdata queue_buff[6];
-  94          
-  95          /* 主函数 */
-  96          void main()
-  97          {
-  98   1              
-  99   1              volatile  os_uint8_t test_data = 0xff;
- 100   1              volatile  os_uint8_t w_data = 0;
- 101   1              
- 102   1              // 初始化一个队列
- 103   1              ringbuffer_created(&queue_1,&queue_buff,6,sizeof(os_uint8_t));
- 104   1              // 写五次 是成功的
- 105   1              w_data++;
- 106   1              ringbuffer_write(&queue_1,&w_data);
- 107   1              w_data++;
- 108   1              ringbuffer_write(&queue_1,&w_data);
- 109   1              w_data++;
- 110   1              ringbuffer_write(&queue_1,&w_data);
- 111   1              w_data++;
- 112   1              ringbuffer_write(&queue_1,&w_data);
- 113   1              w_data++;
- 114   1              ringbuffer_write(&queue_1,&w_data);
- 115   1              // 写五次 是成功的
- 116   1              
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 3   
+  92          
+  93          
+  94          /* 主函数 */
+  95          void main()
+  96          {
+  97   1              
+  98   1      
+  99   1      
+ 100   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+ 101   1              P0M1 = 0x00;
+ 102   1              Timer0_Init();
+ 103   1              EA = 1;
+ 104   1              P_SW2 |= (1<<7);
+ 105   1              
+ 106   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
+ 107   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+ 108   1              os_start();
+ 109   1      
+ 110   1      
+ 111   1              while(1)
+ 112   1              {
+ 113   2      
+ 114   2              }
+ 115   1              
+ 116   1      
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 3   
 
- 117   1              // 写五次后 失败
- 118   1              ringbuffer_write(&queue_1,&(os_uint8_t *)6);
- 119   1              ringbuffer_write(&queue_1,&(os_uint8_t *)7);    
- 120   1              // 写五次后 失败
- 121   1      
- 122   1              // 读五次 成功
- 123   1              ringbuffer_read(&queue_1, &test_data);
- 124   1              ringbuffer_read(&queue_1, &test_data);
- 125   1              ringbuffer_read(&queue_1, &test_data);
- 126   1              ringbuffer_read(&queue_1, &test_data);
- 127   1              ringbuffer_read(&queue_1, &test_data);
- 128   1              ringbuffer_read(&queue_1, &test_data);
- 129   1              // 读五次 成功
- 130   1      
- 131   1              // 读五次后 第一次读 失败并让 读和写指正回到数组0
- 132   1              ringbuffer_read(&queue_1, &test_data);
- 133   1              // 读五次后 第二次读 读和写重合  缓冲区数据为空
- 134   1              ringbuffer_read(&queue_1, &test_data);  
- 135   1      
- 136   1      
- 137   1              // 这两句后 缓冲区数据为空
- 138   1              
- 139   1              // 写一次成功
- 140   1              w_data = 0x33;
- 141   1              ringbuffer_write(&queue_1,&w_data);
- 142   1              // 读一次成功
- 143   1              ringbuffer_read(&queue_1, &test_data);  
- 144   1              
- 145   1              // 这两句后 缓冲区数据为空
- 146   1      
- 147   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
- 148   1              P0M1 = 0x00;
- 149   1              Timer0_Init();
- 150   1              EA = 1;
- 151   1              P_SW2 |= (1<<7);
- 152   1              
- 153   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
- 154   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
- 155   1              os_start();
- 156   1      
- 157   1      
- 158   1              while(1)
- 159   1              {
- 160   2      
- 161   2              }
- 162   1              
- 163   1      
- 164   1      }
- 165          
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 4   
+ 117   1      }
+ 118          
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -241,7 +194,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 55
 001A 7FE8              MOV     R7,#0E8H
 001C 7E03              MOV     R6,#03H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 5   
 
 001E 7D00              MOV     R5,#00H
 0020 7C00              MOV     R4,#00H
@@ -278,252 +231,83 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION Timer0_Init (END)
 
              ; FUNCTION _?time0_handle (BEGIN)
-                                           ; SOURCE LINE # 77
-                                           ; SOURCE LINE # 80
+                                           ; SOURCE LINE # 76
+                                           ; SOURCE LINE # 79
 0000 0500        R     INC     cut+01H
 0002 E500        R     MOV     A,cut+01H
 0004 7002              JNZ     ?C0013
 0006 0500        R     INC     cut
 0008         ?C0013:
-                                           ; SOURCE LINE # 82
+                                           ; SOURCE LINE # 81
 0008 B4F40C            CJNE    A,#0F4H,?C0008
 000B E500        R     MOV     A,cut
 000D B40107            CJNE    A,#01H,?C0008
+                                           ; SOURCE LINE # 82
                                            ; SOURCE LINE # 83
-                                           ; SOURCE LINE # 84
 0010 E4                CLR     A
 0011 F500        R     MOV     cut,A
 0013 F500        R     MOV     cut+01H,A
-                                           ; SOURCE LINE # 85
+                                           ; SOURCE LINE # 84
 0015 B287              CPL     LED_G
-                                           ; SOURCE LINE # 86
+                                           ; SOURCE LINE # 85
 0017         ?C0008:
-                                           ; SOURCE LINE # 87
+                                           ; SOURCE LINE # 86
 0017 020000      E     LJMP    time_handleHook
              ; FUNCTION _?time0_handle (END)
 
              ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 95
                                            ; SOURCE LINE # 96
-                                           ; SOURCE LINE # 97
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 6   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 6   
 
-                                           ; SOURCE LINE # 99
-0000 7500FF      R     MOV     test_data,#0FFH
                                            ; SOURCE LINE # 100
-0003 E4                CLR     A
-0004 F500        R     MOV     w_data,A
+0000 E4                CLR     A
+0001 F594              MOV     P0M0,A
+                                           ; SOURCE LINE # 101
+0003 F593              MOV     P0M1,A
+                                           ; SOURCE LINE # 102
+0005 120000      R     LCALL   Timer0_Init
                                            ; SOURCE LINE # 103
-0006 750001      E     MOV     ?_ringbuffer_created?BYTE+03H,#01H
-0009 750000      R     MOV     ?_ringbuffer_created?BYTE+04H,#HIGH queue_buff
-000C 750000      R     MOV     ?_ringbuffer_created?BYTE+05H,#LOW queue_buff
-000F 750006      E     MOV     ?_ringbuffer_created?BYTE+06H,#06H
-0012 750001      E     MOV     ?_ringbuffer_created?BYTE+07H,#01H
-0015 7B01              MOV     R3,#01H
-0017 7A00        R     MOV     R2,#HIGH queue_1
-0019 7900        R     MOV     R1,#LOW queue_1
-001B 120000      E     LCALL   _ringbuffer_created
-                                           ; SOURCE LINE # 105
-001E 0500        R     INC     w_data
+0008 D2AF              SETB    EA
+                                           ; SOURCE LINE # 104
+000A 43BA80            ORL     P_SW2,#080H
                                            ; SOURCE LINE # 106
-0020 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-0023 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
-0026 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
-0029 7B01              MOV     R3,#01H
-002B 7A00        R     MOV     R2,#HIGH queue_1
-002D 7900        R     MOV     R1,#LOW queue_1
-002F 120000      E     LCALL   _ringbuffer_write
+000D 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
+0010 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
+0013 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
+0016 F500        E     MOV     ?_os_task_create?BYTE+06H,A
+0018 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
+001B 7BFF              MOV     R3,#0FFH
+001D 7A00        R     MOV     R2,#HIGH task1
+001F 7900        R     MOV     R1,#LOW task1
+0021 120000      E     LCALL   _os_task_create
                                            ; SOURCE LINE # 107
-0032 0500        R     INC     w_data
+0024 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
+0027 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
+002A 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
+002D 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
+0030 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
+0033 7BFF              MOV     R3,#0FFH
+0035 7A00        R     MOV     R2,#HIGH task2
+0037 7900        R     MOV     R1,#LOW task2
+0039 120000      E     LCALL   _os_task_create
                                            ; SOURCE LINE # 108
-0034 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-0037 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
-003A 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
-003D 7B01              MOV     R3,#01H
-003F 7A00        R     MOV     R2,#HIGH queue_1
-0041 7900        R     MOV     R1,#LOW queue_1
-0043 120000      E     LCALL   _ringbuffer_write
-                                           ; SOURCE LINE # 109
-0046 0500        R     INC     w_data
-                                           ; SOURCE LINE # 110
-0048 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-004B 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
-004E 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
-0051 7B01              MOV     R3,#01H
-0053 7A00        R     MOV     R2,#HIGH queue_1
-0055 7900        R     MOV     R1,#LOW queue_1
-0057 120000      E     LCALL   _ringbuffer_write
+003C 120000      E     LCALL   os_start
+003F         ?C0010:
                                            ; SOURCE LINE # 111
-005A 0500        R     INC     w_data
                                            ; SOURCE LINE # 112
-005C 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-005F 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
-0062 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
-0065 7B01              MOV     R3,#01H
-0067 7A00        R     MOV     R2,#HIGH queue_1
-0069 7900        R     MOV     R1,#LOW queue_1
-006B 120000      E     LCALL   _ringbuffer_write
-                                           ; SOURCE LINE # 113
-006E 0500        R     INC     w_data
                                            ; SOURCE LINE # 114
-0070 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-0073 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
-0076 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
-0079 7B01              MOV     R3,#01H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 7   
-
-007B 7A00        R     MOV     R2,#HIGH queue_1
-007D 7900        R     MOV     R1,#LOW queue_1
-007F 120000      E     LCALL   _ringbuffer_write
-                                           ; SOURCE LINE # 118
-0082 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-0085 750000      E     MOV     ?_ringbuffer_write?BYTE+04H,#00H
-0088 750006      E     MOV     ?_ringbuffer_write?BYTE+05H,#06H
-008B 7B01              MOV     R3,#01H
-008D 7A00        R     MOV     R2,#HIGH queue_1
-008F 7900        R     MOV     R1,#LOW queue_1
-0091 120000      E     LCALL   _ringbuffer_write
-                                           ; SOURCE LINE # 119
-0094 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-0097 750000      E     MOV     ?_ringbuffer_write?BYTE+04H,#00H
-009A 750007      E     MOV     ?_ringbuffer_write?BYTE+05H,#07H
-009D 7B01              MOV     R3,#01H
-009F 7A00        R     MOV     R2,#HIGH queue_1
-00A1 7900        R     MOV     R1,#LOW queue_1
-00A3 120000      E     LCALL   _ringbuffer_write
-                                           ; SOURCE LINE # 123
-00A6 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-00A9 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-00AC 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-00AF 7B01              MOV     R3,#01H
-00B1 7A00        R     MOV     R2,#HIGH queue_1
-00B3 7900        R     MOV     R1,#LOW queue_1
-00B5 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 124
-00B8 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-00BB 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-00BE 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-00C1 7B01              MOV     R3,#01H
-00C3 7A00        R     MOV     R2,#HIGH queue_1
-00C5 7900        R     MOV     R1,#LOW queue_1
-00C7 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 125
-00CA 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-00CD 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-00D0 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-00D3 7B01              MOV     R3,#01H
-00D5 7A00        R     MOV     R2,#HIGH queue_1
-00D7 7900        R     MOV     R1,#LOW queue_1
-00D9 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 126
-00DC 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-00DF 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-00E2 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-00E5 7B01              MOV     R3,#01H
-00E7 7A00        R     MOV     R2,#HIGH queue_1
-00E9 7900        R     MOV     R1,#LOW queue_1
-00EB 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 127
-00EE 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-00F1 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-00F4 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-00F7 7B01              MOV     R3,#01H
-00F9 7A00        R     MOV     R2,#HIGH queue_1
-00FB 7900        R     MOV     R1,#LOW queue_1
-00FD 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 128
-0100 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-0103 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 8   
-
-0106 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-0109 7B01              MOV     R3,#01H
-010B 7A00        R     MOV     R2,#HIGH queue_1
-010D 7900        R     MOV     R1,#LOW queue_1
-010F 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 132
-0112 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-0115 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-0118 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-011B 7B01              MOV     R3,#01H
-011D 7A00        R     MOV     R2,#HIGH queue_1
-011F 7900        R     MOV     R1,#LOW queue_1
-0121 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 134
-0124 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-0127 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-012A 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-012D 7B01              MOV     R3,#01H
-012F 7A00        R     MOV     R2,#HIGH queue_1
-0131 7900        R     MOV     R1,#LOW queue_1
-0133 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 140
-0136 750033      R     MOV     w_data,#033H
-                                           ; SOURCE LINE # 141
-0139 750000      E     MOV     ?_ringbuffer_write?BYTE+03H,#00H
-013C 750000      R     MOV     ?_ringbuffer_write?BYTE+04H,#HIGH w_data
-013F 750000      R     MOV     ?_ringbuffer_write?BYTE+05H,#LOW w_data
-0142 7B01              MOV     R3,#01H
-0144 7A00        R     MOV     R2,#HIGH queue_1
-0146 7900        R     MOV     R1,#LOW queue_1
-0148 120000      E     LCALL   _ringbuffer_write
-                                           ; SOURCE LINE # 143
-014B 750000      E     MOV     ?_ringbuffer_read?BYTE+03H,#00H
-014E 750000      R     MOV     ?_ringbuffer_read?BYTE+04H,#HIGH test_data
-0151 750000      R     MOV     ?_ringbuffer_read?BYTE+05H,#LOW test_data
-0154 7B01              MOV     R3,#01H
-0156 7A00        R     MOV     R2,#HIGH queue_1
-0158 7900        R     MOV     R1,#LOW queue_1
-015A 120000      E     LCALL   _ringbuffer_read
-                                           ; SOURCE LINE # 147
-015D E4                CLR     A
-015E F594              MOV     P0M0,A
-                                           ; SOURCE LINE # 148
-0160 F593              MOV     P0M1,A
-                                           ; SOURCE LINE # 149
-0162 120000      R     LCALL   Timer0_Init
-                                           ; SOURCE LINE # 150
-0165 D2AF              SETB    EA
-                                           ; SOURCE LINE # 151
-0167 43BA80            ORL     P_SW2,#080H
-                                           ; SOURCE LINE # 153
-016A 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
-016D 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
-0170 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
-0173 F500        E     MOV     ?_os_task_create?BYTE+06H,A
-0175 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
-0178 7BFF              MOV     R3,#0FFH
-017A 7A00        R     MOV     R2,#HIGH task1
-017C 7900        R     MOV     R1,#LOW task1
-017E 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 154
-0181 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
-C51 COMPILER V9.60.7.0   MAIN                                                              12/30/2023 15:42:51 PAGE 9   
-
-0184 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
-0187 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
-018A 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
-018D 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
-0190 7BFF              MOV     R3,#0FFH
-0192 7A00        R     MOV     R2,#HIGH task2
-0194 7900        R     MOV     R1,#LOW task2
-0196 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 155
-0199 120000      E     LCALL   os_start
-019C         ?C0010:
-                                           ; SOURCE LINE # 158
-                                           ; SOURCE LINE # 159
-                                           ; SOURCE LINE # 161
-019C 80FE              SJMP    ?C0010
+003F 80FE              SJMP    ?C0010
              ; FUNCTION main (END)
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    550    ----
+   CODE SIZE        =    201    ----
    CONSTANT SIZE    =   ----    ----
-   XDATA SIZE       =     57    ----
+   XDATA SIZE       =     40    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      2       2
+   DATA SIZE        =      2    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
