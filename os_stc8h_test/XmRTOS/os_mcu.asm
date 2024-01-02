@@ -1,13 +1,12 @@
 NAME	OS_CPU_A_ASM	; 定义一个名称为 “OS_CPU_A_ASM”汇编段
 
-?PR?test?OS_CPU_A_ASM 			SEGMENT CODE ; 这句应该是 在 OS_CPU_A_ASM端里面有一个test函数，放在了code区域
-?PR?TIMER0_ISR?OS_CPU_A_ASM  	SEGMENT CODE	; 这句应该是 在 OS_CPU_A_ASM端里面有一个test函数，放在了code区域
+?PR?OSTickISR?OS_CPU_A_ASM  	SEGMENT CODE	; 这句应该是 在 OS_CPU_A_ASM端里面有一个OSTickISR函数，放在了code区域
 
 EXTRN CODE  (_?time0_handle)
 
 
 
-PUBLIC	test			; 这里就是将这个test函数公开出去
+;PUBLIC	OSCtxSw			; 这里就是将这个OSCtxSw函数公开出去
 
 
 ;定义压栈宏
@@ -54,32 +53,11 @@ ENDM
 
 
 
-; ---------------- 测试函数 ----------------
-RSEG  ?PR?test?OS_CPU_A_ASM
-test:
-	;MOV A,task_id
-	;MOV B,OS_TCB_SIZE
-	;MUL AB ; 乘法操作.低位放到A 高位放到B 所以取A值就是数组偏移量
-	;MOV R0 ,A	; 将数组偏移量存到R0
-	
-	
-	;MOV R1 ,#tcb_list	; tcb_list数组的地址
-	
-	;MOV A,R0	; 又把 r0数组偏移量纯到A
-	;ADD A,R1	; A + R1 A就是低位计算结果
-	;MOV R1,A	; R1现在这里就是数组偏移后的地址
-	;; R1 就是指向sp了 MOV @R1, #0x66	; 这个就是数组结构体里面的第一个变量tcb_list[].sp = 0x66
-
-
-	
-RETI
-; ---------------- 测试函数 ----------------
-
 
 ; ---------------- 定时器0 相关调用 ----------------
 ; --- 定时器0 中断服务程序 ---
-RSEG  ?PR?TIMER0_ISR?OS_CPU_A_ASM
-TIMER0_ISR:     
+RSEG  ?PR?OSTickISR?OS_CPU_A_ASM
+OSTickISR:     
 	CLR EA 		; 关中断
 	PUSHALL		; 压栈
 	
@@ -93,7 +71,7 @@ RETI
 
 
 CSEG AT 000BH	;定时器T0中断
- LJMP TIMER0_ISR
+ LJMP OSTickISR
 
 ; ---------------- 定时器0 相关调用 ----------------
 

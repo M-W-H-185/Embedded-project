@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 1   
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE RINGBUFFER
@@ -56,125 +56,130 @@ line level    source
   44          os_uint8_t ringbuffer_write(RingBufferHandle *ring_buffer, void *_data)
   45          {               
   46   1              os_uint8_t *next_w = ring_buffer->w_ + ring_buffer->itemSize;  // 下一次写入的位置
-  47   1              // 下一次写入的位置等于 读取 的位置 表示满了
-  48   1          if (next_w == ring_buffer->r_) {
-  49   2                      // 溢出
-  50   2              return RINGBUFF_WRITE_OVERFLOW; 
-  51   2      
-  52   2          }
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 2   
+  47   1      
+  48   1              
+  49   1              // 下一次写入的位置等于 读取 的位置 表示满了
+  50   1          if (next_w == ring_buffer->r_) {
+  51   2                      // 溢出
+  52   2              return RINGBUFF_WRITE_OVERFLOW; 
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 2   
 
-  53   1              // 写一个写入指向 数组最后一位表示溢出
-  54   1          if (next_w >= (os_uint8_t *)(ring_buffer->buff + ring_buffer->buff_size)) {
-  55   2                      // 溢出
-  56   2              return RINGBUFF_WRITE_OVERFLOW; 
-  57   2          }
-  58   1      
-  59   1          memcpy((void *)ring_buffer->w_, _data, ring_buffer->itemSize); // 写入数据
-  60   1          ring_buffer->w_ = next_w; // 更新写入 尾指针
-  61   1              return RINGBUFF_SUCCESS;
-  62   1      }
-  63          
-  64          /***********************************************************************
-  65          *       函数描述：  缓冲区读 读和写都到头了 重新回到数组0
-  66          *       传入参数：
-  67          *                               ring_buffer     : 缓冲区操作句柄指针
-  68          *                               _data           : 读取到数据的指针
-  69          * 返回参数：
-  70          *                               os_uint8_t      : 
-  71          *                                                               RINGBUFF_READ_NULL              = 缓冲区无数据
-  72          *                                                               RINGBUFF_SUCCESS                = 写入成功 
-  73          ***********************************************************************/
-  74          os_uint8_t ringbuffer_read(RingBufferHandle *ring_buffer, void *_data)
-  75          {
-  76   1      
-  77   1              // 下一次读取的位置
-  78   1          os_uint8_t *next_r  = (os_uint8_t *)ring_buffer->r_ + ring_buffer->itemSize;  
-  79   1              // 下一次读指针 > 写指针 并且  下一次 等于 数组最尾部的时候 数组溢出
-  80   1          if (
-  81   1                              next_r > ring_buffer->w_ && next_r == (os_uint8_t *)(ring_buffer->buff + (ring_buffer->buff_size ) )
-  82   1                      ) 
-  83   1              {
-  84   2              memcpy(_data, ring_buffer->r_, ring_buffer->itemSize);
-  85   2                      // 将读写指针 指向数据起始位 数组0
-  86   2              ring_buffer->r_ = ring_buffer->buff; 
-  87   2              ring_buffer->w_ = ring_buffer->buff; 
-  88   2              return RINGBUFF_READ_NULL; // 算是溢出也算空。空吧算
-  89   2          }
-  90   1              
-  91   1              // 当前读取位置 和 下一次写入位置重合 表示空
-  92   1          if (ring_buffer->r_ == ring_buffer->w_) {
-  93   2              return RINGBUFF_READ_NULL; // 空
-  94   2          }
-  95   1              
-  96   1              // 读取数据并更新读指针
-  97   1          memcpy(_data, ring_buffer->r_, ring_buffer->itemSize); // 读取数据
-  98   1          ring_buffer->r_ = next_r; // 更新读指针
-  99   1      
- 100   1              
- 101   1              return RINGBUFF_SUCCESS;
- 102   1      }
- 103          
- 104          #if 1==0
+  53   2      
+  54   2          }
+  55   1      
+  56   1              // 写一个写入指向 数组最后一位表示溢出
+  57   1          if (next_w >= (os_uint8_t *)(ring_buffer->buff + ( (ring_buffer->buff_size - 1) * ring_buffer->itemSiz
+             -e ) )) {
+  58   2                      // 溢出
+  59   2              return RINGBUFF_WRITE_OVERFLOW; 
+  60   2          }
+  61   1      
+  62   1          memcpy((void *)ring_buffer->w_, _data, ring_buffer->itemSize); // 写入数据
+  63   1          ring_buffer->w_ = next_w; // 更新写入 尾指针
+  64   1              return RINGBUFF_SUCCESS;
+  65   1      }
+  66          
+  67          /***********************************************************************
+  68          *       函数描述：  缓冲区读 读和写都到头了 重新回到数组0
+  69          *       传入参数：
+  70          *                               ring_buffer     : 缓冲区操作句柄指针
+  71          *                               _data           : 读取到数据的指针
+  72          * 返回参数：
+  73          *                               os_uint8_t      : 
+  74          *                                                               RINGBUFF_READ_NULL              = 缓冲区无数据
+  75          *                                                               RINGBUFF_SUCCESS                = 写入成功 
+  76          ***********************************************************************/
+  77          os_uint8_t ringbuffer_read(RingBufferHandle *ring_buffer, void *_data)
+  78          {
+  79   1      
+  80   1              // 下一次读取的位置
+  81   1          os_uint8_t *next_r  = (os_uint8_t *)ring_buffer->r_ + ring_buffer->itemSize;  
+  82   1              // 下一次读指针 > 写指针 并且  下一次 等于 数组最尾部的时候 数组溢出
+  83   1          if (
+  84   1                              next_r > ring_buffer->w_ && next_r == (os_uint8_t *)( ring_buffer->buff + ( (ring_buffer->buff_size - 1
+             -) * ring_buffer->itemSize ) )
+  85   1                      ) 
+  86   1              {
+  87   2              memcpy(_data, ring_buffer->r_, ring_buffer->itemSize);
+  88   2                      // 将读写指针 指向数据起始位 数组0
+  89   2              ring_buffer->r_ = ring_buffer->buff; 
+  90   2              ring_buffer->w_ = ring_buffer->buff; 
+  91   2              return RINGBUFF_READ_NULL; // 算是溢出也算空。空吧算
+  92   2          }
+  93   1              
+  94   1              // 当前读取位置 和 下一次写入位置重合 表示空
+  95   1          if (ring_buffer->r_ == ring_buffer->w_) {
+  96   2              return RINGBUFF_READ_NULL; // 空
+  97   2          }
+  98   1              
+  99   1              // 读取数据并更新读指针
+ 100   1          memcpy(_data, ring_buffer->r_, ring_buffer->itemSize); // 读取数据
+ 101   1          ring_buffer->r_ = next_r; // 更新读指针
+ 102   1      
+ 103   1              
+ 104   1              return RINGBUFF_SUCCESS;
+ 105   1      }
+ 106          
+ 107          #if 1==0
               void ringBufferTest(void)
               {
               
-                      RingBufferHandle xdata queue_1 ;
+                      RingBufferHandle xdata rb_handle ;
                       os_uint8_t xdata queue_buff[6];
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 3   
+
                       volatile  os_uint8_t test_data = 0xff;
                       volatile  os_uint8_t w_data = 0;
                       
                       // 初始化一个队列
-                      ringbuffer_created(&queue_1,&queue_buff,6,sizeof(os_uint8_t));
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 3   
-
+                      ringbuffer_created(&rb_handle,&queue_buff,6,sizeof(os_uint8_t));
                       // 写五次 是成功的
                       w_data++;
-                      ringbuffer_write(&queue_1,&w_data);
+                      ringbuffer_write(&rb_handle,&w_data);
                       w_data++;
-                      ringbuffer_write(&queue_1,&w_data);
+                      ringbuffer_write(&rb_handle,&w_data);
                       w_data++;
-                      ringbuffer_write(&queue_1,&w_data);
+                      ringbuffer_write(&rb_handle,&w_data);
                       w_data++;
-                      ringbuffer_write(&queue_1,&w_data);
+                      ringbuffer_write(&rb_handle,&w_data);
                       w_data++;
-                      ringbuffer_write(&queue_1,&w_data);
+                      ringbuffer_write(&rb_handle,&w_data);
                       // 写五次 是成功的
                       
                       // 写五次后 失败
-                      ringbuffer_write(&queue_1,&(os_uint8_t *)6);
-                      ringbuffer_write(&queue_1,&(os_uint8_t *)7);    
+                      ringbuffer_write(&rb_handle,&(os_uint8_t *)6);
+                      ringbuffer_write(&rb_handle,&(os_uint8_t *)7);  
                       // 写五次后 失败
               
                       // 读五次 成功
-                      ringbuffer_read(&queue_1, &test_data);
-                      ringbuffer_read(&queue_1, &test_data);
-                      ringbuffer_read(&queue_1, &test_data);
-                      ringbuffer_read(&queue_1, &test_data);
-                      ringbuffer_read(&queue_1, &test_data);
-                      ringbuffer_read(&queue_1, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
                       // 读五次 成功
               
                       // 读五次后 第一次读 失败并让 读和写指正回到数组0
-                      ringbuffer_read(&queue_1, &test_data);
+                      ringbuffer_read(&rb_handle, &test_data);
                       // 读五次后 第二次读 读和写重合  缓冲区数据为空
-                      ringbuffer_read(&queue_1, &test_data);  
+                      ringbuffer_read(&rb_handle, &test_data);        
               
               
                       // 这两句后 缓冲区数据为空
                       
                       // 写一次成功
                       w_data = 0x33;
-                      ringbuffer_write(&queue_1,&w_data);
+                      ringbuffer_write(&rb_handle,&w_data);
                       // 读一次成功
-                      ringbuffer_read(&queue_1, &test_data);  
+                      ringbuffer_read(&rb_handle, &test_data);        
                       
                       // 这两句后 缓冲区数据为空
               }
               #endif
- 159          
- 160          
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 4   
+ 162          
+ 163          
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 4   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -238,7 +243,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _ringbuffer_created (END)
 
              ; FUNCTION _ringbuffer_write (BEGIN)
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 5   
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 5   
 
                                            ; SOURCE LINE # 44
 0000 8B00        R     MOV     ring_buffer,R3
@@ -256,19 +261,19 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 0016 A900        R     MOV     R1,ring_buffer+02H
 0018 900007            MOV     DPTR,#07H
 001B 120000      E     LCALL   ?C?CLDOPTR
-001E FE                MOV     R6,A
-001F 7C00              MOV     R4,#00H
+001E FD                MOV     R5,A
+001F 7E00              MOV     R6,#00H
 0021 D001              POP     AR1
 0023 D002              POP     AR2
 0025 D003              POP     AR3
 0027 29                ADD     A,R1
 0028 F9                MOV     R1,A
-0029 EC                MOV     A,R4
+0029 EE                MOV     A,R6
 002A 3A                ADDC    A,R2
 002B 8B00        R     MOV     next_w,R3
 002D F500        R     MOV     next_w+01H,A
 002F 8900        R     MOV     next_w+02H,R1
-                                           ; SOURCE LINE # 48
+                                           ; SOURCE LINE # 50
 0031 AB00        R     MOV     R3,ring_buffer
 0033 AA00        R     MOV     R2,ring_buffer+01H
 0035 A900        R     MOV     R1,ring_buffer+02H
@@ -285,109 +290,108 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 004B 6583              XRL     A,DPH
 004D         ?C0008:
 004D 7003              JNZ     ?C0002
-                                           ; SOURCE LINE # 50
+                                           ; SOURCE LINE # 52
 004F 7F02              MOV     R7,#02H
 0051 22                RET     
-                                           ; SOURCE LINE # 52
-0052         ?C0002:
                                            ; SOURCE LINE # 54
+0052         ?C0002:
+                                           ; SOURCE LINE # 57
 0052 AB00        R     MOV     R3,ring_buffer
 0054 AA00        R     MOV     R2,ring_buffer+01H
 0056 A900        R     MOV     R1,ring_buffer+02H
-0058 900008            MOV     DPTR,#08H
-005B 120000      E     LCALL   ?C?PLDOPTR
-005E C003              PUSH    AR3
-0060 C002              PUSH    AR2
-0062 C001              PUSH    AR1
-0064 AB00        R     MOV     R3,ring_buffer
-0066 AA00        R     MOV     R2,ring_buffer+01H
-0068 A900        R     MOV     R1,ring_buffer+02H
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 6   
+0058 900006            MOV     DPTR,#06H
+005B 120000      E     LCALL   ?C?CLDOPTR
+005E 24FF              ADD     A,#0FFH
+0060 FF                MOV     R7,A
+0061 E4                CLR     A
+0062 34FF              ADDC    A,#0FFH
+0064 FE                MOV     R6,A
+0065 7C00              MOV     R4,#00H
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 6   
 
-006A 900006            MOV     DPTR,#06H
-006D 120000      E     LCALL   ?C?CLDOPTR
-0070 7C00              MOV     R4,#00H
-0072 D001              POP     AR1
-0074 D002              POP     AR2
-0076 D003              POP     AR3
-0078 29                ADD     A,R1
-0079 F9                MOV     R1,A
-007A EC                MOV     A,R4
-007B 3A                ADDC    A,R2
-007C FA                MOV     R2,A
-007D 8A83              MOV     DPH,R2
-007F 8982              MOV     DPL,R1
-0081 C3                CLR     C
-0082 E500        R     MOV     A,next_w+02H
-0084 9582              SUBB    A,DPL
-0086 E500        R     MOV     A,next_w+01H
-0088 9583              SUBB    A,DPH
-008A         ?C0009:
-008A 4003              JC      ?C0004
-                                           ; SOURCE LINE # 56
-008C 7F02              MOV     R7,#02H
-008E 22                RET     
-                                           ; SOURCE LINE # 57
-008F         ?C0004:
+0067 120000      E     LCALL   ?C?IMUL
+006A 900008            MOV     DPTR,#08H
+006D 120000      E     LCALL   ?C?PLDOPTR
+0070 E9                MOV     A,R1
+0071 2F                ADD     A,R7
+0072 F9                MOV     R1,A
+0073 EA                MOV     A,R2
+0074 3E                ADDC    A,R6
+0075 FA                MOV     R2,A
+0076 8A83              MOV     DPH,R2
+0078 8982              MOV     DPL,R1
+007A C3                CLR     C
+007B E500        R     MOV     A,next_w+02H
+007D 9582              SUBB    A,DPL
+007F E500        R     MOV     A,next_w+01H
+0081 9583              SUBB    A,DPH
+0083         ?C0009:
+0083 4003              JC      ?C0004
                                            ; SOURCE LINE # 59
-008F EE                MOV     A,R6
-0090 FF                MOV     R7,A
-0091 7E00              MOV     R6,#00H
-0093 AB00        R     MOV     R3,ring_buffer
-0095 AA00        R     MOV     R2,ring_buffer+01H
-0097 A900        R     MOV     R1,ring_buffer+02H
-0099 900003            MOV     DPTR,#03H
-009C 120000      E     LCALL   ?C?PLDOPTR
-009F A801              MOV     R0,AR1
-00A1 AC02              MOV     R4,AR2
-00A3 AD03              MOV     R5,AR3
-00A5 AB00        R     MOV     R3,_data
-00A7 AA00        R     MOV     R2,_data+01H
-00A9 A900        R     MOV     R1,_data+02H
-00AB 120000      E     LCALL   ?C?COPY
+0085 7F02              MOV     R7,#02H
+0087 22                RET     
                                            ; SOURCE LINE # 60
-00AE AB00        R     MOV     R3,next_w
-00B0 AA00        R     MOV     R2,next_w+01H
-00B2 A900        R     MOV     R1,next_w+02H
-00B4 C003              PUSH    AR3
-00B6 C002              PUSH    AR2
-00B8 C001              PUSH    AR1
-00BA AB00        R     MOV     R3,ring_buffer
-00BC AA00        R     MOV     R2,ring_buffer+01H
-00BE A900        R     MOV     R1,ring_buffer+02H
-00C0 900003            MOV     DPTR,#03H
-00C3 120000      E     LCALL   ?C?PSTOPTR
-                                           ; SOURCE LINE # 61
-00C6 7F01              MOV     R7,#01H
+0088         ?C0004:
                                            ; SOURCE LINE # 62
-00C8         ?C0003:
-00C8 22                RET     
+0088 AB00        R     MOV     R3,ring_buffer
+008A AA00        R     MOV     R2,ring_buffer+01H
+008C A900        R     MOV     R1,ring_buffer+02H
+008E 900007            MOV     DPTR,#07H
+0091 120000      E     LCALL   ?C?CLDOPTR
+0094 FF                MOV     R7,A
+0095 7E00              MOV     R6,#00H
+0097 900003            MOV     DPTR,#03H
+009A 120000      E     LCALL   ?C?PLDOPTR
+009D A801              MOV     R0,AR1
+009F AC02              MOV     R4,AR2
+00A1 AD03              MOV     R5,AR3
+00A3 AB00        R     MOV     R3,_data
+00A5 AA00        R     MOV     R2,_data+01H
+00A7 A900        R     MOV     R1,_data+02H
+00A9 120000      E     LCALL   ?C?COPY
+                                           ; SOURCE LINE # 63
+00AC AB00        R     MOV     R3,next_w
+00AE AA00        R     MOV     R2,next_w+01H
+00B0 A900        R     MOV     R1,next_w+02H
+00B2 C003              PUSH    AR3
+00B4 C002              PUSH    AR2
+00B6 C001              PUSH    AR1
+00B8 AB00        R     MOV     R3,ring_buffer
+00BA AA00        R     MOV     R2,ring_buffer+01H
+00BC A900        R     MOV     R1,ring_buffer+02H
+00BE 900003            MOV     DPTR,#03H
+00C1 120000      E     LCALL   ?C?PSTOPTR
+                                           ; SOURCE LINE # 64
+00C4 7F01              MOV     R7,#01H
+                                           ; SOURCE LINE # 65
+00C6         ?C0003:
+00C6 22                RET     
              ; FUNCTION _ringbuffer_write (END)
 
              ; FUNCTION _ringbuffer_read (BEGIN)
-                                           ; SOURCE LINE # 74
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 7   
-
+                                           ; SOURCE LINE # 77
 0000 8B00        R     MOV     ring_buffer,R3
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 7   
+
 0002 8A00        R     MOV     ring_buffer+01H,R2
 0004 8900        R     MOV     ring_buffer+02H,R1
-                                           ; SOURCE LINE # 75
                                            ; SOURCE LINE # 78
+                                           ; SOURCE LINE # 81
 0006 900007            MOV     DPTR,#07H
 0009 120000      E     LCALL   ?C?CLDOPTR
-000C FF                MOV     R7,A
-000D FD                MOV     R5,A
-000E 7C00              MOV     R4,#00H
+000C FD                MOV     R5,A
+000D FF                MOV     R7,A
+000E 7E00              MOV     R6,#00H
 0010 120000      E     LCALL   ?C?PLDPTR
 0013 E9                MOV     A,R1
-0014 2D                ADD     A,R5
+0014 2F                ADD     A,R7
 0015 F9                MOV     R1,A
-0016 EC                MOV     A,R4
+0016 EE                MOV     A,R6
 0017 3A                ADDC    A,R2
 0018 8B00        R     MOV     next_r,R3
 001A F500        R     MOV     next_r+01H,A
 001C 8900        R     MOV     next_r+02H,R1
-                                           ; SOURCE LINE # 81
+                                           ; SOURCE LINE # 84
 001E AB00        R     MOV     R3,ring_buffer
 0020 AA00        R     MOV     R2,ring_buffer+01H
 0022 A900        R     MOV     R1,ring_buffer+02H
@@ -406,148 +410,150 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
 003C AB00        R     MOV     R3,ring_buffer
 003E AA00        R     MOV     R2,ring_buffer+01H
 0040 A900        R     MOV     R1,ring_buffer+02H
-0042 900008            MOV     DPTR,#08H
-0045 120000      E     LCALL   ?C?PLDOPTR
-0048 C003              PUSH    AR3
-004A C002              PUSH    AR2
-004C C001              PUSH    AR1
-004E AB00        R     MOV     R3,ring_buffer
-0050 AA00        R     MOV     R2,ring_buffer+01H
-0052 A900        R     MOV     R1,ring_buffer+02H
-0054 900006            MOV     DPTR,#06H
-0057 120000      E     LCALL   ?C?CLDOPTR
-005A D001              POP     AR1
-005C D002              POP     AR2
-005E D003              POP     AR3
-0060 29                ADD     A,R1
-0061 F9                MOV     R1,A
-0062 EC                MOV     A,R4
-0063 3A                ADDC    A,R2
-0064 FA                MOV     R2,A
-0065 E500        R     MOV     A,next_r
-0067 850083      R     MOV     DPH,next_r+01H
-006A 850082      R     MOV     DPL,next_r+02H
-006D 6B                XRL     A,R3
-006E 7008              JNZ     ?C0011
-0070 E9                MOV     A,R1
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 8   
+0042 900006            MOV     DPTR,#06H
+0045 120000      E     LCALL   ?C?CLDOPTR
+0048 24FF              ADD     A,#0FFH
+004A FF                MOV     R7,A
+004B EE                MOV     A,R6
+004C 34FF              ADDC    A,#0FFH
+004E FE                MOV     R6,A
+004F 7C00              MOV     R4,#00H
+0051 120000      E     LCALL   ?C?IMUL
+0054 900008            MOV     DPTR,#08H
+0057 120000      E     LCALL   ?C?PLDOPTR
+005A E9                MOV     A,R1
+005B 2F                ADD     A,R7
+005C F9                MOV     R1,A
+005D EA                MOV     A,R2
+005E 3E                ADDC    A,R6
+005F FA                MOV     R2,A
+0060 E500        R     MOV     A,next_r
+0062 850083      R     MOV     DPH,next_r+01H
+0065 850082      R     MOV     DPL,next_r+02H
+0068 6B                XRL     A,R3
+0069 7008              JNZ     ?C0011
+006B E9                MOV     A,R1
+006C 6582              XRL     A,DPL
+006E 7003              JNZ     ?C0011
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 8   
 
-0071 6582              XRL     A,DPL
-0073 7003              JNZ     ?C0011
-0075 EA                MOV     A,R2
-0076 6583              XRL     A,DPH
-0078         ?C0011:
-0078 704F              JNZ     ?C0005
-                                           ; SOURCE LINE # 83
-                                           ; SOURCE LINE # 84
-007A AB00        R     MOV     R3,ring_buffer
-007C AA00        R     MOV     R2,ring_buffer+01H
-007E A900        R     MOV     R1,ring_buffer+02H
-0080 FE                MOV     R6,A
-0081 120000      E     LCALL   ?C?PLDPTR
-0084 A800        R     MOV     R0,_data+02H
-0086 AC00        R     MOV     R4,_data+01H
-0088 AD00        R     MOV     R5,_data
-008A 120000      E     LCALL   ?C?COPY
+0070 EA                MOV     A,R2
+0071 6583              XRL     A,DPH
+0073         ?C0011:
+0073 7057              JNZ     ?C0005
                                            ; SOURCE LINE # 86
-008D AB00        R     MOV     R3,ring_buffer
-008F AA00        R     MOV     R2,ring_buffer+01H
-0091 A900        R     MOV     R1,ring_buffer+02H
-0093 900008            MOV     DPTR,#08H
-0096 120000      E     LCALL   ?C?PLDOPTR
-0099 C003              PUSH    AR3
-009B C002              PUSH    AR2
-009D C001              PUSH    AR1
-009F AB00        R     MOV     R3,ring_buffer
-00A1 AA00        R     MOV     R2,ring_buffer+01H
-00A3 A900        R     MOV     R1,ring_buffer+02H
-00A5 120000      E     LCALL   ?C?PSTPTR
                                            ; SOURCE LINE # 87
-00A8 AB00        R     MOV     R3,ring_buffer
-00AA AA00        R     MOV     R2,ring_buffer+01H
-00AC A900        R     MOV     R1,ring_buffer+02H
-00AE 900008            MOV     DPTR,#08H
-00B1 120000      E     LCALL   ?C?PLDOPTR
-00B4 C003              PUSH    AR3
-00B6 C002              PUSH    AR2
-00B8 C001              PUSH    AR1
-00BA AB00        R     MOV     R3,ring_buffer
-00BC AA00        R     MOV     R2,ring_buffer+01H
-00BE A900        R     MOV     R1,ring_buffer+02H
-00C0 900003            MOV     DPTR,#03H
-00C3 120000      E     LCALL   ?C?PSTOPTR
-                                           ; SOURCE LINE # 88
-00C6 7F03              MOV     R7,#03H
-00C8 22                RET     
+0075 AB00        R     MOV     R3,ring_buffer
+0077 AA00        R     MOV     R2,ring_buffer+01H
+0079 A900        R     MOV     R1,ring_buffer+02H
+007B 900007            MOV     DPTR,#07H
+007E 120000      E     LCALL   ?C?CLDOPTR
+0081 FF                MOV     R7,A
+0082 7E00              MOV     R6,#00H
+0084 120000      E     LCALL   ?C?PLDPTR
+0087 A800        R     MOV     R0,_data+02H
+0089 AC00        R     MOV     R4,_data+01H
+008B AD00        R     MOV     R5,_data
+008D 120000      E     LCALL   ?C?COPY
                                            ; SOURCE LINE # 89
-00C9         ?C0005:
+0090 AB00        R     MOV     R3,ring_buffer
+0092 AA00        R     MOV     R2,ring_buffer+01H
+0094 A900        R     MOV     R1,ring_buffer+02H
+0096 900008            MOV     DPTR,#08H
+0099 120000      E     LCALL   ?C?PLDOPTR
+009C C003              PUSH    AR3
+009E C002              PUSH    AR2
+00A0 C001              PUSH    AR1
+00A2 AB00        R     MOV     R3,ring_buffer
+00A4 AA00        R     MOV     R2,ring_buffer+01H
+00A6 A900        R     MOV     R1,ring_buffer+02H
+00A8 120000      E     LCALL   ?C?PSTPTR
+                                           ; SOURCE LINE # 90
+00AB AB00        R     MOV     R3,ring_buffer
+00AD AA00        R     MOV     R2,ring_buffer+01H
+00AF A900        R     MOV     R1,ring_buffer+02H
+00B1 900008            MOV     DPTR,#08H
+00B4 120000      E     LCALL   ?C?PLDOPTR
+00B7 C003              PUSH    AR3
+00B9 C002              PUSH    AR2
+00BB C001              PUSH    AR1
+00BD AB00        R     MOV     R3,ring_buffer
+00BF AA00        R     MOV     R2,ring_buffer+01H
+00C1 A900        R     MOV     R1,ring_buffer+02H
+00C3 900003            MOV     DPTR,#03H
+00C6 120000      E     LCALL   ?C?PSTOPTR
+                                           ; SOURCE LINE # 91
+00C9 7F03              MOV     R7,#03H
+00CB 22                RET     
                                            ; SOURCE LINE # 92
-00C9 AB00        R     MOV     R3,ring_buffer
-00CB AA00        R     MOV     R2,ring_buffer+01H
-00CD A900        R     MOV     R1,ring_buffer+02H
-00CF 900003            MOV     DPTR,#03H
-00D2 120000      E     LCALL   ?C?PLDOPTR
-00D5 C003              PUSH    AR3
-00D7 C002              PUSH    AR2
-00D9 C001              PUSH    AR1
-00DB AB00        R     MOV     R3,ring_buffer
-00DD AA00        R     MOV     R2,ring_buffer+01H
-00DF A900        R     MOV     R1,ring_buffer+02H
-00E1 120000      E     LCALL   ?C?PLDPTR
-C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 13:29:53 PAGE 9   
+00CC         ?C0005:
+                                           ; SOURCE LINE # 95
+00CC AB00        R     MOV     R3,ring_buffer
+00CE AA00        R     MOV     R2,ring_buffer+01H
+00D0 A900        R     MOV     R1,ring_buffer+02H
+00D2 900003            MOV     DPTR,#03H
+00D5 120000      E     LCALL   ?C?PLDOPTR
+00D8 C003              PUSH    AR3
+00DA C002              PUSH    AR2
+00DC C001              PUSH    AR1
+00DE AB00        R     MOV     R3,ring_buffer
+00E0 AA00        R     MOV     R2,ring_buffer+01H
+00E2 A900        R     MOV     R1,ring_buffer+02H
+C51 COMPILER V9.60.7.0   RINGBUFFER                                                        01/02/2024 16:55:54 PAGE 9   
 
-00E4 D082              POP     DPL
-00E6 D083              POP     DPH
-00E8 D0E0              POP     ACC
-00EA 6B                XRL     A,R3
-00EB 7008              JNZ     ?C0012
-00ED E9                MOV     A,R1
-00EE 6582              XRL     A,DPL
-00F0 7003              JNZ     ?C0012
-00F2 EA                MOV     A,R2
-00F3 6583              XRL     A,DPH
-00F5         ?C0012:
-00F5 7003              JNZ     ?C0007
-                                           ; SOURCE LINE # 93
-00F7 7F03              MOV     R7,#03H
-00F9 22                RET     
-                                           ; SOURCE LINE # 94
-00FA         ?C0007:
+00E4 120000      E     LCALL   ?C?PLDPTR
+00E7 D082              POP     DPL
+00E9 D083              POP     DPH
+00EB D0E0              POP     ACC
+00ED 6B                XRL     A,R3
+00EE 7008              JNZ     ?C0012
+00F0 E9                MOV     A,R1
+00F1 6582              XRL     A,DPL
+00F3 7003              JNZ     ?C0012
+00F5 EA                MOV     A,R2
+00F6 6583              XRL     A,DPH
+00F8         ?C0012:
+00F8 7003              JNZ     ?C0007
+                                           ; SOURCE LINE # 96
+00FA 7F03              MOV     R7,#03H
+00FC 22                RET     
                                            ; SOURCE LINE # 97
-00FA AB00        R     MOV     R3,ring_buffer
-00FC AA00        R     MOV     R2,ring_buffer+01H
-00FE A900        R     MOV     R1,ring_buffer+02H
-0100 900007            MOV     DPTR,#07H
-0103 120000      E     LCALL   ?C?CLDOPTR
-0106 FF                MOV     R7,A
-0107 7E00              MOV     R6,#00H
-0109 120000      E     LCALL   ?C?PLDPTR
-010C A800        R     MOV     R0,_data+02H
-010E AC00        R     MOV     R4,_data+01H
-0110 AD00        R     MOV     R5,_data
-0112 120000      E     LCALL   ?C?COPY
-                                           ; SOURCE LINE # 98
-0115 AB00        R     MOV     R3,next_r
-0117 AA00        R     MOV     R2,next_r+01H
-0119 A900        R     MOV     R1,next_r+02H
-011B C003              PUSH    AR3
-011D C002              PUSH    AR2
-011F C001              PUSH    AR1
-0121 AB00        R     MOV     R3,ring_buffer
-0123 AA00        R     MOV     R2,ring_buffer+01H
-0125 A900        R     MOV     R1,ring_buffer+02H
-0127 120000      E     LCALL   ?C?PSTPTR
+00FD         ?C0007:
+                                           ; SOURCE LINE # 100
+00FD AB00        R     MOV     R3,ring_buffer
+00FF AA00        R     MOV     R2,ring_buffer+01H
+0101 A900        R     MOV     R1,ring_buffer+02H
+0103 900007            MOV     DPTR,#07H
+0106 120000      E     LCALL   ?C?CLDOPTR
+0109 FF                MOV     R7,A
+010A 7E00              MOV     R6,#00H
+010C 120000      E     LCALL   ?C?PLDPTR
+010F A800        R     MOV     R0,_data+02H
+0111 AC00        R     MOV     R4,_data+01H
+0113 AD00        R     MOV     R5,_data
+0115 120000      E     LCALL   ?C?COPY
                                            ; SOURCE LINE # 101
-012A 7F01              MOV     R7,#01H
-                                           ; SOURCE LINE # 102
-012C         ?C0006:
-012C 22                RET     
+0118 AB00        R     MOV     R3,next_r
+011A AA00        R     MOV     R2,next_r+01H
+011C A900        R     MOV     R1,next_r+02H
+011E C003              PUSH    AR3
+0120 C002              PUSH    AR2
+0122 C001              PUSH    AR1
+0124 AB00        R     MOV     R3,ring_buffer
+0126 AA00        R     MOV     R2,ring_buffer+01H
+0128 A900        R     MOV     R1,ring_buffer+02H
+012A 120000      E     LCALL   ?C?PSTPTR
+                                           ; SOURCE LINE # 104
+012D 7F01              MOV     R7,#01H
+                                           ; SOURCE LINE # 105
+012F         ?C0006:
+012F 22                RET     
              ; FUNCTION _ringbuffer_read (END)
 
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    602    ----
+   CODE SIZE        =    603    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

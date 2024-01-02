@@ -42,7 +42,7 @@ void os_getTaskIdHighPriority(void)
 * 返回参数：
 *				void: 无返回值
 ***********************************************************************/
-void os_switch(void)
+void os_taskSwtich(void)
 {
 	// 上面中断已经入栈了
 
@@ -66,6 +66,8 @@ void os_switch(void)
 	
 	// 下面中断汇编已经出栈
 }
+
+
 
 /***********************************************************************
 *	函数描述：创建一个任务
@@ -117,6 +119,11 @@ void os_start(void)
 	EA = 1;//开中断
 	return;
 }
+void os_init(void)
+{
+	
+	memset(tcb_list, 0, (MAX_TASKS * sizeof(struct os_tcb_t) )  ); // 写入0
+}
 
 /***********************************************************************
 *	函数描述：任务延时函数，调用后马上进行一次任务调度
@@ -133,7 +140,7 @@ void os_delay(os_uint32_t tasks)
 	// 将任务设置为阻塞态
 	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
 	// 只要任务延时了，就马上任务调度
-	os_switch();
+	os_taskSwtich();
 
 }
 
@@ -180,5 +187,5 @@ void time_handleHook(void)
 		}
 		tcb_list[ti].delay_tick--;
 	}
-	os_switch();
+	os_taskSwtich();
 }

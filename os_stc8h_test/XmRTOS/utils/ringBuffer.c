@@ -44,14 +44,17 @@ os_uint8_t ringbuffer_created(RingBufferHandle *ring_buffer, void *buff, os_uint
 os_uint8_t ringbuffer_write(RingBufferHandle *ring_buffer, void *_data)
 {		
 	os_uint8_t *next_w = ring_buffer->w_ + ring_buffer->itemSize;  // 下一次写入的位置
+
+	
 	// 下一次写入的位置等于 读取 的位置 表示满了
     if (next_w == ring_buffer->r_) {
 		// 溢出
         return RINGBUFF_WRITE_OVERFLOW; 
 
     }
+
 	// 写一个写入指向 数组最后一位表示溢出
-    if (next_w >= (os_uint8_t *)(ring_buffer->buff + ring_buffer->buff_size)) {
+    if (next_w >= (os_uint8_t *)(ring_buffer->buff + ( (ring_buffer->buff_size - 1) * ring_buffer->itemSize ) )) {
 		// 溢出
         return RINGBUFF_WRITE_OVERFLOW; 
     }
@@ -78,7 +81,7 @@ os_uint8_t ringbuffer_read(RingBufferHandle *ring_buffer, void *_data)
     os_uint8_t *next_r  = (os_uint8_t *)ring_buffer->r_ + ring_buffer->itemSize;  
 	// 下一次读指针 > 写指针 并且  下一次 等于 数组最尾部的时候 数组溢出
     if (
-			next_r > ring_buffer->w_ && next_r == (os_uint8_t *)(ring_buffer->buff + (ring_buffer->buff_size ) )
+			next_r > ring_buffer->w_ && next_r == (os_uint8_t *)( ring_buffer->buff + ( (ring_buffer->buff_size - 1) * ring_buffer->itemSize ) )
 		) 
 	{
         memcpy(_data, ring_buffer->r_, ring_buffer->itemSize);
@@ -105,53 +108,53 @@ os_uint8_t ringbuffer_read(RingBufferHandle *ring_buffer, void *_data)
 void ringBufferTest(void)
 {
 
-	RingBufferHandle xdata queue_1 ;
+	RingBufferHandle xdata rb_handle ;
 	os_uint8_t xdata queue_buff[6];
 	volatile  os_uint8_t test_data = 0xff;
 	volatile  os_uint8_t w_data = 0;
 	
 	// 初始化一个队列
-	ringbuffer_created(&queue_1,&queue_buff,6,sizeof(os_uint8_t));
+	ringbuffer_created(&rb_handle,&queue_buff,6,sizeof(os_uint8_t));
 	// 写五次 是成功的
 	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
+	ringbuffer_write(&rb_handle,&w_data);
 	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
+	ringbuffer_write(&rb_handle,&w_data);
 	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
+	ringbuffer_write(&rb_handle,&w_data);
 	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
+	ringbuffer_write(&rb_handle,&w_data);
 	w_data++;
-	ringbuffer_write(&queue_1,&w_data);
+	ringbuffer_write(&rb_handle,&w_data);
 	// 写五次 是成功的
 	
 	// 写五次后 失败
-	ringbuffer_write(&queue_1,&(os_uint8_t *)6);
-	ringbuffer_write(&queue_1,&(os_uint8_t *)7);	
+	ringbuffer_write(&rb_handle,&(os_uint8_t *)6);
+	ringbuffer_write(&rb_handle,&(os_uint8_t *)7);	
 	// 写五次后 失败
 
 	// 读五次 成功
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
-	ringbuffer_read(&queue_1, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
 	// 读五次 成功
 
 	// 读五次后 第一次读 失败并让 读和写指正回到数组0
-	ringbuffer_read(&queue_1, &test_data);
+	ringbuffer_read(&rb_handle, &test_data);
 	// 读五次后 第二次读 读和写重合  缓冲区数据为空
-	ringbuffer_read(&queue_1, &test_data);	
+	ringbuffer_read(&rb_handle, &test_data);	
 
 
 	// 这两句后 缓冲区数据为空
 	
 	// 写一次成功
 	w_data = 0x33;
-	ringbuffer_write(&queue_1,&w_data);
+	ringbuffer_write(&rb_handle,&w_data);
 	// 读一次成功
-	ringbuffer_read(&queue_1, &test_data);	
+	ringbuffer_read(&rb_handle, &test_data);	
 	
 	// 这两句后 缓冲区数据为空
 }
