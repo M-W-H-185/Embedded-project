@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    01/02/2024  10:05:03  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    01/02/2024  13:29:54  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
@@ -46,20 +46,21 @@ LINK MAP OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     0009H     UNIT         ?DT?_RINGBUFFER_WRITE?RINGBUFFER
-            DATA    0011H     0009H     UNIT         ?DT?_RINGBUFFER_READ?RINGBUFFER
-            DATA    001AH     0009H     UNIT         _DATA_GROUP_
-            DATA    0023H     0008H     UNIT         ?DT?_RINGBUFFER_CREATED?RINGBUFFER
-            DATA    002BH     0002H     UNIT         ?DT?MAIN
-            DATA    002DH     0002H     UNIT         ?DT?OS_TASK
-            IDATA   002FH     0014H     UNIT         ?ID?OS_TASK
-            IDATA   0043H     0001H     UNIT         ?STACK
+            DATA    0008H     000BH     UNIT         ?DT?_OS_QUEUECREATE?OS_QUEUE
+            DATA    0013H     0009H     UNIT         ?DT?_RINGBUFFER_WRITE?RINGBUFFER
+            DATA    001CH     0009H     UNIT         ?DT?_RINGBUFFER_READ?RINGBUFFER
+            DATA    0025H     0009H     UNIT         _DATA_GROUP_
+            DATA    002EH     0008H     UNIT         ?DT?_RINGBUFFER_CREATED?RINGBUFFER
+            DATA    0036H     0002H     UNIT         ?DT?MAIN
+            DATA    0038H     0002H     UNIT         ?DT?OS_TASK
+            IDATA   003AH     0014H     UNIT         ?ID?OS_TASK
+            IDATA   004EH     0001H     UNIT         ?STACK
 
             * * * * * * *  X D A T A   M E M O R Y  * * * * * * *
             XDATA   0000H     0046H     UNIT         ?XD?OS_TASK
             XDATA   0046H     0028H     UNIT         ?XD?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 2
 
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 2
 
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
@@ -71,67 +72,72 @@ LINK MAP OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
             CODE    000EH     02EBH     UNIT         ?C?LIB_CODE
             CODE    02F9H     012DH     UNIT         ?PR?_RINGBUFFER_READ?RINGBUFFER
             CODE    0426H     00C9H     UNIT         ?PR?_RINGBUFFER_WRITE?RINGBUFFER
-            CODE    04EFH     00C5H     UNIT         ?PR?TIME_HANDLEHOOK?OS_TASK
-            CODE    05B4H     009DH     UNIT         ?PR?OS_SWITCH?OS_TASK
-            CODE    0651H     008CH     UNIT         ?C_C51STARTUP
-            CODE    06DDH     008AH     UNIT         ?PR?_OS_TASK_CREATE?OS_TASK
-            CODE    0767H     0064H     UNIT         ?PR?_RINGBUFFER_CREATED?RINGBUFFER
-            CODE    07CBH     0056H     UNIT         ?PR?OS_START?OS_TASK
-            CODE    0821H     0041H     UNIT         ?PR?MAIN?MAIN
-            CODE    0862H     003CH     UNIT         ?PR?TIMER0_ISR?OS_CPU_A_ASM
-            CODE    089EH     0032H     UNIT         ?PR?TASK2?MAIN
-            CODE    08D0H     0029H     UNIT         ?PR?TASK1?MAIN
-            CODE    08F9H     0027H     UNIT         ?PR?_OS_DELAY?OS_TASK
-            CODE    0920H     001AH     UNIT         ?PR?_?TIME0_HANDLE?MAIN
-            CODE    093AH     0013H     UNIT         ?PR?TIMER0_INIT?MAIN
-            CODE    094DH     000BH     UNIT         ?C_INITSEG
+            CODE    04EFH     00C1H     UNIT         ?PR?TIME_HANDLEHOOK?OS_TASK
+            CODE    05B0H     008CH     UNIT         ?C_C51STARTUP
+            CODE    063CH     008AH     UNIT         ?PR?_OS_TASK_CREATE?OS_TASK
+            CODE    06C6H     0078H     UNIT         ?PR?OS_SWITCH?OS_TASK
+            CODE    073EH     0064H     UNIT         ?PR?_RINGBUFFER_CREATED?RINGBUFFER
+            CODE    07A2H     0057H     UNIT         ?PR?OS_START?OS_TASK
+            CODE    07F9H     0041H     UNIT         ?PR?MAIN?MAIN
+            CODE    083AH     003CH     UNIT         ?PR?TIMER0_ISR?OS_CPU_A_ASM
+            CODE    0876H     0036H     UNIT         ?PR?_OS_QUEUECREATE?OS_QUEUE
+            CODE    08ACH     0032H     UNIT         ?PR?TASK2?MAIN
+            CODE    08DEH     0029H     UNIT         ?PR?TASK1?MAIN
+            CODE    0907H     0027H     UNIT         ?PR?_OS_DELAY?OS_TASK
+            CODE    092EH     0021H     UNIT         ?PR?OS_GETTASKIDHIGHPRIORITY?OS_TASK
+            CODE    094FH     001AH     UNIT         ?PR?_?TIME0_HANDLE?MAIN
+            CODE    0969H     0013H     UNIT         ?PR?TIMER0_INIT?MAIN
+            CODE    097CH     000BH     UNIT         ?C_INITSEG
 
 
 
 OVERLAY MAP OF MODULE:   .\Objects\ºôÎüµÆpwm (?C_STARTUP)
 
 
-SEGMENT                                      DATA_GROUP 
-  +--> CALLED SEGMENT                      START    LENGTH
-----------------------------------------------------------
-?C_C51STARTUP                              -----    -----
+SEGMENT                                        DATA_GROUP 
+  +--> CALLED SEGMENT                        START    LENGTH
+------------------------------------------------------------
+?C_C51STARTUP                                -----    -----
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
 
-?PR?MAIN?MAIN                              -----    -----
+?PR?MAIN?MAIN                                -----    -----
   +--> ?PR?TIMER0_INIT?MAIN
   +--> ?PR?TASK1?MAIN
   +--> ?PR?_OS_TASK_CREATE?OS_TASK
   +--> ?PR?TASK2?MAIN
   +--> ?PR?OS_START?OS_TASK
 
-?PR?TASK1?MAIN                             -----    -----
+?PR?TASK1?MAIN                               -----    -----
   +--> ?PR?_OS_DELAY?OS_TASK
 
-?PR?_OS_DELAY?OS_TASK                      -----    -----
+?PR?_OS_DELAY?OS_TASK                        -----    -----
   +--> ?PR?OS_SWITCH?OS_TASK
 
-?PR?_OS_TASK_CREATE?OS_TASK                001AH    0008H
+?PR?OS_SWITCH?OS_TASK                        -----    -----
+  +--> ?PR?OS_GETTASKIDHIGHPRIORITY?OS_TASK
 
-?PR?TASK2?MAIN                             -----    -----
+?PR?_OS_TASK_CREATE?OS_TASK                  0025H    0008H
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 3
+
+
+?PR?TASK2?MAIN                               -----    -----
   +--> ?PR?_OS_DELAY?OS_TASK
 
-?PR?OS_START?OS_TASK                       -----    -----
+?PR?OS_START?OS_TASK                         -----    -----
   +--> ?PR?OS_IDLE_TASK?OS_TASK
   +--> ?PR?_OS_TASK_CREATE?OS_TASK
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 3
-
-
 
 *** NEW ROOT ***************************************************
 
-?PR?TIMER0_ISR?OS_CPU_A_ASM                -----    -----
+?PR?TIMER0_ISR?OS_CPU_A_ASM                  -----    -----
   +--> ?PR?_?TIME0_HANDLE?MAIN
 
-?PR?_?TIME0_HANDLE?MAIN                    -----    -----
+?PR?_?TIME0_HANDLE?MAIN                      -----    -----
   +--> ?PR?TIME_HANDLEHOOK?OS_TASK
 
-?PR?TIME_HANDLEHOOK?OS_TASK                0022H    0001H
+?PR?TIME_HANDLEHOOK?OS_TASK                  002DH    0001H
   +--> ?PR?OS_SWITCH?OS_TASK
 
 
@@ -142,8 +148,8 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   ----------------------------------
 
   -------         MODULE        ?C_STARTUP
-  C:0651H         SEGMENT       ?C_C51STARTUP
-  I:0043H         SEGMENT       ?STACK
+  C:05B0H         SEGMENT       ?C_C51STARTUP
+  I:004EH         SEGMENT       ?STACK
   C:0000H         PUBLIC        ?C_STARTUP
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -152,7 +158,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   N:0000H         SYMBOL        IBPSTACK
   N:0100H         SYMBOL        IBPSTACKTOP
   N:0080H         SYMBOL        IDATALEN
-  C:0654H         SYMBOL        IDATALOOP
+  C:05B3H         SYMBOL        IDATALOOP
   N:0000H         SYMBOL        PBPSTACK
   N:0100H         SYMBOL        PBPSTACKTOP
   N:0000H         SYMBOL        PDATALEN
@@ -161,27 +167,27 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   N:0000H         SYMBOL        PPAGEENABLE
   D:00A0H         SYMBOL        PPAGE_SFR
   D:0081H         SYMBOL        SP
-  C:0651H         SYMBOL        STARTUP1
+  C:05B0H         SYMBOL        STARTUP1
   N:0000H         SYMBOL        XBPSTACK
   N:0000H         SYMBOL        XBPSTACKTOP
   N:0000H         SYMBOL        XDATALEN
   N:0000H         SYMBOL        XDATASTART
   C:0000H         LINE#         126
-  C:0651H         LINE#         133
-  C:0653H         LINE#         134
-  C:0654H         LINE#         135
-  C:0655H         LINE#         136
-  C:0657H         LINE#         185
-  C:065AH         LINE#         196
+  C:05B0H         LINE#         133
+  C:05B2H         LINE#         134
+  C:05B3H         LINE#         135
+  C:05B4H         LINE#         136
+  C:05B6H         LINE#         185
+  C:05B9H         LINE#         196
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 4
+
+
   -------         ENDMOD        ?C_STARTUP
 
   -------         MODULE        MAIN
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0093H         PUBLIC        P0M1
   D:0080H         PUBLIC        P0
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 4
-
-
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
@@ -196,9 +202,9 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   B:0080H.6       PUBLIC        LED_Y
   D:00B8H         PUBLIC        IP
   D:00D8H         PUBLIC        CCON
-  C:0821H         PUBLIC        main
-  C:093AH         PUBLIC        Timer0_Init
-  C:0920H         PUBLIC        _?time0_handle
+  C:07F9H         PUBLIC        main
+  C:0969H         PUBLIC        Timer0_Init
+  C:094FH         PUBLIC        _?time0_handle
   D:0098H         PUBLIC        SCON
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
@@ -206,81 +212,81 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   B:00A8H.1       PUBLIC        ET0
   B:0088H.5       PUBLIC        TF0
   D:008CH         PUBLIC        TH0
-  D:002BH         PUBLIC        cut
+  D:0036H         PUBLIC        cut
   D:008AH         PUBLIC        TL0
   B:0088H.4       PUBLIC        TR0
   X:0046H         PUBLIC        task_stack1
   X:005AH         PUBLIC        task_stack2
-  C:08D0H         PUBLIC        task1
-  C:089EH         PUBLIC        task2
+  C:08DEH         PUBLIC        task1
+  C:08ACH         PUBLIC        task2
   D:00D0H         PUBLIC        PSW
   B:0080H.7       PUBLIC        LED_G
   D:0094H         PUBLIC        P0M0
   -------         PROC          TASK1
-  C:08D0H         LINE#         29
-  C:08D0H         LINE#         30
-  C:08D0H         LINE#         31
-  C:08D0H         LINE#         32
-  C:08D0H         LINE#         33
-  C:08D2H         LINE#         34
-  C:08DDH         LINE#         36
-  C:08DFH         LINE#         37
-  C:08EAH         LINE#         39
-  C:08ECH         LINE#         40
-  C:08F7H         LINE#         42
+  C:08DEH         LINE#         29
+  C:08DEH         LINE#         30
+  C:08DEH         LINE#         31
+  C:08DEH         LINE#         32
+  C:08DEH         LINE#         33
+  C:08E0H         LINE#         34
+  C:08EBH         LINE#         36
+  C:08EDH         LINE#         37
+  C:08F8H         LINE#         39
+  C:08FAH         LINE#         40
+  C:0905H         LINE#         42
   -------         ENDPROC       TASK1
   -------         PROC          TASK2
-  C:089EH         LINE#         45
-  C:089EH         LINE#         46
-  C:089EH         LINE#         48
-  C:089EH         LINE#         49
-  C:089EH         LINE#         50
-  C:08A0H         LINE#         51
-  C:08ABH         LINE#         52
-  C:08B6H         LINE#         54
-  C:08B8H         LINE#         55
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 5
+  C:08ACH         LINE#         45
+  C:08ACH         LINE#         46
+  C:08ACH         LINE#         48
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 5
 
 
-  C:08C3H         LINE#         56
-  C:08CEH         LINE#         58
+  C:08ACH         LINE#         49
+  C:08ACH         LINE#         50
+  C:08AEH         LINE#         51
+  C:08B9H         LINE#         52
+  C:08C4H         LINE#         54
+  C:08C6H         LINE#         55
+  C:08D1H         LINE#         56
+  C:08DCH         LINE#         58
   -------         ENDPROC       TASK2
   -------         PROC          TIMER0_INIT
-  C:093AH         LINE#         63
-  C:093AH         LINE#         64
-  C:093AH         LINE#         65
-  C:093DH         LINE#         66
-  C:0940H         LINE#         67
-  C:0943H         LINE#         68
-  C:0946H         LINE#         69
-  C:0948H         LINE#         70
-  C:094AH         LINE#         71
-  C:094CH         LINE#         72
+  C:0969H         LINE#         63
+  C:0969H         LINE#         64
+  C:0969H         LINE#         65
+  C:096CH         LINE#         66
+  C:096FH         LINE#         67
+  C:0972H         LINE#         68
+  C:0975H         LINE#         69
+  C:0977H         LINE#         70
+  C:0979H         LINE#         71
+  C:097BH         LINE#         72
   -------         ENDPROC       TIMER0_INIT
   -------         PROC          _?TIME0_HANDLE
-  C:0920H         LINE#         76
-  C:0920H         LINE#         79
-  C:0928H         LINE#         81
-  C:0930H         LINE#         82
-  C:0930H         LINE#         83
-  C:0935H         LINE#         84
-  C:0937H         LINE#         85
-  C:0937H         LINE#         86
+  C:094FH         LINE#         76
+  C:094FH         LINE#         79
+  C:0957H         LINE#         81
+  C:095FH         LINE#         82
+  C:095FH         LINE#         83
+  C:0964H         LINE#         84
+  C:0966H         LINE#         85
+  C:0966H         LINE#         86
   -------         ENDPROC       _?TIME0_HANDLE
   -------         PROC          MAIN
-  C:0821H         LINE#         95
-  C:0821H         LINE#         96
-  C:0821H         LINE#         100
-  C:0824H         LINE#         101
-  C:0826H         LINE#         102
-  C:0829H         LINE#         103
-  C:082BH         LINE#         104
-  C:082EH         LINE#         106
-  C:0845H         LINE#         107
-  C:085DH         LINE#         108
-  C:0860H         LINE#         111
-  C:0860H         LINE#         112
-  C:0860H         LINE#         114
+  C:07F9H         LINE#         93
+  C:07F9H         LINE#         94
+  C:07F9H         LINE#         98
+  C:07FCH         LINE#         99
+  C:07FEH         LINE#         100
+  C:0801H         LINE#         101
+  C:0803H         LINE#         102
+  C:0806H         LINE#         104
+  C:081DH         LINE#         105
+  C:0835H         LINE#         106
+  C:0838H         LINE#         109
+  C:0838H         LINE#         110
+  C:0838H         LINE#         112
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
@@ -293,39 +299,39 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:00C0H         PUBLIC        P4
   D:00C8H         PUBLIC        P5
   D:00E8H         PUBLIC        P6
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 6
+
+
   D:00F8H         PUBLIC        P7
   D:00A8H         PUBLIC        IE
   D:00B8H         PUBLIC        IP
   D:00D8H         PUBLIC        CCON
   C:02F9H         PUBLIC        _ringbuffer_read
   D:0098H         PUBLIC        SCON
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 6
-
-
   D:0088H         PUBLIC        TCON
   C:0426H         PUBLIC        _ringbuffer_write
-  C:0767H         PUBLIC        _ringbuffer_created
+  C:073EH         PUBLIC        _ringbuffer_created
   D:00D0H         PUBLIC        PSW
   -------         PROC          _RINGBUFFER_CREATED
-  D:0023H         SYMBOL        ring_buffer
-  D:0026H         SYMBOL        buff
-  D:0029H         SYMBOL        buff_size
-  D:002AH         SYMBOL        itemSize
-  C:0767H         LINE#         21
-  C:076DH         LINE#         22
-  C:076DH         LINE#         25
-  C:0782H         LINE#         26
-  C:079AH         LINE#         27
-  C:07A8H         LINE#         28
-  C:07B0H         LINE#         29
-  C:07C8H         LINE#         32
-  C:07CAH         LINE#         33
+  D:002EH         SYMBOL        ring_buffer
+  D:0031H         SYMBOL        buff
+  D:0034H         SYMBOL        buff_size
+  D:0035H         SYMBOL        itemSize
+  C:073EH         LINE#         21
+  C:0744H         LINE#         22
+  C:0744H         LINE#         25
+  C:0759H         LINE#         26
+  C:0771H         LINE#         27
+  C:077FH         LINE#         28
+  C:0787H         LINE#         29
+  C:079FH         LINE#         32
+  C:07A1H         LINE#         33
   -------         ENDPROC       _RINGBUFFER_CREATED
   -------         PROC          _RINGBUFFER_WRITE
-  D:0008H         SYMBOL        ring_buffer
-  D:000BH         SYMBOL        _data
+  D:0013H         SYMBOL        ring_buffer
+  D:0016H         SYMBOL        _data
   -------         DO            
-  D:000EH         SYMBOL        next_w
+  D:0019H         SYMBOL        next_w
   -------         ENDDO         
   C:0426H         LINE#         44
   C:042CH         LINE#         45
@@ -342,10 +348,10 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   C:04EEH         LINE#         62
   -------         ENDPROC       _RINGBUFFER_WRITE
   -------         PROC          _RINGBUFFER_READ
-  D:0011H         SYMBOL        ring_buffer
-  D:0014H         SYMBOL        _data
+  D:001CH         SYMBOL        ring_buffer
+  D:001FH         SYMBOL        _data
   -------         DO            
-  D:0017H         SYMBOL        next_r
+  D:0022H         SYMBOL        next_r
   -------         ENDDO         
   C:02F9H         LINE#         74
   C:02FFH         LINE#         75
@@ -353,15 +359,15 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   C:0317H         LINE#         81
   C:0373H         LINE#         83
   C:0373H         LINE#         84
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 7
+
+
   C:0386H         LINE#         86
   C:03A1H         LINE#         87
   C:03BFH         LINE#         88
   C:03C2H         LINE#         89
   C:03C2H         LINE#         92
   C:03F0H         LINE#         93
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 7
-
-
   C:03F3H         LINE#         94
   C:03F3H         LINE#         97
   C:040EH         LINE#         98
@@ -372,7 +378,7 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
 
   -------         MODULE        OS_CPU_A_ASM
   C:0005H         SEGMENT       ?PR?TEST?OS_CPU_A_ASM
-  C:0862H         SEGMENT       ?PR?TIMER0_ISR?OS_CPU_A_ASM
+  C:083AH         SEGMENT       ?PR?TIMER0_ISR?OS_CPU_A_ASM
   C:0005H         PUBLIC        TEST
   D:00E0H         SYMBOL        ACC
   D:00F0H         SYMBOL        B
@@ -381,47 +387,47 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   B:00A8H.7       SYMBOL        EA
   N:0000H         SYMBOL        OS_CPU_A_ASM
   D:00D0H         SYMBOL        PSW
-  C:0862H         SYMBOL        TIMER0_ISR
+  C:083AH         SYMBOL        TIMER0_ISR
   C:0005H         LINE#         75
-  C:0862H         LINE#         83
-  C:0864H         LINE#         84
-  C:0866H         LINE#         84
-  C:0868H         LINE#         84
-  C:086AH         LINE#         84
-  C:086CH         LINE#         84
-  C:086EH         LINE#         84
-  C:0870H         LINE#         84
-  C:0872H         LINE#         84
-  C:0874H         LINE#         84
-  C:0876H         LINE#         84
-  C:0878H         LINE#         84
-  C:087AH         LINE#         84
-  C:087CH         LINE#         84
-  C:087EH         LINE#         86
-  C:0881H         LINE#         88
-  C:0883H         LINE#         88
-  C:0885H         LINE#         88
-  C:0887H         LINE#         88
-  C:0889H         LINE#         88
-  C:088BH         LINE#         88
-  C:088DH         LINE#         88
-  C:088FH         LINE#         88
-  C:0891H         LINE#         88
-  C:0893H         LINE#         88
-  C:0895H         LINE#         88
-  C:0897H         LINE#         88
-  C:0899H         LINE#         88
-  C:089BH         LINE#         89
-  C:089DH         LINE#         91
+  C:083AH         LINE#         83
+  C:083CH         LINE#         84
+  C:083EH         LINE#         84
+  C:0840H         LINE#         84
+  C:0842H         LINE#         84
+  C:0844H         LINE#         84
+  C:0846H         LINE#         84
+  C:0848H         LINE#         84
+  C:084AH         LINE#         84
+  C:084CH         LINE#         84
+  C:084EH         LINE#         84
+  C:0850H         LINE#         84
+  C:0852H         LINE#         84
+  C:0854H         LINE#         84
+  C:0856H         LINE#         86
+  C:0859H         LINE#         88
+  C:085BH         LINE#         88
+  C:085DH         LINE#         88
+  C:085FH         LINE#         88
+  C:0861H         LINE#         88
+  C:0863H         LINE#         88
+  C:0865H         LINE#         88
+  C:0867H         LINE#         88
+  C:0869H         LINE#         88
+  C:086BH         LINE#         88
+  C:086DH         LINE#         88
+  C:086FH         LINE#         88
+  C:0871H         LINE#         88
+  C:0873H         LINE#         89
+  C:0875H         LINE#         91
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 8
+
+
   C:000BH         LINE#         96
   -------         ENDMOD        OS_CPU_A_ASM
 
   -------         MODULE        OS_TASK
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0080H         PUBLIC        P0
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 8
-
-
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
@@ -437,111 +443,120 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:00D8H         PUBLIC        CCON
   X:0000H         PUBLIC        task_idle_stack
   D:0098H         PUBLIC        SCON
+  C:092EH         PUBLIC        os_getTaskIdHighPriority
   D:0088H         PUBLIC        TCON
-  C:06DDH         PUBLIC        _os_task_create
-  C:08F9H         PUBLIC        _os_delay
+  C:063CH         PUBLIC        _os_task_create
+  C:0907H         PUBLIC        _os_delay
   X:0014H         PUBLIC        tcb_list
-  C:05B4H         PUBLIC        os_switch
-  D:002DH         PUBLIC        max_task
-  D:002EH         PUBLIC        task_id
-  C:07CBH         PUBLIC        os_start
+  C:06C6H         PUBLIC        os_switch
+  D:0038H         PUBLIC        max_task
+  D:0039H         PUBLIC        task_id
+  C:07A2H         PUBLIC        os_start
   C:0003H         PUBLIC        os_idle_task
   D:00D0H         PUBLIC        PSW
-  I:002FH         SYMBOL        public_stack
-  -------         PROC          OS_SWITCH
+  I:003AH         SYMBOL        public_stack
+  -------         PROC          OS_GETTASKIDHIGHPRIORITY
   -------         DO            
   D:0007H         SYMBOL        ost_i
   -------         ENDDO         
-  C:05B4H         LINE#         28
-  C:05B4H         LINE#         29
-  C:05B4H         LINE#         31
-  C:05B5H         LINE#         35
-  C:05DDH         LINE#         38
-  C:05F3H         LINE#         40
-  C:05FBH         LINE#         41
-  C:05FBH         LINE#         42
-  C:060DH         LINE#         43
-  C:060DH         LINE#         44
-  C:060FH         LINE#         45
-  C:060FH         LINE#         47
-  C:060FH         LINE#         48
-  C:0612H         LINE#         49
-  C:0617H         LINE#         50
-  C:0617H         LINE#         51
-  C:061AH         LINE#         52
-  C:061AH         LINE#         54
-  C:062DH         LINE#         57
+  C:092EH         LINE#         20
+  C:092EH         LINE#         21
+  C:092EH         LINE#         22
+  C:0930H         LINE#         24
+  C:0930H         LINE#         25
+  C:0930H         LINE#         27
+  C:0935H         LINE#         28
+  C:0935H         LINE#         29
+  C:0935H         LINE#         30
+  C:0935H         LINE#         31
+  C:0947H         LINE#         32
+  C:0947H         LINE#         33
+  C:0949H         LINE#         34
+  C:094AH         LINE#         35
+  C:094AH         LINE#         36
+  C:094EH         LINE#         37
+  -------         ENDPROC       OS_GETTASKIDHIGHPRIORITY
+  -------         PROC          OS_SWITCH
+  C:06C6H         LINE#         45
+  C:06C6H         LINE#         46
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 9
+
+
+  C:06C6H         LINE#         52
+  C:06EEH         LINE#         55
+  C:0704H         LINE#         57
+  C:0707H         LINE#         60
+  C:071AH         LINE#         63
   -------         ENDPROC       OS_SWITCH
   -------         PROC          _OS_TASK_CREATE
-  D:001AH         SYMBOL        task
-  D:001DH         SYMBOL        t_stack
-  D:0020H         SYMBOL        tid
-  C:06DDH         LINE#         73
-  C:06E3H         LINE#         74
-  C:06E3H         LINE#         75
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 9
-
-
-  C:06F6H         LINE#         76
-  C:06F6H         LINE#         78
-  C:06F6H         LINE#         79
-  C:0702H         LINE#         80
-  C:0710H         LINE#         82
-  C:072CH         LINE#         83
-  C:0744H         LINE#         85
-  C:0764H         LINE#         88
-  C:0766H         LINE#         89
+  D:0025H         SYMBOL        task
+  D:0028H         SYMBOL        t_stack
+  D:002BH         SYMBOL        tid
+  C:063CH         LINE#         79
+  C:0642H         LINE#         80
+  C:0642H         LINE#         81
+  C:0655H         LINE#         82
+  C:0655H         LINE#         84
+  C:0655H         LINE#         85
+  C:0661H         LINE#         86
+  C:066FH         LINE#         88
+  C:068BH         LINE#         89
+  C:06A3H         LINE#         91
+  C:06C3H         LINE#         94
+  C:06C5H         LINE#         95
   -------         ENDPROC       _OS_TASK_CREATE
   -------         PROC          OS_START
-  C:07CBH         LINE#         97
-  C:07CBH         LINE#         98
-  C:07CBH         LINE#         99
-  C:07CDH         LINE#         101
-  C:07E4H         LINE#         104
-  C:07E7H         LINE#         106
-  C:080BH         LINE#         108
-  C:081EH         LINE#         111
-  C:0820H         LINE#         113
+  C:07A2H         LINE#         103
+  C:07A2H         LINE#         104
+  C:07A2H         LINE#         105
+  C:07A4H         LINE#         107
+  C:07BCH         LINE#         110
+  C:07BFH         LINE#         112
+  C:07E3H         LINE#         114
+  C:07F6H         LINE#         117
+  C:07F8H         LINE#         119
   -------         ENDPROC       OS_START
   -------         PROC          _OS_DELAY
   D:0004H         SYMBOL        tasks
-  C:08F9H         LINE#         122
-  C:08F9H         LINE#         123
-  C:08F9H         LINE#         124
-  C:08F9H         LINE#         126
-  C:090BH         LINE#         128
-  C:091DH         LINE#         130
+  C:0907H         LINE#         128
+  C:0907H         LINE#         129
+  C:0907H         LINE#         130
+  C:0907H         LINE#         132
+  C:0919H         LINE#         134
+  C:092BH         LINE#         136
   -------         ENDPROC       _OS_DELAY
   -------         PROC          OS_IDLE_TASK
-  C:0003H         LINE#         141
-  C:0003H         LINE#         142
-  C:0003H         LINE#         143
+  C:0003H         LINE#         147
+  C:0003H         LINE#         148
+  C:0003H         LINE#         149
+  C:0003H         LINE#         150
+  C:0003H         LINE#         152
   -------         ENDPROC       OS_IDLE_TASK
   -------         PROC          TIME_HANDLEHOOK
   -------         DO            
-  D:0022H         SYMBOL        ti
+  D:002DH         SYMBOL        ti
   -------         ENDDO         
-  C:04EFH         LINE#         153
-  C:04EFH         LINE#         154
-  C:04EFH         LINE#         155
-  C:04F2H         LINE#         158
-  C:04FEH         LINE#         159
-  C:04FEH         LINE#         160
-  C:0515H         LINE#         161
-  C:0515H         LINE#         162
-  C:0515H         LINE#         163
-  C:0515H         LINE#         165
-  C:0548H         LINE#         166
-  C:0548H         LINE#         167
-  C:055EH         LINE#         169
-  C:0570H         LINE#         170
-  C:0572H         LINE#         171
-  C:0572H         LINE#         172
-  C:05ACH         LINE#         173
-  C:05B1H         LINE#         174
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 10
+  C:04EFH         LINE#         162
+  C:04EFH         LINE#         163
+  C:04EFH         LINE#         164
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 10
 
 
+  C:04F2H         LINE#         167
+  C:04F4H         LINE#         168
+  C:04F4H         LINE#         169
+  C:050BH         LINE#         170
+  C:050BH         LINE#         171
+  C:050BH         LINE#         172
+  C:050BH         LINE#         174
+  C:053EH         LINE#         175
+  C:053EH         LINE#         176
+  C:0554H         LINE#         178
+  C:0566H         LINE#         179
+  C:0568H         LINE#         180
+  C:0568H         LINE#         181
+  C:05A2H         LINE#         182
+  C:05ADH         LINE#         183
   -------         ENDPROC       TIME_HANDLEHOOK
   -------         ENDMOD        OS_TASK
 
@@ -560,7 +575,23 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   D:00D8H         PUBLIC        CCON
   D:0098H         PUBLIC        SCON
   D:0088H         PUBLIC        TCON
+  C:0876H         PUBLIC        _os_queueCreate
   D:00D0H         PUBLIC        PSW
+  -------         PROC          _OS_QUEUECREATE
+  D:0008H         SYMBOL        queue_handle
+  D:000BH         SYMBOL        buff
+  D:000EH         SYMBOL        buff_size
+  D:000FH         SYMBOL        itemSize
+  -------         DO            
+  D:0010H         SYMBOL        ringbuffer
+  -------         ENDDO         
+  C:0876H         LINE#         15
+  C:087CH         LINE#         16
+  C:087CH         LINE#         19
+  C:0894H         LINE#         21
+  C:08A9H         LINE#         23
+  C:08ABH         LINE#         24
+  -------         ENDPROC       _OS_QUEUECREATE
   -------         ENDMOD        OS_QUEUE
 
   -------         MODULE        ?C?COPY
@@ -568,6 +599,9 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   -------         ENDMOD        ?C?COPY
 
   -------         MODULE        ?C?CLDOPTR
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 11
+
+
   C:0104H         PUBLIC        ?C?CLDOPTR
   -------         ENDMOD        ?C?CLDOPTR
 
@@ -599,9 +633,6 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   C:01BFH         PUBLIC        ?C?PLDPTR
   -------         ENDMOD        ?C?PLDPTR
 
-BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  10:05:03  PAGE 11
-
-
   -------         MODULE        ?C?PSTPTR
   C:01DFH         PUBLIC        ?C?PSTPTR
   -------         ENDMOD        ?C?PSTPTR
@@ -628,6 +659,9 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
 
   -------         MODULE        ?C?PSTXDATA
   C:02D2H         PUBLIC        ?C?PSTXDATA
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  01/02/2024  13:29:54  PAGE 12
+
+
   -------         ENDMOD        ?C?PSTXDATA
 
   -------         MODULE        ?C?PLDPDATA
@@ -643,9 +677,6 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
   -------         ENDMOD        ?C?PLDCODE
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_RINGBUFFER_CREATED?RINGBUFFER
-
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?_RINGBUFFER_WRITE?RINGBUFFER
 
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
@@ -654,5 +685,8 @@ SYMBOL TABLE OF MODULE:  .\Objects\ºôÎüµÆpwm (?C_STARTUP)
 *** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
     SEGMENT: ?PR?TEST?OS_CPU_A_ASM
 
-Program Size: data=68.0 xdata=110 code=2387
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_OS_QUEUECREATE?OS_QUEUE
+
+Program Size: data=79.0 xdata=110 code=2434
 LINK/LOCATE RUN COMPLETE.  4 WARNING(S),  0 ERROR(S)

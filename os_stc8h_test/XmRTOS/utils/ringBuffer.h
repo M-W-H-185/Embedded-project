@@ -1,5 +1,5 @@
-#ifndef __OS_QUEUE_H__
-#define __OS_QUEUE_H__
+#ifndef __RINGBUFFER_H__
+#define __RINGBUFFER_H__
 #include "os_task.h"
 
 

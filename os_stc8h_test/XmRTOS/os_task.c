@@ -17,7 +17,24 @@ static os_uint8_t idata public_stack[MAX_TASK_DEP];
 os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];		
 void os_idle_task(void);
 
-
+void os_getTaskIdHighPriority(void)
+{
+	os_uint8_t  ost_i = 0;
+	// 找出就绪态的一个id
+	for(ost_i = 0; ost_i < MAX_TASKS; ost_i++)
+	{
+		
+		if(ost_i == task_id)
+		{
+			continue;
+		}
+		if( tcb_list[ost_i].os_status_type == OS_READY ) 
+		{
+			task_id = ost_i;
+			break;
+		}
+	}
+}
 /***********************************************************************
 *	函数描述：任务调度函数
 *	传入参数：
@@ -28,7 +45,7 @@ void os_idle_task(void);
 void os_switch(void)
 {
 	// 上面中断已经入栈了
-	os_uint8_t  ost_i = 0;
+
 
 	// 已经入栈到了公共堆栈内了
 	// 将公共堆栈拷贝到任务堆栈内
@@ -36,20 +53,9 @@ void os_switch(void)
 	
 	
 	tcb_list[task_id].sp = SP;
-	// 找出就绪态的一个id
-	for(ost_i = 0; ost_i < max_task; ost_i++)
-	{
-		if(tcb_list[ost_i].os_status_type == OS_READY)
-		{
-			task_id = ost_i;
-			continue;
 
-		}
-	}
-	if(task_id == max_task)
-	{
-		task_id = 0;
-	}
+	os_getTaskIdHighPriority();
+	
 	// 先将下一个id的sp指向到SP
 	SP = tcb_list[task_id].sp;
 
@@ -66,13 +72,13 @@ void os_switch(void)
 *	传入参数：
 *				task：		任务函数指针，指向任务的入口函数。
 *				t_stack: 	指向任务函数堆栈指针
-*				tid:			任务槽位置
+*				tid:		任务槽位置 按照顺序 
 * 返回参数：
 *				void: 无返回值
 ***********************************************************************/
 void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid)
 {
-	if((max_task+1) >= MAX_TASKS)
+	if((max_task+1) >= MAX_TASKS - 1)
 	{
 		return;
 	}
@@ -98,10 +104,10 @@ void os_start(void)
 {
 	EA = 0;//关中断
 	// 装载空闲任务
-	os_task_create(os_idle_task, &task_idle_stack, 0);//将task1函数装入0号槽
+	os_task_create(os_idle_task, &task_idle_stack, MAX_TASKS-1);//将task1函数装入MAX_TASKS-1号槽
 	
 	// 空闲任务先运行
-	task_id = 0;
+	task_id = MAX_TASKS-1;
 	// 将任务堆栈拷贝到公共堆栈里面
 	memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
 	
@@ -140,7 +146,10 @@ void os_delay(os_uint32_t tasks)
 ***********************************************************************/
 void os_idle_task(void)
 {
-	while(1);
+	while(1)
+	{
+		
+	}
 }
 
 /***********************************************************************
@@ -155,7 +164,7 @@ void time_handleHook(void)
 	os_uint8_t ti = 0;
 
 	// 在这里处理遍历延时
-	for(ti = 0; ti<max_task; ti++)
+	for(ti = 0; ti<MAX_TASKS; ti++)
 	{
 		if(tcb_list[ti].os_status_type != OS_BLOCKED)
 		{

@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 1   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 13:29:53 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
@@ -62,7 +62,7 @@ line level    source
   52   2                      os_delay(1000);
   53   2                      
   54   2                      LED_Y = 0;
-C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 2   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 13:29:53 PAGE 2   
 
   55   2                      os_delay(1000);
   56   2                      os_delay(1000);
@@ -101,36 +101,32 @@ line level    source
   89          
   90          
   91          
-  92          
-  93          
-  94          /* 主函数 */
-  95          void main()
-  96          {
-  97   1              
-  98   1      
-  99   1      
- 100   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
- 101   1              P0M1 = 0x00;
- 102   1              Timer0_Init();
- 103   1              EA = 1;
- 104   1              P_SW2 |= (1<<7);
- 105   1              
- 106   1              os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
- 107   1              os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
- 108   1              os_start();
- 109   1      
- 110   1      
- 111   1              while(1)
- 112   1              {
- 113   2      
- 114   2              }
- 115   1              
- 116   1      
-C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 3   
-
- 117   1      }
- 118          
-C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 4   
+  92          /* 主函数 */
+  93          void main()
+  94          {
+  95   1              
+  96   1      
+  97   1      
+  98   1              P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+  99   1              P0M1 = 0x00;
+ 100   1              Timer0_Init();
+ 101   1              EA = 1;
+ 102   1              P_SW2 |= (1<<7);
+ 103   1              
+ 104   1              os_task_create(task1, &task_stack1, 2);//将task1函数装入0号槽
+ 105   1              os_task_create(task2, &task_stack2, 3);//将task2函数装入1号槽
+ 106   1              os_start();
+ 107   1      
+ 108   1      
+ 109   1              while(1)
+ 110   1              {
+ 111   2      
+ 112   2              }
+ 113   1              
+ 114   1      
+ 115   1      }
+ 116          
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 13:29:53 PAGE 3   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
@@ -194,7 +190,7 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
                                            ; SOURCE LINE # 55
 001A 7FE8              MOV     R7,#0E8H
 001C 7E03              MOV     R6,#03H
-C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 5   
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 13:29:53 PAGE 4   
 
 001E 7D00              MOV     R5,#00H
 0020 7C00              MOV     R4,#00H
@@ -256,47 +252,47 @@ ASSEMBLY LISTING OF GENERATED OBJECT CODE
              ; FUNCTION _?time0_handle (END)
 
              ; FUNCTION main (BEGIN)
-                                           ; SOURCE LINE # 95
-                                           ; SOURCE LINE # 96
-C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 10:05:03 PAGE 6   
+                                           ; SOURCE LINE # 93
+                                           ; SOURCE LINE # 94
+C51 COMPILER V9.60.7.0   MAIN                                                              01/02/2024 13:29:53 PAGE 5   
 
-                                           ; SOURCE LINE # 100
+                                           ; SOURCE LINE # 98
 0000 E4                CLR     A
 0001 F594              MOV     P0M0,A
-                                           ; SOURCE LINE # 101
+                                           ; SOURCE LINE # 99
 0003 F593              MOV     P0M1,A
-                                           ; SOURCE LINE # 102
+                                           ; SOURCE LINE # 100
 0005 120000      R     LCALL   Timer0_Init
-                                           ; SOURCE LINE # 103
+                                           ; SOURCE LINE # 101
 0008 D2AF              SETB    EA
-                                           ; SOURCE LINE # 104
+                                           ; SOURCE LINE # 102
 000A 43BA80            ORL     P_SW2,#080H
-                                           ; SOURCE LINE # 106
+                                           ; SOURCE LINE # 104
 000D 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
 0010 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack1
 0013 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack1
 0016 F500        E     MOV     ?_os_task_create?BYTE+06H,A
-0018 750001      E     MOV     ?_os_task_create?BYTE+07H,#01H
+0018 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
 001B 7BFF              MOV     R3,#0FFH
 001D 7A00        R     MOV     R2,#HIGH task1
 001F 7900        R     MOV     R1,#LOW task1
 0021 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 107
+                                           ; SOURCE LINE # 105
 0024 750001      E     MOV     ?_os_task_create?BYTE+03H,#01H
 0027 750000      R     MOV     ?_os_task_create?BYTE+04H,#HIGH task_stack2
 002A 750000      R     MOV     ?_os_task_create?BYTE+05H,#LOW task_stack2
 002D 750000      E     MOV     ?_os_task_create?BYTE+06H,#00H
-0030 750002      E     MOV     ?_os_task_create?BYTE+07H,#02H
+0030 750003      E     MOV     ?_os_task_create?BYTE+07H,#03H
 0033 7BFF              MOV     R3,#0FFH
 0035 7A00        R     MOV     R2,#HIGH task2
 0037 7900        R     MOV     R1,#LOW task2
 0039 120000      E     LCALL   _os_task_create
-                                           ; SOURCE LINE # 108
+                                           ; SOURCE LINE # 106
 003C 120000      E     LCALL   os_start
 003F         ?C0010:
-                                           ; SOURCE LINE # 111
+                                           ; SOURCE LINE # 109
+                                           ; SOURCE LINE # 110
                                            ; SOURCE LINE # 112
-                                           ; SOURCE LINE # 114
 003F 80FE              SJMP    ?C0010
              ; FUNCTION main (END)
 

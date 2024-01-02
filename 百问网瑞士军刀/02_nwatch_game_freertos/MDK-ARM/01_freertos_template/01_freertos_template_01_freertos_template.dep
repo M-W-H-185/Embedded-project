@@ -1,8 +1,7 @@
 Dependencies for Project '01_freertos_template', Target '01_freertos_template': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_5.06u7
-F (startup_stm32f103xb.s)(0x658D3277)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I ../Core/Inc-I.\RTE\_01_freertos_template-IC:\Users\37723\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\37723\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.0\Device\Include--pd "__UVISION_VERSION SETA 538" --pd "_RTE_ SETA 1" --pd "STM32F10X_MD SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f103xb.lst --xref -o 01_freertos_template\startup_stm32f103xb.o --depend 01_freertos_template\startup_stm32f103xb.d)
-F (..\Core\Src\music.c)(0x658D3276)(--c99 -c --cpu Cortex-M3 -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3 -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Drivers/DshanMCU-F103 -I ../nwatch-I.\RTE\_01_freertos_template-IC:\Users\37723\AppData\Local\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include-IC:\Users\37723\AppData\Local\Arm\Packs\Keil\STM32F1xx_DFP\2.4.0\Device\Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o 01_freertos_template\music.o --omf_browse 01_freertos_template\music.crf --depend 01_freertos_template\music.d)
-I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x6497BAA5)
+F (startup_stm32f103xb.s)(0x658D3277)()
+F (..\Core\Src\music.c)(0x658D3276)()
 F (../Core/Src/main.c)(0x658D3276)()
 F (../Core/Src/gpio.c)(0x658D3276)()
 F (../Core/Src/freertos.c)(0x658D3276)()

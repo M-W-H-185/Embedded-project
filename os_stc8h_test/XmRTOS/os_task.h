@@ -32,7 +32,7 @@ typedef struct os_tcb_t
 	os_uint32_t 			delay_tick;			// 延时滴答数
 	os_uint8_t 				os_status_type;		// 任务状态
 	os_uint8_t				*stack;				// 任务的私有堆栈
-};
+}os_tcb;
 
 
 

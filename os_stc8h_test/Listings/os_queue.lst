@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.7.0   OS_QUEUE                                                          01/02/2024 10:05:03 PAGE 1   
+C51 COMPILER V9.60.7.0   OS_QUEUE                                                          01/02/2024 13:29:53 PAGE 1   
 
 
 C51 COMPILER V9.60.7.0, COMPILATION OF MODULE OS_QUEUE
@@ -9,19 +9,77 @@ COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE XmRTOS\os_queue.c OPTIMIZE(8,SPE
 line level    source
 
    1          #include "os_queue.h"
-C51 COMPILER V9.60.7.0   OS_QUEUE                                                          01/02/2024 10:05:03 PAGE 2   
+   2          #include "ringBuffer.h"
+   3          
+   4          
+   5          typedef struct QueueHandle_t
+   6          {
+   7                  RingBufferHandle  *rb_handle;                                                   // 环形缓冲区操作句柄
+   8                  os_uint8_t                osTaskIdsWaitToSendList[MAX_TASKS];   // 等待发送的任务id列表。缓冲区满后将id存进去
+   9                  os_uint8_t                osTaskIdsWaitToReadList[MAX_TASKS];   // 等待读取的任务id列表。缓冲区读取不到数据的时候将id存
+             -进去
+  10          
+  11          }QueueHandle;
+  12          
+  13          
+  14          // 创建一个队列
+  15          os_uint8_t os_queueCreate(QueueHandle *queue_handle, void *buff, os_uint8_t buff_size, os_uint8_t itemSize
+             -)
+  16          {
+  17   1              RingBufferHandle  *ringbuffer ;
+  18   1              // 创建一个环形缓冲区
+  19   1              ringbuffer_created(ringbuffer, buff, buff_size, itemSize);
+  20   1              // 指向环形缓冲区
+  21   1              queue_handle->rb_handle = ringbuffer;
+  22   1              
+  23   1              return 0;
+  24   1      }
+C51 COMPILER V9.60.7.0   OS_QUEUE                                                          01/02/2024 13:29:53 PAGE 2   
 
 ASSEMBLY LISTING OF GENERATED OBJECT CODE
 
 
+             ; FUNCTION _os_queueCreate (BEGIN)
+                                           ; SOURCE LINE # 15
+0000 8B00        R     MOV     queue_handle,R3
+0002 8A00        R     MOV     queue_handle+01H,R2
+0004 8900        R     MOV     queue_handle+02H,R1
+                                           ; SOURCE LINE # 16
+                                           ; SOURCE LINE # 19
+0006 850000      E     MOV     ?_ringbuffer_created?BYTE+03H,buff
+0009 850000      E     MOV     ?_ringbuffer_created?BYTE+04H,buff+01H
+000C 850000      E     MOV     ?_ringbuffer_created?BYTE+05H,buff+02H
+000F 850000      E     MOV     ?_ringbuffer_created?BYTE+06H,buff_size
+0012 850000      E     MOV     ?_ringbuffer_created?BYTE+07H,itemSize
+0015 AB00        R     MOV     R3,ringbuffer
+0017 AA00        R     MOV     R2,ringbuffer+01H
+0019 A900        R     MOV     R1,ringbuffer+02H
+001B 120000      E     LCALL   _ringbuffer_created
+                                           ; SOURCE LINE # 21
+001E AB00        R     MOV     R3,ringbuffer
+0020 AA00        R     MOV     R2,ringbuffer+01H
+0022 A900        R     MOV     R1,ringbuffer+02H
+0024 C003              PUSH    AR3
+0026 C002              PUSH    AR2
+0028 C001              PUSH    AR1
+002A AB00        R     MOV     R3,queue_handle
+002C AA00        R     MOV     R2,queue_handle+01H
+002E A900        R     MOV     R1,queue_handle+02H
+0030 120000      E     LCALL   ?C?PSTPTR
+                                           ; SOURCE LINE # 23
+0033 7F00              MOV     R7,#00H
+                                           ; SOURCE LINE # 24
+0035 22                RET     
+             ; FUNCTION _os_queueCreate (END)
+
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =   ----    ----
+   CODE SIZE        =     54    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----    ----
+   DATA SIZE        =   ----      11
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.

@@ -11,6 +11,32 @@
 *.ilk
 *.map
 *.exp
+*.axf
+
+*.map
+*.lst
+
+*.o
+*.axf
+*.Bak
+*.crf
+*.d
+*.dep
+*.htm
+*.lnp
+*.iex
+*.hex
+
+*.Administrator
+
+*.scvd
+
+*.ncb
+*.suo
+
+
+*.user
+
 
 # Precompiled Headers
 *.gch

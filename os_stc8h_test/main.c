@@ -89,8 +89,6 @@ void time0_handle(void)large reentrant
 
 
 
-
-
 /* 主函数 */
 void main()
 {
@@ -103,8 +101,8 @@ void main()
 	EA = 1;
 	P_SW2 |= (1<<7);
 	
-	os_task_create(task1, &task_stack1, 1);//将task1函数装入0号槽
-	os_task_create(task2, &task_stack2, 2);//将task2函数装入1号槽
+	os_task_create(task1, &task_stack1, 2);//将task1函数装入0号槽
+	os_task_create(task2, &task_stack2, 3);//将task2函数装入1号槽
 	os_start();
 
 
