@@ -6,7 +6,9 @@
 *.ko
 *.obj
 *.elf
-
+*.m51
+*.MaWenHao
+*.37723
 # Linker output
 *.ilk
 *.map
