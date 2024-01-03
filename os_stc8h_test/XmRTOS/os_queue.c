@@ -44,7 +44,6 @@ os_uint8_t os_queueSend(QueueHandle *queue_handle, void *_data, os_uint32_t wait
 			}
 		}
 	}
-	
 	// 如果写入失败 并且有阻塞时间    将当前任务放入等待发送列表内
 	else if(ret != RINGBUFF_SUCCESS && waitTicks > 0 )
 	{
@@ -82,8 +81,6 @@ os_uint8_t os_queueRead(QueueHandle *queue_handle, void *_data, os_uint32_t wait
 			}
 		}
 	}
-	
-	
 	// 如果读取失败 并且有阻塞时间    将当前任务放入等待读取列表内
 	else if(ret != RINGBUFF_SUCCESS && waitTicks > 0 )
 	{
