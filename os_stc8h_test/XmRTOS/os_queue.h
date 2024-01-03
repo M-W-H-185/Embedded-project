@@ -17,6 +17,7 @@ typedef struct QueueHandle_t
 }QueueHandle;
 os_uint8_t os_queueCreate(QueueHandle *queue_handle, void *buff, os_uint8_t buff_size, os_uint8_t itemSize);
 os_uint8_t os_queueSend(QueueHandle *queue_handle, void *_data, os_uint32_t waitTicks);
+os_uint8_t os_queueRead(QueueHandle *queue_handle, void *_data, os_uint32_t waitTicks);
 
 #endif
 

@@ -35,11 +35,19 @@ typedef struct test_ty{
 	os_uint32_t k3;
 };
 
+QueueHandle xdata queue_1;
+struct test_ty xdata queue_buff[5];
 void task1(void)
 {
 	while(1)
 	{
-		
+		struct test_ty test;
+		os_queueRead(&queue_1,&test,10000);	// 队列读取失败 延时100秒
+		LED_R = 1;
+		os_delay(100);
+
+		LED_R = 0;
+		os_delay(100);
 		OSCtxSw();	// 最好在任务后面放这个
 	}
 }
@@ -50,20 +58,18 @@ void task2(void)
 	while(1)
 	{
 		LED_Y = 1;
-		os_delay(1000);
-		os_delay(1000);
+		os_delay(100);
+		os_delay(100);
 		
 		LED_Y = 0;
-		os_delay(1000);
-		os_delay(1000);
+		os_delay(100);
+		os_delay(100);
 		
 		OSCtxSw();
 	}
 }
 
 
-QueueHandle xdata queue_1;
-struct test_ty xdata queue_buff[5];
 void task3(void)
 {
 	os_uint8_t ret = 0;
@@ -84,16 +90,13 @@ void task3(void)
 			if(K3 == 0)
 			{	
 				test.k3 = 1;	
-				ret = os_queueSend(&queue_1,&test,10000);	// 当队列满后 延时10秒
+				ret = os_queueSend(&queue_1,&test,1000);	// 当队列满后 延时1秒。尽量不要在此延时太长时间，否则写入过快进入阻塞态，读取任务读取完了也进入阻塞态那就很尴尬了
+				
 				LED_G = !LED_G;	
 				while(!K3);
 			}	
 		}
-		LED_R = 1;
-		os_delay(100);
-
-		LED_R = 0;
-		os_delay(100);
+		
 		
 		OSCtxSw();
 	}

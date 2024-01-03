@@ -743,12 +743,13 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 	of execution time efficiency. */
 	for( ;; )
 	{
-		taskENTER_CRITICAL();
+		taskENTER_CRITICAL();	// 进入临界区
 		{
 			/* Is there room on the queue now?  The running task must be the
 			highest priority task wanting to access the queue.  If the head item
 			in the queue is to be overwritten then it does not matter if the
 			queue is full. */
+			// 检查有没有空位
 			if( ( pxQueue->uxMessagesWaiting < pxQueue->uxLength ) || ( xCopyPosition == queueOVERWRITE ) )
 			{
 				traceQUEUE_SEND( pxQueue );
@@ -763,6 +764,7 @@ Queue_t * const pxQueue = ( Queue_t * ) xQueue;
 							/* The queue is a member of a queue set, and posting
 							to the queue set caused a higher priority task to
 							unblock. A context switch is required. */
+							// 下文切换
 							queueYIELD_IF_USING_PREEMPTION();
 						}
 						else
