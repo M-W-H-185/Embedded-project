@@ -17,6 +17,8 @@ static os_uint8_t idata public_stack[MAX_TASK_DEP];
 os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];		
 void os_idle_task(void);
 
+
+
 void os_getTaskIdHighPriority(void)
 {
 	os_uint8_t  ost_i = 0;
@@ -35,14 +37,26 @@ void os_getTaskIdHighPriority(void)
 		}
 	}
 }
-/***********************************************************************
-*	函数描述：任务调度函数
+/*****************************************************************************
+*	函数描述：任务调度函数。允许在任务内调用函数
 *	传入参数：
 *				
 * 返回参数：
 *				void: 无返回值
-***********************************************************************/
-void os_taskSwtich(void)
+*****************************************************************************/
+extern void OSCtxSw(void);
+
+
+
+/*****************************************************************************
+*	函数描述：任务调度函数，除了time_handleHook以外在c函数内禁止调用本函数！！！！
+*				如需任务自愿放弃cpu自愿的请使用 OSCtxSw 汇编内的函数
+*	传入参数：
+*				
+* 返回参数：
+*				void: 无返回值
+*****************************************************************************/
+void os_taskSwtich(void)  large reentrant
 {
 	// 上面中断已经入栈了
 
@@ -68,7 +82,6 @@ void os_taskSwtich(void)
 }
 
 
-
 /***********************************************************************
 *	函数描述：创建一个任务
 *	传入参数：
@@ -84,6 +97,7 @@ void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid)
 	{
 		return;
 	}
+	memset(t_stack, 0, (MAX_TASK_DEP * sizeof(os_uint8_t) )  ); // 写入0
 	t_stack[0] = (unsigned int)task & 0xff;		// DPL
 	t_stack[1] = (unsigned int)task >> 8;  		// DPH
 
@@ -123,6 +137,7 @@ void os_init(void)
 {
 	
 	memset(tcb_list, 0, (MAX_TASKS * sizeof(struct os_tcb_t) )  ); // 写入0
+	memset(public_stack, 0, (MAX_TASK_DEP * sizeof(os_uint8_t) )  ); // 写入0
 }
 
 /***********************************************************************
@@ -140,7 +155,7 @@ void os_delay(os_uint32_t tasks)
 	// 将任务设置为阻塞态
 	tcb_list[task_id].os_status_type = 	OS_BLOCKED;
 	// 只要任务延时了，就马上任务调度
-	os_taskSwtich();
+	OSCtxSw();
 
 }
 

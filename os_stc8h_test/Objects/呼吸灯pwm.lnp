@@ -1,8 +1,0 @@
-".\Objects\STARTUP.obj",
-".\Objects\main.obj",
-".\Objects\ringBuffer.obj",
-".\Objects\os_mcu.obj",
-".\Objects\os_task.obj",
-".\Objects\os_queue.obj" 
-TO ".\Objects\ºôÎüµÆpwm" 
-PRINT(".\Listings\ºôÎüµÆpwm.m51") RAMSIZE(256) 

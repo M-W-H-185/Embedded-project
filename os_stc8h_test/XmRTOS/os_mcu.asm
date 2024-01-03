@@ -1,12 +1,14 @@
 NAME	OS_CPU_A_ASM	; 定义一个名称为 “OS_CPU_A_ASM”汇编段
 
-?PR?OSTickISR?OS_CPU_A_ASM  	SEGMENT CODE	; 这句应该是 在 OS_CPU_A_ASM端里面有一个OSTickISR函数，放在了code区域
+?PR?timeIsp_handle?OS_CPU_A_ASM  	SEGMENT CODE	; 设置函数存放到code区
+?PR?OSCtxSw?OS_CPU_A_ASM  	SEGMENT CODE	; 设置函数存放到code区
 
 EXTRN CODE  (_?time0_handle)
+EXTRN CODE  (_?os_taskSwtich)
 
 
 
-;PUBLIC	OSCtxSw			; 这里就是将这个OSCtxSw函数公开出去
+PUBLIC	OSCtxSw			; 这里就是将这个OSCtxSw函数公开出去
 
 
 ;定义压栈宏
@@ -48,7 +50,19 @@ ENDM
 
 
 
+; ---------------- OSCtxSw 任务切换函数 ----------------
+RSEG  ?PR?OSCtxSw?OS_CPU_A_ASM
+OSCtxSw:
 
+	CLR EA 		; 关中断
+	PUSHALL		; 压栈
+
+	LCALL _?os_taskSwtich	; 调用中断处理函数
+
+	POPALL		; 出栈
+	SETB EA		; 开中断
+RETI;
+; ---------------- OSCtxSw 任务切换函数 ----------------
 
 
 
@@ -56,8 +70,8 @@ ENDM
 
 ; ---------------- 定时器0 相关调用 ----------------
 ; --- 定时器0 中断服务程序 ---
-RSEG  ?PR?OSTickISR?OS_CPU_A_ASM
-OSTickISR:     
+RSEG  ?PR?timeIsp_handle?OS_CPU_A_ASM
+timeIsp_handle:     
 	CLR EA 		; 关中断
 	PUSHALL		; 压栈
 	
@@ -71,7 +85,7 @@ RETI
 
 
 CSEG AT 000BH	;定时器T0中断
- LJMP OSTickISR
+ LJMP timeIsp_handle
 
 ; ---------------- 定时器0 相关调用 ----------------
 

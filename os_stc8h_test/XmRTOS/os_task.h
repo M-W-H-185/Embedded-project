@@ -39,10 +39,11 @@ extern os_uint8_t data task_id;  /*当前活动任务号*/
 
 void os_start(void);
 void os_init(void);
+extern void OSCtxSw(void);
 
 void os_delay(os_uint32_t tasks);
 void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid);
-void os_taskSwtich(void);
+void os_taskSwtich(void)  large reentrant;
 void time_handleHook(void);
 
 #endif

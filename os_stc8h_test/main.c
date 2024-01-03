@@ -29,21 +29,22 @@ os_uint8_t xdata task_stack3[MAX_TASK_DEP];			/*任务2堆栈.*/
 // 任务堆栈区
 
 
+typedef struct test_ty{
+	os_uint8_t 	k1;
+	os_uint16_t k2;
+	os_uint32_t k3;
+};
 
-void task1()
+void task1(void)
 {
 	while(1)
 	{
-
 		
-		// LED_R = 1;
-		os_delay(100);
-		
-
+		OSCtxSw();	// 最好在任务后面放这个
 	}
 }
 
-void task2()
+void task2(void)
 {
 
 	while(1)
@@ -55,24 +56,20 @@ void task2()
 		LED_Y = 0;
 		os_delay(1000);
 		os_delay(1000);
-
+		
+		OSCtxSw();
 	}
 }
 
-typedef struct test_ty{
-	os_uint8_t 	k1;
-	os_uint16_t k2;
-	os_uint32_t k3;
-};
 
 QueueHandle xdata queue_1;
 struct test_ty xdata queue_buff[5];
-void task3()
+void task3(void)
 {
 	os_uint8_t ret = 0;
 	
 
-		// 创建队列
+	// 创建队列
 	os_queueCreate(&queue_1, &queue_buff, 5, sizeof(struct test_ty));
 	
 	while(1)
@@ -86,14 +83,9 @@ void task3()
 			os_delay(15);
 			if(K3 == 0)
 			{	
-				test.k3 = 1;
-				
-				
-				ret = os_queueSend(&queue_1,&test,10000);
-				if(ret = RINGBUFF_SUCCESS)
-				{
-					LED_G = !LED_G;	
-				}
+				test.k3 = 1;	
+				ret = os_queueSend(&queue_1,&test,10000);	// 当队列满后 延时10秒
+				LED_G = !LED_G;	
 				while(!K3);
 			}	
 		}
@@ -102,8 +94,8 @@ void task3()
 
 		LED_R = 0;
 		os_delay(100);
-//		os_taskSwtich();
 		
+		OSCtxSw();
 	}
 }
 
