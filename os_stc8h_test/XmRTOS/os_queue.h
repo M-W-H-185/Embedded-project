@@ -7,11 +7,6 @@
 #include "os_task.h"
 #include "ringBuffer.h"
 
-#define QUEUE_TYPE_BASE                ( ( uint8_t ) 0U ) /* 基础的队列 */
-#define QUEUE_TYPE_MUTEX               ( ( uint8_t ) 1U ) /* 互斥信号量 */
-#define QUEUE_TYPE_COUNTING_SEMAPHORE  ( ( uint8_t ) 2U ) /* 计数信号量 */
-#define QUEUE_TYPE_BINARY_SEMAPHORE    ( ( uint8_t ) 3U ) /* 二值信号量 */
-#define QUEUE_TYPE_RECURSIVE_MUTEX     ( ( uint8_t ) 4U ) /* 递归互斥信号量 */
 
 typedef struct QueueHandle_t
 {

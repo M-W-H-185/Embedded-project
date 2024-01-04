@@ -24,6 +24,10 @@ enum OS_TASK_STATUS_TYPE
 	OS_SUSPENDED  = 4		// Í£Ö¹Ì¬
 
 };
+#define RET_TRUE   		1
+#define RET_FALSE  		0
+#define RET_SUCCESS		RET_TRUE
+#define RET_ERROR		RET_FALSE
 
 // ÈÎÎñ¿ØÖÆ¿é
 typedef struct os_tcb_t
@@ -43,7 +47,7 @@ void os_init(void);
 extern void OSCtxSw(void);
 
 void os_delay(os_uint32_t tasks);
-void os_delayNo(os_uint32_t tasks);
+
 
 void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid);
 void os_taskSwtich(void)  large reentrant;

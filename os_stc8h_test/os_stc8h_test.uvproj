@@ -125,7 +125,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>1</UseSimulator>
+            <UseSimulator>0</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -137,7 +137,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
-            <UseTarget>0</UseTarget>
+            <UseTarget>1</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -430,6 +430,16 @@
               <FileName>os_queue.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\XmRTOS\os_queue.h</FilePath>
+            </File>
+            <File>
+              <FileName>os_semaphore.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\XmRTOS\os_semaphore.c</FilePath>
+            </File>
+            <File>
+              <FileName>os_semaphore.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\XmRTOS\os_semaphore.h</FilePath>
             </File>
           </Files>
         </Group>

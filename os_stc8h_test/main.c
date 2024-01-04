@@ -10,6 +10,8 @@
 #include "stdio.h"
 #include "os_task.h"
 #include "os_queue.h"
+#include "os_semaphore.h"
+
 /* 发光二极管定义 */
 
 sbit LED_R = P0^5;    // 红色LED
@@ -37,12 +39,15 @@ typedef struct test_ty{
 
 QueueHandle xdata queue_1;
 struct test_ty xdata queue_buff[5];
+SemaphoreHandle xdata sem_handle1;
+
+SemaphoreHandle xdata sem_handle2;
+
 void task1(void)
 {
 	while(1)
 	{
-		struct test_ty test;
-		os_queueRead(&queue_1,&test,10000);	// 队列读取失败 延时100秒
+		semaphoreTake(&sem_handle1,1000000);
 		LED_R = 1;
 		os_delay(100);
 
@@ -57,6 +62,9 @@ void task2(void)
 
 	while(1)
 	{
+//		struct test_ty test;
+//		os_queueRead(&queue_1,&test,10000);	// 队列读取失败 延时100秒
+		semaphoreTake(&sem_handle2,1000000);
 		LED_Y = 1;
 		os_delay(100);
 		os_delay(100);
@@ -76,8 +84,12 @@ void task3(void)
 	
 
 	// 创建队列
-	os_queueCreate(&queue_1, &queue_buff, 5, sizeof(struct test_ty));
+//	os_queueCreate(&queue_1, &queue_buff, 5, sizeof(struct test_ty));
 	
+	// 创建一个二值型信号量
+	semaphoreCreateBinary(&sem_handle1);
+	// 计数型
+	semaphoreCreateCount(&sem_handle2,5,0);
 	while(1)
 	{
 		struct test_ty test;
@@ -90,7 +102,9 @@ void task3(void)
 			if(K3 == 0)
 			{	
 				test.k3 = 1;	
-				ret = os_queueSend(&queue_1,&test,1000);	// 当队列满后 延时1秒。尽量不要在此延时太长时间，否则写入过快进入阻塞态，读取任务读取完了也进入阻塞态那就很尴尬了
+				ret = semaphoreGive(&sem_handle1);
+				ret = semaphoreGive(&sem_handle2);
+//				ret = os_queueSend(&queue_1,&test,0);	// 当队列满后 延时0秒。尽量不要在此延时太长时间，否则写入过快进入阻塞态，读取任务读取完了也进入阻塞态那就很尴尬了
 				
 				LED_G = !LED_G;	
 				while(!K3);
@@ -136,6 +150,8 @@ void time0_handle(void) large reentrant
 /* 主函数 */
 void main()
 {
+
+	
 	EA = 0;
 	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
