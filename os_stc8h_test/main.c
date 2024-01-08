@@ -24,11 +24,11 @@ sbit K2 = P3^6;     // 按键K2
 sbit K3 = P3^5;     // 按键K3
 
 
-// 任务堆栈区
-os_uint8_t xdata task_stack1[MAX_TASK_DEP];			/*任务1堆栈.*/
-os_uint8_t xdata task_stack2[MAX_TASK_DEP];			/*任务2堆栈.*/
-os_uint8_t xdata task_stack3[MAX_TASK_DEP];			/*任务2堆栈.*/
-// 任务堆栈区
+// 任务堆
+os_uint8_t xdata task_stack1[MAX_TASK_DEP];			/*任务1堆.*/
+os_uint8_t xdata task_stack2[MAX_TASK_DEP];			/*任务2堆.*/
+os_uint8_t xdata task_stack3[MAX_TASK_DEP];			/*任务2堆.*/
+// 任务堆
 
 
 typedef struct test_ty{
@@ -161,8 +161,8 @@ void main()
 	P3M1 &= 0x1F;// 0001 1111
 	
 	
-	Timer0_Init();
-	os_init();
+	Timer0_Init();		// 利用定时器0作为rtos时钟节拍，处理任务延时以及切换
+	os_init();			// 将任务数组写入0
 	P_SW2 |= (1<<7);
 	
 	os_task_create(task1, &task_stack1, 1);//将task1函数装入1号槽
