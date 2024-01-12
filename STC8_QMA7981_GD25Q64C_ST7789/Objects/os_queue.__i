@@ -1,0 +1,1 @@
+"XmRTOS\os_queue.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils;.\hal) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_queue.lst) OBJECT(.\Objects\os_queue.obj)

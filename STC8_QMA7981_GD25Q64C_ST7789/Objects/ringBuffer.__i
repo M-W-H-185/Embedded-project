@@ -1,0 +1,1 @@
+"XmRTOS\utils\ringBuffer.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils;.\hal) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\ringBuffer.lst) OBJECT(.\Objects\ringBuffer.obj)
