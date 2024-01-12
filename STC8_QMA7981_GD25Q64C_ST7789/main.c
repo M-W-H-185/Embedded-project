@@ -59,12 +59,17 @@ void task1(void)
 		OSCtxSw();	// 最好在任务后面放这个
 	}
 }
+unsigned char QMA7981Read(unsigned char reg);
 
 void task2(void)
 {
 
 	while(1)
 	{
+		EA = 0;
+		printf("id:%02x\n",QMA7981Read(0x00));
+		EA = 1;
+
 		LED_Y = 1;
 		os_delay(100);
 		os_delay(100);
@@ -135,11 +140,39 @@ void Uart1Init(void)  //115200bps@24MHz
 	TI = 1; // 加这句话可以使用printf
 }
 
-
+void QMA7981Init()
+{
+  hal_I2cStart(); 
+    hal_I2cSendByte(0x24);//发送器件地址+写命令    
+    hal_I2cRendACK();
+  hal_I2cSendByte(0x11);    //写寄存器地址
+  hal_I2cRendACK();        //等待应答 
+    hal_I2cSendByte(0xc0);//发送数据
+    hal_I2cRendACK();     
+  hal_I2cStop();
+}
+unsigned char QMA7981Read(unsigned char reg)
+{
+    unsigned char xdata res;
+    
+  hal_I2cStart(); 
+    hal_I2cSendByte(0x24);//发送器件地址+写命令    
+    hal_I2cRendACK();        //等待应答 
+  hal_I2cSendByte(reg);    //写寄存器地址
+  hal_I2cRendACK();        //等待应答
+  hal_I2cStart(); 
+    hal_I2cSendByte(0x25);//发送器件地址+读命令    
+  hal_I2cRendACK();        //等待应答 
+    res=hal_I2cReadByteData();//读取数据,发送nACK 
+    hal_I2cSendNACK();
+  hal_I2cStop();            //产生一个停止条件 
+    
+    return res;        
+}
 /* 主函数 */
 void main()
 {
-
+	// unsigned char xdata id = 0;
 	P_SW2 |= 0x80;	// 使能访问XFR
 	
 	EA = 0;
@@ -152,9 +185,9 @@ void main()
 	
 	Uart1Init();		// 初始化串口1 
 	Timer0_Init();		// 利用定时器0作为rtos时钟节拍，处理任务延时以及切换
-	hal_I2cInit();			// 初始化i2c
-	
-	
+		LED_G = 0;
+
+QMA7981Init();
 	
 	os_init();			// 将任务数组写入0
 	// 创建一个二值型信号量
@@ -164,7 +197,7 @@ void main()
 	os_task_create(task3, &task_stack3, 80, 3);//将task3函数装入3号槽
 	printf("os_init success\r\n");
 	os_start();
-
+	
 
 	while(1)
 	{

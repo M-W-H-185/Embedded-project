@@ -177,7 +177,7 @@
           </Flash1>
           <bUseTDR>0</bUseTDR>
           <Flash2></Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -455,11 +455,6 @@
               <FileName>hal_i2c.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\hal\hal_i2c.h</FilePath>
-            </File>
-            <File>
-              <FileName>stc8G_hal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\hal\stc8G_hal.h</FilePath>
             </File>
           </Files>
         </Group>

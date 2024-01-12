@@ -1,1 +1,0 @@
-"XmRTOS\os_semaphore.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils;.\hal) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_semaphore.lst) OBJECT(.\Objects\os_semaphore.obj)

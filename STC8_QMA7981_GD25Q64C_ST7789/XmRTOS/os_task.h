@@ -40,7 +40,7 @@ typedef struct os_tcb_t
 }os_tcb;
 
 #define OS_DELAY_MAX 4294967295
-extern os_uint8_t data task_id;  /*当前活动任务号*/
+extern os_uint8_t xdata task_id;  /*当前活动任务号*/
 extern struct os_tcb_t xdata tcb_list[MAX_TASKS];
 
 void os_start(void);

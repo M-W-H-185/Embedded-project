@@ -1,1 +1,0 @@
-"XmRTOS\os_task.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils;.\hal) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\os_task.lst) OBJECT(.\Objects\os_task.obj)

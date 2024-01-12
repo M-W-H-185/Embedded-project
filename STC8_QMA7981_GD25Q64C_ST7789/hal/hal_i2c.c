@@ -41,9 +41,36 @@ uint8_t hal_I2cStop(void)
 	return 0;
 }
 // 发送byte
-uint8_t hal_I
+uint8_t hal_I2cSendByte(uint8_t _data)
+{
+	I2CTXD = _data; // 填充数据
+	I2CMSCR = 0x02;	// 发送数据命令
+	while(hal_I2cGetIdleState()==1);	// 等待发送成功
+	return 0 ;
+}
+// 读取一个字节
+uint8_t hal_I2cReadByteData(void)
+{
+		uint8_t temp = 0;
+		I2CMSCR = 0x04;	// 读取数据命令
+		while(hal_I2cGetIdleState()==1);		// 等待发送成功
+		temp = I2CRXD;
+		return temp;
+}
 
-
+// 发送一个nack
+uint8_t hal_I2cSendNACK(void)
+{
+	I2CMSST = 0X01;
+	I2CMSCR = 0X05;
+	while(hal_I2cGetIdleState()==1);	// 等待发送成功
+	return 0 ;
+}
+void hal_I2cRendACK()
+{
+	I2CMSCR = 0x03;                             //发送读ACK命令
+	while(hal_I2cGetIdleState()==1);	// 等待发送成功
+}
 
 void hal_I2cInit(void)
 {

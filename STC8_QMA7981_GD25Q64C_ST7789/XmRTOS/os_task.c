@@ -1,8 +1,8 @@
 #include "os_task.h"
 // 任务创建、切换、延时文件
 
-os_uint8_t data task_id = 0;    /*当前活动任务号*/
-os_uint8_t max_task = 0;
+os_uint8_t xdata task_id = 0;    /*当前活动任务号*/
+os_uint8_t xdata max_task = 0;
 
 /* 任务控制列表 */
 struct os_tcb_t xdata tcb_list[MAX_TASKS];

@@ -1,1 +1,0 @@
-"hal\hal_i2c.c" OPTIMIZE (8,SPEED) BROWSE INCDIR(.\XmRTOS;.\XmRTOS\utils;.\hal) DEBUG OBJECTEXTEND CODE PRINT(.\Listings\hal_i2c.lst) OBJECT(.\Objects\hal_i2c.obj)
