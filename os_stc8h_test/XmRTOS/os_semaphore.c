@@ -11,6 +11,10 @@ os_uint8_t semaphoreCreate(SemaphoreHandle *sem_handle, os_uint8_t maxCount, os_
 	sem_handle->initCount 		= initCount;
 	sem_handle->messagesWaiting 	= initCount;	//初始化计数值
 	sem_handle->type 			= type;
+
+
+	
+	memset(sem_handle->osTaskIdsWaitToTakeList, 0, (MAX_TASKS * sizeof(os_uint8_t)));
 	return RET_SUCCESS;
 }
 
@@ -70,14 +74,16 @@ os_uint8_t semaphoreTake(SemaphoreHandle *sem_handle, os_uint32_t waitTicks)
 		sem_handle->messagesWaiting = sem_handle->messagesWaiting - 1;
 		EA = 1;
 		ret =  RET_SUCCESS;
+		return ret;
 	}
 	else
 	{
 		// 将当前获取最高信号量 的任务放进去 等待列表中。释放信号量的时候环形
 		sem_handle->osTaskIdsWaitToTakeList[task_id] = 1;
-		EA = 1;
+		// EA = 1;
 		os_delay(waitTicks);
 		ret =  RET_ERROR;
+		return ret;
 	}
 
 	EA = 1;

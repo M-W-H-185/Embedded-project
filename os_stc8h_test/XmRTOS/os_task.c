@@ -14,7 +14,7 @@ struct os_tcb_t xdata tcb_list[MAX_TASKS];
 static os_uint8_t idata public_stack[MAX_TASK_DEP];
 
 /*空闲任务堆栈.*/
-os_uint8_t xdata task_idle_stack[MAX_TASK_DEP];		
+os_uint8_t xdata task_idle_stack[20];		
 void os_idle_task(void);
 
 
@@ -63,7 +63,7 @@ void os_taskSwtich(void)  large reentrant
 
 	// 已经入栈到了公共堆栈内了
 	// 将公共堆栈拷贝到任务堆栈内
-	memcpy(tcb_list[task_id].stack, public_stack,MAX_TASK_DEP);
+	memcpy(tcb_list[task_id].stack, public_stack,tcb_list[task_id].stack_size);
 	
 	
 	tcb_list[task_id].sp = SP;
@@ -74,7 +74,7 @@ void os_taskSwtich(void)  large reentrant
 	SP = tcb_list[task_id].sp;
 
 	// 将任务堆栈拷贝到公共堆栈里面
-	memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
+	memcpy(public_stack,tcb_list[task_id].stack,tcb_list[task_id].stack_size);
 	
 
 	
@@ -91,13 +91,13 @@ void os_taskSwtich(void)  large reentrant
 * 返回参数：
 *				void: 无返回值
 ***********************************************************************/
-void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid)
+void os_task_create(void(*task)(void), os_uint8_t *t_stack, os_uint8_t stack_size, int tid)
 {
 	if((max_task+1) >= MAX_TASKS - 1)
 	{
 		return;
 	}
-	memset(t_stack, 0, (MAX_TASK_DEP * sizeof(os_uint8_t) )  ); // 写入0
+	memset(t_stack, 0, (stack_size * sizeof(os_uint8_t) )  ); // 写入0
 	t_stack[0] = (unsigned int)task & 0xff;		// DPL
 	t_stack[1] = (unsigned int)task >> 8;  		// DPH
 
@@ -105,6 +105,7 @@ void os_task_create(void(*task)(void), os_uint8_t *t_stack, int tid)
 	tcb_list[tid].os_status_type 	= OS_READY;
 
 	tcb_list[tid].stack = t_stack;
+	tcb_list[tid].stack_size = stack_size;
 	
 	
 	max_task++;
@@ -120,12 +121,12 @@ void os_start(void)
 {
 	EA = 0;//关中断
 	// 装载空闲任务
-	os_task_create(os_idle_task, &task_idle_stack, MAX_TASKS-1);//将task1函数装入MAX_TASKS-1号槽
+	os_task_create(os_idle_task, &task_idle_stack, 20, MAX_TASKS-1);//将task1函数装入MAX_TASKS-1号槽
 	
 	// 空闲任务先运行
 	task_id = MAX_TASKS-1;
 	// 将任务堆栈拷贝到公共堆栈里面
-	memcpy(public_stack,tcb_list[task_id].stack,MAX_TASK_DEP);
+	memcpy(public_stack,tcb_list[task_id].stack,tcb_list[task_id].stack_size);
 	
 	SP = tcb_list[task_id].sp;
 	
