@@ -12,7 +12,7 @@
 #include "os_task.h"
 #include "os_queue.h"
 #include "os_semaphore.h"
-
+#include "QMA7981.h"
 
 /* 发光二极管定义 */
 
@@ -68,8 +68,8 @@ void task2(void)
 	while(1)
 	{
 		EA = 0;
-//		id = Read_Byte(0x00);
-//		printf("id:%x\r\n",id);
+		//		id = Read_Byte(0x00);
+		//		printf("id:%x\r\n",id);
 		q_xyz = qm7891_read_xyz();
 		printf("x:%d y:%d z:%d \r\n",q_xyz.x, q_xyz.y, q_xyz.z);
 		EA = 1;
@@ -153,25 +153,25 @@ void main()
 	P0M1 = 0x00;
 	P3M0 = 0x00;                                //设置P3.0~P3.7为双向口模式
 	P3M1 = 0x00;
-	
+
 
 	Uart1Init();		// 初始化串口1 
 	Timer0_Init();		// 利用定时器0作为rtos时钟节拍，处理任务延时以及切换
 	LED_G = 0;
 
 	QMA7981Init();
-	//	
-	os_init();			// 将任务数组写入0
+	
+	os_init();	
 	// 创建一个二值型信号量
 	semaphoreCreateBinary(&sem_handle1);
 	os_task_create(task1, &task_stack1, 80, 1);//将task1函数装入1号槽
 	os_task_create(task2, &task_stack2, 20, 2);//将task2函数装入2号槽
 	os_task_create(task3, &task_stack3, 80, 3);//将task3函数装入3号槽
 	printf("os_init success\r\n");
-	
-	
+
+
 	os_start();
-	
+
 
 	while(1)
 	{

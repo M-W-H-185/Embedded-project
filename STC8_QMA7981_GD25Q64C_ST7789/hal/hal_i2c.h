@@ -4,24 +4,19 @@
 #include "intrins.h"
 #include "stdio.h"
 #include "string.h"
-typedef     unsigned char    uint8_t;	//  8 bits 
 
-typedef     unsigned int     uint16_t;	// 16 bits 
+void i2c_init(void);
 
-typedef     unsigned long    uint32_t;	// 32 bits 
+/* IIC写一个字节 
+   reg:寄存器地址
+   dat:数据 */
+void Write_Byte(unsigned char reg, unsigned char dat);
 
-typedef struct QMA7981_XYZ
-{
-	short x;
-	short y; 
-	short z; 
+/* IIC读一个字节  
+   reg:寄存器地址 
+   返回值:读到的数据 */
+unsigned char Read_Byte(unsigned char reg);
 
-}QMA7981_XYZ;
-unsigned char Read_Byte(unsigned char reg); /* 读取寄存器数据函数 */
-QMA7981_XYZ qm7891_read_xyz(void);
-
-
-void QMA7981Init(void);
 
 #endif
 

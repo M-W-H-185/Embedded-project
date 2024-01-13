@@ -324,7 +324,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\XmRTOS;.\XmRTOS\utils;.\hal</IncludePath>
+              <IncludePath>.\XmRTOS;.\XmRTOS\utils;.\hal;.\hdl</IncludePath>
             </VariousControls>
           </C51>
           <Ax51>
@@ -455,6 +455,26 @@
               <FileName>hal_i2c.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\hal\hal_i2c.h</FilePath>
+            </File>
+            <File>
+              <FileName>type.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\hal\type.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>hdl</GroupName>
+          <Files>
+            <File>
+              <FileName>QMA7981.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\hdl\QMA7981.c</FilePath>
+            </File>
+            <File>
+              <FileName>QMA7981.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\hdl\QMA7981.h</FilePath>
             </File>
           </Files>
         </Group>
