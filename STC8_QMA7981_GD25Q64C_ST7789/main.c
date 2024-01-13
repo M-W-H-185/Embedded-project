@@ -63,13 +63,16 @@ unsigned char QMA7981Read(unsigned char reg);
 
 void task2(void)
 {
+	unsigned char xdata id = 0;
 
 	while(1)
 	{
 		EA = 0;
-		printf("id:%02x\n",QMA7981Read(0x00));
+		id = Read_Byte(0x00);
+		printf("id:%x\r\n",id);
 		EA = 1;
-
+		
+		os_delay(1000);
 		LED_Y = 1;
 		os_delay(100);
 		os_delay(100);
@@ -109,12 +112,12 @@ void task3(void)
 
 
 
-void Timer0_Init(void)		//1毫秒@24MHz
+void Timer0_Init(void)		//1毫秒@35MHz
 {
 	AUXR |= 0x80;			//定时器时钟1T模式
 	TMOD &= 0xF0;			//设置定时器模式
-	TL0 = 0x40;				//设置定时初始值
-	TH0 = 0xA2;				//设置定时初始值
+	TL0 = 0x48;				//设置定时初始值
+	TH0 = 0x77;				//设置定时初始值
 	TF0 = 0;				//清除TF0标志
 	TR0 = 1;				//定时器0开始计时
 	ET0 = 1;				//使能定时器0中断
@@ -129,66 +132,35 @@ void time0_handle(void) large reentrant
 }
 
 // 串口初始化函数 可以使用printf
-void Uart1Init(void)  //115200bps@24MHz
+void Uart1Init(void)  //115200bps@35MHz
 {
 	SCON = 0x50;		//8位数据,可变波特率
 	AUXR |= 0x01;		//串口1选择定时器2为波特率发生器
 	AUXR |= 0x04;		//定时器时钟1T模式
-	T2L = 0xCC;			//设置定时初始值
+	T2L = 0xB4;			//设置定时初始值
 	T2H = 0xFF;			//设置定时初始值
 	AUXR |= 0x10;		//定时器2开始计时
 	TI = 1; // 加这句话可以使用printf
 }
 
-void QMA7981Init()
-{
-  hal_I2cStart(); 
-    hal_I2cSendByte(0x24);//发送器件地址+写命令    
-    hal_I2cRendACK();
-  hal_I2cSendByte(0x11);    //写寄存器地址
-  hal_I2cRendACK();        //等待应答 
-    hal_I2cSendByte(0xc0);//发送数据
-    hal_I2cRendACK();     
-  hal_I2cStop();
-}
-unsigned char QMA7981Read(unsigned char reg)
-{
-    unsigned char xdata res;
-    
-  hal_I2cStart(); 
-    hal_I2cSendByte(0x24);//发送器件地址+写命令    
-    hal_I2cRendACK();        //等待应答 
-  hal_I2cSendByte(reg);    //写寄存器地址
-  hal_I2cRendACK();        //等待应答
-  hal_I2cStart(); 
-    hal_I2cSendByte(0x25);//发送器件地址+读命令    
-  hal_I2cRendACK();        //等待应答 
-    res=hal_I2cReadByteData();//读取数据,发送nACK 
-    hal_I2cSendNACK();
-  hal_I2cStop();            //产生一个停止条件 
-    
-    return res;        
-}
+
 /* 主函数 */
 void main()
 {
-	// unsigned char xdata id = 0;
-	P_SW2 |= 0x80;	// 使能访问XFR
-	
+
 	EA = 0;
-	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+	P0M0 = 0x00;                                //设置P0.0~P0.7为双向口模式
 	P0M1 = 0x00;
+	P3M0 = 0x00;                                //设置P3.0~P3.7为双向口模式
+	P3M1 = 0x00;
 	
-	// 将 P3.5、P3.6、P3.7 端口初始化为 准双向模式
-	P3M0 = 0x00;// 0000 0000
-	P3M1 &= 0x1F;// 0001 1111
-	
+
 	Uart1Init();		// 初始化串口1 
 	Timer0_Init();		// 利用定时器0作为rtos时钟节拍，处理任务延时以及切换
-		LED_G = 0;
+	LED_G = 0;
 
-QMA7981Init();
-	
+	QMA7981Init();
+	//	
 	os_init();			// 将任务数组写入0
 	// 创建一个二值型信号量
 	semaphoreCreateBinary(&sem_handle1);
@@ -196,6 +168,8 @@ QMA7981Init();
 	os_task_create(task2, &task_stack2, 20, 2);//将task2函数装入2号槽
 	os_task_create(task3, &task_stack3, 80, 3);//将task3函数装入3号槽
 	printf("os_init success\r\n");
+	
+	
 	os_start();
 	
 

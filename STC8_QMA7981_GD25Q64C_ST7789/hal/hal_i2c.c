@@ -1,81 +1,102 @@
 #include "hal_i2c.h"
 #include "stc8g.h"
-void I2C_Isr() interrupt 24
-{
 
-    if (I2CMSST & 0x40)
-    {
-        I2CMSST &= ~0x40;                       //清中断标志
-    }
-
-}
-// 获取空闲状态 0 空闲 1忙碌
-uint8_t hal_I2cGetIdleState(void)
+void Wait()
 {
-	// I2CMSST & 0x40 bit6为0的时候就是没执行完，bit6为1的时候为1的时候代表执行完了
-	if((I2CMSST & 0x40) == 1)
-	{
-		I2CMSST &= ~0x40;	// 每次I2CMSCR执行完后都需要软件set0
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}
-	return 1;
-	
-}
-// 发送起始信号
-uint8_t hal_I2cStart(void)
-{
-	I2CMSCR = 0X01;
-	while(hal_I2cGetIdleState()==1);	// 等待发送成功
-	return 0;
+	while (!(I2CMSST & 0x40));
+	I2CMSST &= ~0x40;
 }
 
-// 发送停止信号
-uint8_t hal_I2cStop(void)
+void Start()
 {
-	I2CMSCR = 0X06;
-	while(hal_I2cGetIdleState()==1);	// 等待发送成功
-	return 0;
-}
-// 发送byte
-uint8_t hal_I2cSendByte(uint8_t _data)
-{
-	I2CTXD = _data; // 填充数据
-	I2CMSCR = 0x02;	// 发送数据命令
-	while(hal_I2cGetIdleState()==1);	// 等待发送成功
-	return 0 ;
-}
-// 读取一个字节
-uint8_t hal_I2cReadByteData(void)
-{
-		uint8_t temp = 0;
-		I2CMSCR = 0x04;	// 读取数据命令
-		while(hal_I2cGetIdleState()==1);		// 等待发送成功
-		temp = I2CRXD;
-		return temp;
+	I2CMSCR = 0x01;                             //发送START命令
+	Wait();
 }
 
-// 发送一个nack
-uint8_t hal_I2cSendNACK(void)
+void SendData(char dat)
 {
-	I2CMSST = 0X01;
-	I2CMSCR = 0X05;
-	while(hal_I2cGetIdleState()==1);	// 等待发送成功
-	return 0 ;
+	I2CTXD = dat;                               //写数据到数据缓冲区
+	I2CMSCR = 0x02;                             //发送SEND命令
+	Wait();
 }
-void hal_I2cRendACK()
+
+void RecvACK()
 {
 	I2CMSCR = 0x03;                             //发送读ACK命令
-	while(hal_I2cGetIdleState()==1);	// 等待发送成功
+	Wait();
 }
 
-void hal_I2cInit(void)
+char RecvData()
 {
-	P_SW2 |= 0x30;	// bit45写入11 I2C功能叫选择位 
-	I2CCFG |= 0xC0;	// 1100 0000 启用i2c设置为主机模式
-	I2CCFG |= 0xD;	// 1100 1101 设置总线速度
-	I2CMSCR|= 0x80;	// 1000 0000 允许主机中断 
+	I2CMSCR = 0x04;                             //发送RECV命令
+	Wait();
+	return I2CRXD;
 }
+
+//void SendACK()
+//{
+//	I2CMSST = 0x00;                             //设置ACK信号
+//	I2CMSCR = 0x05;                             //发送ACK命令
+//	Wait();
+//}
+
+void SendNAK()
+{
+	I2CMSST = 0x01;                             //设置NAK信号
+	I2CMSCR = 0x05;                             //发送ACK命令
+	Wait();
+}
+
+void Stop()
+{
+	I2CMSCR = 0x06;                             //发送STOP命令
+	Wait();
+}
+
+/* IIC写一个字节 
+   reg:寄存器地址
+   dat:数据 */
+void Write_Byte(unsigned char reg, unsigned char dat) 				 
+{ 
+	Start(); 
+	SendData(0x24);//发送器件地址+写命令	
+	RecvACK();
+	SendData(reg);	//写寄存器地址
+	RecvACK();		//等待应答 
+	SendData(dat);//发送数据
+	RecvACK();	 
+	Stop();
+}
+
+/* IIC读一个字节  
+   reg:寄存器地址 
+   返回值:读到的数据 */
+unsigned char Read_Byte(unsigned char reg)
+{
+	unsigned char res;
+	
+	Start(); 
+	SendData(0x24);//发送器件地址+写命令	
+	RecvACK();		//等待应答 
+	SendData(reg);	//写寄存器地址
+	RecvACK();		//等待应答
+	Start(); 
+	SendData(0x25);//发送器件地址+读命令	
+	RecvACK();		//等待应答 
+	res=RecvData();//读取数据,发送nACK 
+	SendNAK();
+	Stop();			//产生一个停止条件 
+
+	return res;		
+}
+
+/* QMA7981初始化设置 */
+void QMA7981Init(void)   //QMA7981初始化设置
+{
+	P_SW2 |= 0xB0; // EAXFR=1使能访问XFR  I2C_S=11把I2C引脚映射到P3.2 P3.3引脚
+
+	I2CCFG = 0xFF;   //使能I2C主机模式
+	I2CMSST = 0x00;
+	Write_Byte(0x11,0xc0);       //将设备设置为active模式
+}
+
