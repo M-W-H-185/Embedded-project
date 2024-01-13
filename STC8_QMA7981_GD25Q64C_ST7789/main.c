@@ -59,7 +59,7 @@ void task1(void)
 		OSCtxSw();	// 最好在任务后面放这个
 	}
 }
-unsigned char QMA7981Read(unsigned char reg);
+QMA7981_XYZ xdata q_xyz;
 
 void task2(void)
 {
@@ -68,11 +68,11 @@ void task2(void)
 	while(1)
 	{
 		EA = 0;
-		id = Read_Byte(0x00);
-		printf("id:%x\r\n",id);
+//		id = Read_Byte(0x00);
+//		printf("id:%x\r\n",id);
+		q_xyz = qm7891_read_xyz();
+		printf("x:%d y:%d z:%d \r\n",q_xyz.x, q_xyz.y, q_xyz.z);
 		EA = 1;
-		
-		os_delay(1000);
 		LED_Y = 1;
 		os_delay(100);
 		os_delay(100);
