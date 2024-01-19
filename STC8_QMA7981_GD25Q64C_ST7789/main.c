@@ -13,7 +13,7 @@
 #include "os_queue.h"
 #include "os_semaphore.h"
 #include "QMA7981.h"
-
+#include "st7789.h"
 /* 发光二极管定义 */
 
 sbit LED_R = P0^5;    // 红色LED
@@ -28,23 +28,23 @@ sbit K3 = P3^5;     // 按键K3
 
 // 任务堆
 os_uint8_t xdata task_stack1[80] = {0};			/*任务1堆.*/
-os_uint8_t xdata task_stack2[20] = {0};			/*任务2堆.*/
+os_uint8_t xdata task_stack2[300] = {0};			/*任务2堆.*/
 os_uint8_t xdata task_stack3[80] = {0};			/*任务2堆.*/
 // 任务堆
-
 
 typedef struct test_ty{
 	os_uint8_t 	k1;
 	os_uint16_t k2;
 	os_uint32_t k3;
 };
-
+/* 引入外部全局变量 */
+extern unsigned int  POINT_COLOR; // 点的颜色
+extern unsigned int  BACK_COLOR;  // 背景色
 QueueHandle xdata queue_1;
 struct test_ty xdata queue_buff[5];
 SemaphoreHandle xdata sem_handle1;
 
 SemaphoreHandle xdata sem_handle2;
-
 void task1(void)
 {
 	while(1)
@@ -60,10 +60,12 @@ void task1(void)
 	}
 }
 QMA7981_XYZ xdata q_xyz;
+	unsigned int xdata ccc = GREEN;
 
 void task2(void)
 {
 	unsigned char xdata id = 0;
+
 
 	while(1)
 	{
@@ -72,14 +74,21 @@ void task2(void)
 		//		printf("id:%x\r\n",id);
 		q_xyz = qm7891_read_xyz();
 		printf("x:%d y:%d z:%d \r\n",q_xyz.x, q_xyz.y, q_xyz.z);
+		
+		LCD_Clear(ccc ); // 液晶屏显示黑色
+		ccc  = ccc + 50;
+		
+		
 		EA = 1;
 		LED_Y = 1;
 		os_delay(100);
 		os_delay(100);
-
+		
+	
 		LED_Y = 0;
 		os_delay(100);
 		os_delay(100);
+		
 		OSCtxSw();
 	}
 }
@@ -143,16 +152,31 @@ void Uart1Init(void)  //115200bps@35MHz
 	TI = 1; // 加这句话可以使用printf
 }
 
+/* 把IO口初始化为双向模式 */
+void IO_Init(void)
+{
+	P0M0 = 0x00;   //设置P0.0~P0.7为双向口模式
+	P0M1 = 0x00;
+	P1M0 = 0x00;   //设置P1.0~P1.7为双向口模式
+	P1M1 = 0x00;
+	P2M0 = 0x00;   //设置P2.0~P2.7为双向口模式
+	P2M1 = 0x00;
+	P3M0 = 0x00;   //设置P3.0~P3.7为双向口模式
+	P3M1 = 0x00;
+	P4M0 = 0x00;   //设置P4.0~P4.7为双向口模式
+	P4M1 = 0x00;
+	P5M0 = 0x00;   //设置P5.0~P5.7为双向口模式
+	P5M1 = 0x00;
+}
 
 /* 主函数 */
 void main()
 {
-
+	/* 定义局部变量 */
+	unsigned char i,cnt=0;
+	unsigned int pointX_new, pointY_new, pointX_old, pointY_old; // 刻度指针坐标
 	EA = 0;
-	P0M0 = 0x00;                                //设置P0.0~P0.7为双向口模式
-	P0M1 = 0x00;
-	P3M0 = 0x00;                                //设置P3.0~P3.7为双向口模式
-	P3M1 = 0x00;
+	IO_Init();
 
 
 	Uart1Init();		// 初始化串口1 
@@ -160,7 +184,10 @@ void main()
 	LED_G = 0;
 
 	QMA7981Init();
+	LCD_Init();
 	
+	LCD_Clear(BLACK); // 液晶屏显示黑色
+
 	os_init();	
 	// 创建一个二值型信号量
 	semaphoreCreateBinary(&sem_handle1);
@@ -180,4 +207,3 @@ void main()
 	
 
 }
-

@@ -76,14 +76,15 @@ unsigned char Read_Byte(unsigned char reg)
 	unsigned char res;
 	
 	Start(); 
-	SendData(0x24);//发送器件地址+写命令	
+	SendData(0x24);	//发送器件地址+写命令	
 	RecvACK();		//等待应答 
 	SendData(reg);	//写寄存器地址
 	RecvACK();		//等待应答
+	
 	Start(); 
-	SendData(0x25);//发送器件地址+读命令	
+	SendData(0x25);	//发送器件地址+读命令	
 	RecvACK();		//等待应答 
-	res=RecvData();//读取数据,发送nACK 
+	res=RecvData();	//读取数据,发送nACK 
 	SendNAK();
 	Stop();			//产生一个停止条件 
 
