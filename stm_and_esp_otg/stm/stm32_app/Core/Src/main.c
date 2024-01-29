@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,6 +61,8 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define INFLASH_START_ADDR      ((uint32_t)0x8000000)  // STM32 内部FLASH的起始地址
+#define INFLASH_VTOR_OFFSET     ((uint32_t)0x8003000)  // APP向量表的偏移地址，与APP的起始地址保持一致
 
 /* USER CODE END 0 */
 
@@ -71,7 +73,8 @@ static void MX_USART2_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  SCB->VTOR = INFLASH_START_ADDR | INFLASH_VTOR_OFFSET;     // 设置向量表的起始地址
+  __enable_irq();    	// 开启总中断
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -96,7 +99,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  SEGGER_RTT_Init();
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+  SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
+  SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
+  SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -106,6 +114,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    HAL_Delay(1111);
+    SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
+    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
   }
   /* USER CODE END 3 */
 }
@@ -255,19 +266,18 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
+  /*Configure GPIO pin : PB12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_12;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
