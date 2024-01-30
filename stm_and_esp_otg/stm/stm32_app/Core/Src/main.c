@@ -75,6 +75,8 @@ int main(void)
   /* USER CODE BEGIN 1 */
   SCB->VTOR = INFLASH_START_ADDR | INFLASH_VTOR_OFFSET;     // 设置向量表的起始地址
   __enable_irq();    	// 开启总中断
+  uint8_t rx_buff[] = "Hello i is app !\r\n";
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -102,9 +104,6 @@ int main(void)
   SEGGER_RTT_Init();
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
   SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
-  SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
-  SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
-
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -117,6 +116,8 @@ int main(void)
     HAL_Delay(1111);
     SEGGER_RTT_printf(0, "Hello i is app !\r\n");  
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+    HAL_UART_Transmit(&huart1,rx_buff,sizeof(rx_buff),100);
+
   }
   /* USER CODE END 3 */
 }
