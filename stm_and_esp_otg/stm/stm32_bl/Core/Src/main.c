@@ -99,24 +99,70 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
   /* NOTE: This function Should not be modified, when the callback is needed,
            the HAL_UART_TxCpltCallback could be implemented in the user file
    */
- 
-	if(Uart1_Rx_Cnt >= 255)  //溢出判断
-	{
-		Uart1_Rx_Cnt = 0;
-		memset(Uart1_RxBuff,0x00,sizeof(Uart1_RxBuff));
-		HAL_UART_Transmit(&huart1, (uint8_t *)&cAlmStr, sizeof(cAlmStr),0xFFFF);	
-	}
-	else
-	{
-		Uart1_RxBuff[Uart1_Rx_Cnt++] = aRxBuffer;   //接收数据转存
-	
-		if((Uart1_RxBuff[Uart1_Rx_Cnt-1] == 0x0A)&&(Uart1_RxBuff[Uart1_Rx_Cnt-2] == 0x0D)) //判断结束位
-		{
-			HAL_UART_Transmit(&huart1, (uint8_t *)&Uart1_RxBuff, Uart1_Rx_Cnt,0xFFFF); //将收到的信息发送出去
-			Uart1_Rx_Cnt = 0;
-			memset(Uart1_RxBuff,0x00,sizeof(Uart1_RxBuff)); //清空数组
-		}
-	}
+  static uint16_t  uart1_rx_count = 0;
+  static uint8_t   uart1_rx_buff[300];		// uart1 接收缓冲
+  static uint16_t  uart1_rx_full_length = 0; // 指令的完整长度
+  uart1_rx_buff[uart1_rx_count] = aRxBuffer;   
+  uart1_rx_count ++;
+  
+  // 帧头 1 + 帧头 2 + cmdid + is_ack + 长度高位 + 长度低位
+  if(uart1_rx_count >= 2)
+  {   
+    if(uart1_rx_buff[0] == 0xED && uart1_rx_buff[1] == 0x90)  // 校验一次帧头先
+    {
+      // 提取 指令的完整长度
+      if(uart1_rx_count == 6)
+      {
+        uart1_rx_full_length = 6;
+        uart1_rx_full_length +=  ((uart1_rx_buff)[4] << 8) | (uart1_rx_buff)[5];  // 数据区长度
+        uart1_rx_full_length += 2;  // 校验和的长度
+        SEGGER_RTT_printf(0, "uart1_rx_full_length:%d\r\n",uart1_rx_full_length);  
+
+      }
+    }
+    else
+    {
+      // 帧头异常 清空
+      SEGGER_RTT_printf(0, "uart data head error !!!\r\n",uart1_rx_full_length);  
+      //清空rx缓冲区
+      memset(uart1_rx_buff,0x00,sizeof(uart1_rx_buff)); 
+      uart1_rx_count = 0;
+      uart1_rx_full_length = 0;
+    }
+    // 如果uart1 计数器 等于 指令的完整长度时 代表接收成功
+    if(uart1_rx_count == uart1_rx_full_length)
+    {
+      SEGGER_RTT_printf(0,"uart data read success:");
+      for(int i = 0;i<uart1_rx_full_length;i++)
+      {
+        SEGGER_RTT_printf(0," %02x",uart1_rx_buff[i]);
+      }
+      SEGGER_RTT_printf(0,"\n");
+      //清空rx缓冲区
+      memset(uart1_rx_buff,0x00,sizeof(uart1_rx_buff)); 
+      uart1_rx_count = 0;
+      uart1_rx_full_length = 0;
+    }
+  }
+  
+
+//	if(Uart1_Rx_Cnt >= 255)  //溢出判断
+//	{
+//		Uart1_Rx_Cnt = 0;
+//		memset(Uart1_RxBuff,0x00,sizeof(Uart1_RxBuff));
+//		HAL_UART_Transmit(&huart1, (uint8_t *)&cAlmStr, sizeof(cAlmStr),0xFFFF);	
+//	}
+//	else
+//	{
+//		Uart1_RxBuff[Uart1_Rx_Cnt++] = aRxBuffer;   //接收数据转存
+//	
+//		if((Uart1_RxBuff[Uart1_Rx_Cnt-1] == 0x0A)&&(Uart1_RxBuff[Uart1_Rx_Cnt-2] == 0x0D)) //判断结束位
+//		{
+//			HAL_UART_Transmit(&huart1, (uint8_t *)&Uart1_RxBuff, Uart1_Rx_Cnt,0xFFFF); //将收到的信息发送出去
+//			Uart1_Rx_Cnt = 0;
+//			memset(Uart1_RxBuff,0x00,sizeof(Uart1_RxBuff)); //清空数组
+//		}
+//	}
 	
 	HAL_UART_Receive_IT(&huart1, (uint8_t *)&aRxBuffer, 1);   //再开启接收中断
 }
@@ -173,7 +219,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
+//    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
     HAL_Delay(1111);
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
    
