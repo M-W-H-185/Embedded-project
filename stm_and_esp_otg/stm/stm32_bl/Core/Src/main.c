@@ -42,6 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart1;
+DMA_HandleTypeDef hdma_usart1_rx;
 
 /* USER CODE BEGIN PV */
 uint8_t rx_buff[300] = "Hello i is bootLoader !\r\n";
@@ -51,6 +52,7 @@ uint8_t rx_buff[300] = "Hello i is bootLoader !\r\n";
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -87,85 +89,37 @@ void IAP_LoadApp(uint32_t appxaddr)
 		JumpApp();								                //跳转到APP.
 	}
 }
-uint8_t aRxBuffer;			//接收中断缓冲
-uint8_t Uart1_RxBuff[256];		//接收缓冲
-uint8_t Uart1_Rx_Cnt = 0;		//接收缓冲计数
-uint8_t	cAlmStr[] = "数据溢出(大于256)\r\n";
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+#define USRT1_RX_BUFF_SIZE 1024
+uint8_t uart1_rx_buff[USRT1_RX_BUFF_SIZE];                                                  //声明外部变量 
+void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
 {
-  /* Prevent unused argument(s) compilation warning */
-  UNUSED(huart);
-  /* NOTE: This function Should not be modified, when the callback is needed,
-           the HAL_UART_TxCpltCallback could be implemented in the user file
-   */
-  static uint16_t  uart1_rx_count = 0;
-  static uint8_t   uart1_rx_buff[300];		// uart1 接收缓冲
-  static uint16_t  uart1_rx_full_length = 0; // 指令的完整长度
-  uart1_rx_buff[uart1_rx_count] = aRxBuffer;   
-  uart1_rx_count ++;
-  
-  // 帧头 1 + 帧头 2 + cmdid + is_ack + 长度高位 + 长度低位
-  if(uart1_rx_count >= 2)
-  {   
-    if(uart1_rx_buff[0] == 0xED && uart1_rx_buff[1] == 0x90)  // 校验一次帧头先
-    {
-      // 提取 指令的完整长度
-      if(uart1_rx_count == 6)
-      {
-        uart1_rx_full_length = 6;
-        uart1_rx_full_length +=  ((uart1_rx_buff)[4] << 8) | (uart1_rx_buff)[5];  // 数据区长度
-        uart1_rx_full_length += 2;  // 校验和的长度
-        SEGGER_RTT_printf(0, "uart1_rx_full_length:%d\r\n",uart1_rx_full_length);  
+    HAL_UART_DMAStop(&huart1);      //停止本次DMA传输
+    
+    uint8_t data_length  = USRT1_RX_BUFF_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx); //计算接收到的数据长度 buff_size - dma剩下的空间
 
-      }
-    }
-    else
-    {
-      // 帧头异常 清空
-      SEGGER_RTT_printf(0, "uart data head error !!!\r\n",uart1_rx_full_length);  
-      //清空rx缓冲区
-      memset(uart1_rx_buff,0x00,sizeof(uart1_rx_buff)); 
-      uart1_rx_count = 0;
-      uart1_rx_full_length = 0;
-    }
-    // 如果uart1 计数器 等于 指令的完整长度时 代表接收成功
-    if(uart1_rx_count == uart1_rx_full_length)
-    {
-      SEGGER_RTT_printf(0,"uart data read success:");
-      for(int i = 0;i<uart1_rx_full_length;i++)
-      {
-        SEGGER_RTT_printf(0," %02x",uart1_rx_buff[i]);
-      }
-      SEGGER_RTT_printf(0,"\n");
-      //清空rx缓冲区
-      memset(uart1_rx_buff,0x00,sizeof(uart1_rx_buff)); 
-      uart1_rx_count = 0;
-      uart1_rx_full_length = 0;
-    }
-  }
-  
+    SEGGER_RTT_printf(0, "Receive Data(length = %d): ",data_length);
+    HAL_UART_Transmit(&huart1,uart1_rx_buff,data_length,USRT1_RX_BUFF_SIZE);            //测试函数：将接收到的数据打印出去
+    SEGGER_RTT_printf(0, "\r\n");
 
-//	if(Uart1_Rx_Cnt >= 255)  //溢出判断
-//	{
-//		Uart1_Rx_Cnt = 0;
-//		memset(Uart1_RxBuff,0x00,sizeof(Uart1_RxBuff));
-//		HAL_UART_Transmit(&huart1, (uint8_t *)&cAlmStr, sizeof(cAlmStr),0xFFFF);	
-//	}
-//	else
-//	{
-//		Uart1_RxBuff[Uart1_Rx_Cnt++] = aRxBuffer;   //接收数据转存
-//	
-//		if((Uart1_RxBuff[Uart1_Rx_Cnt-1] == 0x0A)&&(Uart1_RxBuff[Uart1_Rx_Cnt-2] == 0x0D)) //判断结束位
-//		{
-//			HAL_UART_Transmit(&huart1, (uint8_t *)&Uart1_RxBuff, Uart1_Rx_Cnt,0xFFFF); //将收到的信息发送出去
-//			Uart1_Rx_Cnt = 0;
-//			memset(Uart1_RxBuff,0x00,sizeof(Uart1_RxBuff)); //清空数组
-//		}
-//	}
-	
-	HAL_UART_Receive_IT(&huart1, (uint8_t *)&aRxBuffer, 1);   //再开启接收中断
+    memset(uart1_rx_buff,0,data_length);                                        //清零接收缓冲区
+    data_length = 0;
+    HAL_UART_Receive_DMA(&huart1, (uint8_t*)uart1_rx_buff, USRT1_RX_BUFF_SIZE); //重启开始DMA传输 每次255字节数据
 }
+
+
+void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
+{
+    if(USART1 == huart1.Instance)                                   //判断是否是串口1（！此处应写(huart->Instance == USART1)
+    {
+        if(RESET != __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE))   //判断是否是空闲中断
+        {
+            __HAL_UART_CLEAR_IDLEFLAG(&huart1);                     //清楚空闲中断标志（否则会一直不断进入中断）
+            SEGGER_RTT_printf(0, "\r\nUART1 Idle IQR Detected\r\n");
+            USAR_UART_IDLECallback(huart);                          //调用中断处理函数
+        }
+    }
+}
+
 
 
 
@@ -199,12 +153,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)&aRxBuffer, 1);
-
   /* USER CODE BEGIN 2 */
 
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
   SEGGER_RTT_Init();
   SEGGER_RTT_printf(0, "Init RTT Log\r\n");  
   SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
@@ -220,10 +172,10 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 //    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
-    HAL_Delay(1111);
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
-   
-    //HAL_Delay(1111);
+//    HAL_Delay(1111);
+//    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+//   
+//    //HAL_Delay(1111);
     // IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
   }
   /* USER CODE END 3 */
@@ -235,33 +187,39 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  LL_FLASH_SetLatency(LL_FLASH_LATENCY_2);
+  while(LL_FLASH_GetLatency()!= LL_FLASH_LATENCY_2)
   {
-    Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  LL_RCC_HSE_Enable();
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+   /* Wait till HSE is ready */
+  while(LL_RCC_HSE_IsReady() != 1)
+  {
+
+  }
+  LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE_DIV_1, LL_RCC_PLL_MUL_9);
+  LL_RCC_PLL_Enable();
+
+   /* Wait till PLL is ready */
+  while(LL_RCC_PLL_IsReady() != 1)
+  {
+
+  }
+  LL_RCC_SetAHBPrescaler(LL_RCC_SYSCLK_DIV_1);
+  LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_2);
+  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
+  LL_RCC_SetSysClkSource(LL_RCC_SYS_CLKSOURCE_PLL);
+
+   /* Wait till System clock is ready */
+  while(LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL)
+  {
+
+  }
+  LL_SetSystemCoreClock(72000000);
+
+   /* Update the time base */
+  if (HAL_InitTick (TICK_INT_PRIORITY) != HAL_OK)
   {
     Error_Handler();
   }
@@ -295,8 +253,28 @@ static void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
+    __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);                    // 空闲中断 串口中断
+    HAL_UART_Receive_DMA(&huart1, (uint8_t*)uart1_rx_buff, USRT1_RX_BUFF_SIZE);     //设置DMA传输，讲串口1的数据搬运到recvive_buff中，
+                                                                    //每次255个字节
 
   /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* Init with LL driver */
+  /* DMA controller clock enable */
+  LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
+
+  /* DMA interrupt init */
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
 }
 
