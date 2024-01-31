@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stm32f1xx_hal_flash.h"
 #include "string.h"
 #include "SEGGER_RTT.h"
 /* USER CODE END Includes */
@@ -63,7 +64,6 @@ static void MX_USART1_UART_Init(void);
 
 #define FLASH_APP_ADDR 0x8003000  //你的APP存放起始地址
 
-
 typedef void (*pFunction)(void);
 
 
@@ -89,21 +89,99 @@ void IAP_LoadApp(uint32_t appxaddr)
 		JumpApp();								                //跳转到APP.
 	}
 }
+
+
+
+// 计算 CRCCRC-16/MODBUS
+// crc modbus 校验和遵循 低位在前 高位在后
+// https://blog.csdn.net/m0_37697335/article/details/113267780
+uint16_t calculateCRC(uint8_t *data, int length) {
+    unsigned int i;
+    unsigned short crc = 0xFFFF;  //crc16位寄存器初始值
+    // printf("crc16_modbus校验->length:%d data:",length);
+    while(length--)
+    {
+        // printf("%02x ",*data);
+        crc ^= *data++;
+        for (i = 0; i < 8; ++i)
+        {
+            if (crc & 1)
+            {
+                crc = (crc >> 1) ^ 0xA001; //多项式 POLY（0x8005)的高低位交换值，这是由于其模型的一些参数决定的
+            }
+            else
+            {
+                crc = (crc >> 1);
+            }
+        }
+    }
+    // printf("\r\n");
+    return crc;
+}
+// 合并用的
+#define COMBINE_BYTES_TO_UINT16(high_byte, low_byte) (((uint16_t)(high_byte) << 8) | (low_byte))
+
 #define USRT1_RX_BUFF_SIZE 1024
-uint8_t uart1_rx_buff[USRT1_RX_BUFF_SIZE];                                                  //声明外部变量 
-void USAR_UART_IDLECallback(UART_HandleTypeDef *huart)
+#define UART_DATA_HEAD_1 0xED
+#define UART_DATA_HEAD_2 0x90
+uint8_t uart1_rx_buff[USRT1_RX_BUFF_SIZE]; 
+uint8_t data_length  = 0;
+
+void uart1_dataBuffReset(void)
 {
-    HAL_UART_DMAStop(&huart1);      //停止本次DMA传输
-    
-    uint8_t data_length  = USRT1_RX_BUFF_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx); //计算接收到的数据长度 buff_size - dma剩下的空间
-
-    SEGGER_RTT_printf(0, "Receive Data(length = %d): ",data_length);
-    HAL_UART_Transmit(&huart1,uart1_rx_buff,data_length,USRT1_RX_BUFF_SIZE);            //测试函数：将接收到的数据打印出去
-    SEGGER_RTT_printf(0, "\r\n");
-
     memset(uart1_rx_buff,0,data_length);                                        //清零接收缓冲区
     data_length = 0;
     HAL_UART_Receive_DMA(&huart1, (uint8_t*)uart1_rx_buff, USRT1_RX_BUFF_SIZE); //重启开始DMA传输 每次255字节数据
+
+}
+void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
+{
+    HAL_UART_DMAStop(&huart1);      //停止本次DMA传输
+    
+    data_length  = USRT1_RX_BUFF_SIZE - __HAL_DMA_GET_COUNTER(&hdma_usart1_rx); //计算接收到的数据长度 buff_size - dma剩下的空间
+    
+    /** 处理 串口数据 **/
+    
+    SEGGER_RTT_printf(0, "Receive Data(length = %d): ",data_length);
+    HAL_UART_Transmit(&huart1,uart1_rx_buff,data_length,USRT1_RX_BUFF_SIZE);            //测试函数：将接收到的数据打印出去
+    // 校验帧头
+    if(uart1_rx_buff[0] != UART_DATA_HEAD_1 || uart1_rx_buff[1] != UART_DATA_HEAD_2)
+    {
+        SEGGER_RTT_printf(0,"uart1 read head error!\r\n");
+        uart1_dataBuffReset();
+        return;
+    }
+    
+    // 命令帧
+    uint8_t  cmd_id = uart1_rx_buff[2];
+    // 是否需要应答
+    uint8_t  isack  = uart1_rx_buff[3];
+    // 数据块的长度
+    uint16_t data_block_size = ((uart1_rx_buff)[4] << 8) | (uart1_rx_buff)[5];  
+    // 数据块
+    uint8_t *data_block = &(uart1_rx_buff[6]);
+    // 串口接收后解析的crc modbus 校验和
+    uint16_t uart_calculateCRC = calculateCRC(uart1_rx_buff,data_length - 2);
+    // 串口接收到的crc modbus校验和
+    uint16_t uart_read_crc = COMBINE_BYTES_TO_UINT16(uart1_rx_buff[data_length-1],uart1_rx_buff[data_length-2]);
+    // crc modbus 校验和
+    if(uart_calculateCRC != uart_read_crc)
+    {
+        SEGGER_RTT_printf(0,"uart1 read crc modbus error!\r\n");
+        uart1_dataBuffReset();
+        return;
+    }
+
+    // 到了这里代表串口接收到的数据是完整正确的
+    SEGGER_RTT_printf(0, 
+        "uart1 read success! cmd_id:%02x isack:%02x data_block_size:%d  uart_calculateCRC:%d uart_read_crc:%d uartCRC_L:%02x uartCRC_H:%02x\r\n",
+        cmd_id,isack,data_block_size,uart_calculateCRC,uart_read_crc,uart1_rx_buff[data_length-2],uart1_rx_buff[data_length-1]
+    );
+            
+    /** 处理 串口数据 **/
+       
+ 
+    uart1_dataBuffReset();
 }
 
 
@@ -114,8 +192,7 @@ void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
         if(RESET != __HAL_UART_GET_FLAG(&huart1, UART_FLAG_IDLE))   //判断是否是空闲中断
         {
             __HAL_UART_CLEAR_IDLEFLAG(&huart1);                     //清楚空闲中断标志（否则会一直不断进入中断）
-            SEGGER_RTT_printf(0, "\r\nUART1 Idle IQR Detected\r\n");
-            USAR_UART_IDLECallback(huart);                          //调用中断处理函数
+            USAR1_UART_IDLECallback(huart);                          //调用中断处理函数
         }
     }
 }
@@ -158,10 +235,17 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   SEGGER_RTT_Init();
+
+// 注意写入过一次，下一次就得先擦除！不如写入无效的
+HAL_FLASH_Unlock();     //解锁Flash
+uint16_t Write_Flash_Data = 0x6666;
+HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,FLASH_APP_ADDR,Write_Flash_Data);  // 写入flash FLASH_TYPEPROGRAM_HALFWORD是按照16bit写入的
+HAL_FLASH_Lock();       //锁住Flash
+
   SEGGER_RTT_printf(0, "Init RTT Log\r\n");  
   SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
 
- 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

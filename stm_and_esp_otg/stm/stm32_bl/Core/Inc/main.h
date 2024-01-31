@@ -68,7 +68,8 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
-void USAR_UART_IDLECallback(UART_HandleTypeDef *huart);
+void USER_UART_IRQHandler(UART_HandleTypeDef *huart);
+
 
 /* USER CODE END Private defines */
 
