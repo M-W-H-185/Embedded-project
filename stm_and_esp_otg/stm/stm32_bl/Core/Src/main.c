@@ -120,12 +120,16 @@ uint16_t calculateCRC(uint8_t *data, int length) {
 }
 // 合并用的
 #define COMBINE_BYTES_TO_UINT16(high_byte, low_byte) (((uint16_t)(high_byte) << 8) | (low_byte))
+#define FLASH_MAX_PAGE_SIZE ((1024*2))  // stm32f103每一页的大小
 
 #define USRT1_RX_BUFF_SIZE 1024
 #define UART_DATA_HEAD_1 0xED
 #define UART_DATA_HEAD_2 0x90
 uint8_t uart1_rx_buff[USRT1_RX_BUFF_SIZE]; 
 uint8_t data_length  = 0;
+
+uint16_t firmware_cut = 0;  // 固件计数器 每 FLASH_MAX_PAGE_SIZE 就写入一次！
+uint8_t firmware_buff[FLASH_MAX_PAGE_SIZE] = {0};   // 固件缓冲区 2048kb
 
 void uart1_dataBuffReset(void)
 {
@@ -151,7 +155,7 @@ void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
         uart1_dataBuffReset();
         return;
     }
-    
+    // 帧头1 + 帧头2 + cmd_id + isack + size_d + size_h + ....dataBlock
     // 命令帧
     uint8_t  cmd_id = uart1_rx_buff[2];
     // 是否需要应答
@@ -177,6 +181,24 @@ void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
         "uart1 read success! cmd_id:%02x isack:%02x data_block_size:%d  uart_calculateCRC:%d uart_read_crc:%d uartCRC_L:%02x uartCRC_H:%02x\r\n",
         cmd_id,isack,data_block_size,uart_calculateCRC,uart_read_crc,uart1_rx_buff[data_length-2],uart1_rx_buff[data_length-1]
     );
+    if(cmd_id == 0x03)   // 固件接收
+    {
+        // 帧头1 + 帧头2 + cmd_id + isack + size_d + size_h + (dataBlock[0] = 分包号) +..dataBlock
+        uint16_t uart_firmware_block_size = data_block_size - 1;// 因为固件包的第一位是固件包分包号
+        uint8_t firmware_split_number = uart1_rx_buff[6];
+        uint8_t *firmware_block = &(uart1_rx_buff[7]);
+        
+        SEGGER_RTT_printf(0,"firmware_Log: firmware_split_number:%d firmware_block[0~2]:%02x %02x %02x\r\n",firmware_split_number,
+            firmware_block[0],firmware_block[1],firmware_block[2]
+        );
+        // 上面就收到了固件包了
+        firmware_cut += uart_firmware_block_size;
+        if(firmware_cut == FLASH_MAX_PAGE_SIZE) // 每 FLASH_MAX_PAGE_SIZE 就写入一次！
+        {
+            firmware_cut = 0;
+            SEGGER_RTT_printf(0,"read 2048 firmware\r\n");
+        }
+    }
             
     /** 处理 串口数据 **/
        
@@ -197,8 +219,51 @@ void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
     }
 }
 
+// flash 操作函数 begin
+// stm32 flash采用小端存储方式 即 低位在前 高位在后
+// 比如flash[2] = {0x58,0x0D} 则读取出来的值就是 uint16 = 0x0D58
+uint16_t flash_read_byte(uint32_t faddr)
+{
+	return *(uint32_t*)faddr; 
+}
 
+uint8_t flash_read(uint32_t write_address, uint16_t *data_, uint16_t data_size)
+{
+    uint16_t i;
+	for(i=0; i<data_size; i++)
+	{
+		data_[i]=flash_read_byte(write_address);//读取2个字节.
+		write_address+=2;//偏移2个字节.	
+	}
+    
+    return 0 ;
+}
 
+// flash写入函数 data_size按照uint16算
+// uint16 temp[5] data_size = sizeof(temp)
+uint8_t flash_write(uint32_t write_address, uint16_t *data_, uint16_t data_size)
+{
+    // 1、计算flash写入开始页地址
+    uint32_t flash_write_pageAddress_start = (write_address) & ~(FLASH_MAX_PAGE_SIZE - 1);  // 2047是页大小减去1
+    uint32_t flash_write_pageAddress_end = (write_address + data_size - 1) & ~(2047);
+    // 当前的页扇区的buff区
+    uint16_t this_flashPageBuffTemp[FLASH_MAX_PAGE_SIZE / 2] = {0xff};
+    memset(this_flashPageBuffTemp, 0xff, (FLASH_MAX_PAGE_SIZE / 2));
+    
+    // 2、考虑到多扇区写入
+    while (flash_write_pageAddress_start <= flash_write_pageAddress_end) {
+        flash_read(flash_write_pageAddress_start, this_flashPageBuffTemp, (FLASH_MAX_PAGE_SIZE / 2));
+        
+ 
+        
+        
+        flash_write_pageAddress_start += FLASH_MAX_PAGE_SIZE;  // 下一页
+    }
+    
+    return (0);
+}
+
+// flash 操作函数 end
 
 
 /* USER CODE END 0 */
@@ -209,60 +274,66 @@ void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-  /* USER CODE END 1 */
+    /* USER CODE BEGIN 1 */
+        // bl 占用大小 0x3000 
+        // falsh每页 2048
+        // 所以 bl占用了 6页
+    /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+    /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-  /* USER CODE BEGIN Init */
+    /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+    /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+    /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+    /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_USART1_UART_Init();
-  /* USER CODE BEGIN 2 */
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_DMA_Init();
+    MX_USART1_UART_Init();
+    /* USER CODE BEGIN 2 */
 
-  SEGGER_RTT_Init();
+    SEGGER_RTT_Init();
 
-// 注意写入过一次，下一次就得先擦除！不如写入无效的
-HAL_FLASH_Unlock();     //解锁Flash
-uint16_t Write_Flash_Data = 0x6666;
-HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,FLASH_APP_ADDR,Write_Flash_Data);  // 写入flash FLASH_TYPEPROGRAM_HALFWORD是按照16bit写入的
-HAL_FLASH_Lock();       //锁住Flash
+//    // stm32 flash 只能写 0 不能写 1 所以再次写入需要擦除
+//    HAL_FLASH_Unlock();     //解锁Flash
+//    uint16_t Write_Flash_Data = 0x6666;
+//    HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,FLASH_APP_ADDR,Write_Flash_Data);  // 写入flash FLASH_TYPEPROGRAM_HALFWORD是按照16bit写入的
+//    HAL_FLASH_Lock();       //锁住Flash
 
-  SEGGER_RTT_printf(0, "Init RTT Log\r\n");  
-  SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
-
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+    SEGGER_RTT_printf(0, "Init RTT Log\r\n");  
+    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
+//    uint16_t temp[5] = {0};
+//    
+//    flash_read(0x8000000, temp, sizeof(temp));
 //    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
-//    HAL_Delay(1111);
-//    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
-//   
-//    //HAL_Delay(1111);
-    // IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
-  }
-  /* USER CODE END 3 */
+
+    /* USER CODE END 2 */
+
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
+    while (1)
+    {
+        /* USER CODE END WHILE */
+
+        /* USER CODE BEGIN 3 */
+        //    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
+        //    HAL_Delay(1111);
+        //    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+        //   
+        //    //HAL_Delay(1111);
+        // IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
+    }
+    /* USER CODE END 3 */
 }
 
 /**
