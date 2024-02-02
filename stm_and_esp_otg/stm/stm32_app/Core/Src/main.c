@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-//#include "SEGGER_RTT.h"
+#include "SEGGER_RTT.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -101,9 +101,9 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  //SEGGER_RTT_Init();
+  SEGGER_RTT_Init();
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-  //SEGGER_RTT_printf(0, "Hello i is app v0.0.1 !\r\n");  
+  SEGGER_RTT_printf(0, "Hello i is app v0.0.1 !\r\n");  
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -114,7 +114,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     HAL_Delay(1111);
-    //SEGGER_RTT_printf(0, "Hello i is app v0.0.1 !\r\n");  
+    SEGGER_RTT_printf(0, "Hello i is app v0.0.1 !\r\n");  
     HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
     HAL_UART_Transmit(&huart1,rx_buff,sizeof(rx_buff),100);
 
