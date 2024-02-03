@@ -22,9 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "stm32f1xx_hal_flash.h"
 #include "string.h"
 #include "SEGGER_RTT.h"
+#include "user_flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,8 +118,22 @@ uint16_t calculateCRC(uint8_t *data, int length) {
     return crc;
 }
 // 合并用的
+
 #define COMBINE_BYTES_TO_UINT16(high_byte, low_byte) (((uint16_t)(high_byte) << 8) | (low_byte))
-#define FLASH_MAX_PAGE_SIZE ((1024*2))  // stm32f103每一页的大小
+// uint8数组转uint16
+void convertUint8ToUint16(uint8_t *inputArray, uint16_t *outputArray, size_t arraySize, size_t outputArraySize) {
+	// 将uint8数组转换为uint16数组
+	for (size_t i = 0; i < arraySize; i += 2) {
+		outputArray[i / 2] = COMBINE_BYTES_TO_UINT16(inputArray[i + 1] ,inputArray[i]);
+	}
+	// 如果数组大小是奇数，补0xff
+	if (arraySize % 2 != 0) {
+		outputArray[outputArraySize-1] = COMBINE_BYTES_TO_UINT16(0x66 ,inputArray[arraySize-1]);
+	}
+}
+
+#define FLASH_MAX_PAGE_SIZE_8      (STM_SECTOR_SIZE)  // stm32f103每一页的大小
+#define FLASH_MAX_PAGE_SIZE_16     (STM_SECTOR_SIZE/2)  // stm32f103每一页的大小
 
 #define USRT1_RX_BUFF_SIZE 1024
 #define UART_DATA_HEAD_1 0xED
@@ -128,9 +142,13 @@ uint8_t uart1_rx_buff[USRT1_RX_BUFF_SIZE];
 uint8_t data_length  = 0;
 
 uint16_t firmware_size_cut = 0;  // 固件大小计数器 每 FLASH_MAX_PAGE_SIZE 就写入一次！
-uint16_t firmware_buff[FLASH_MAX_PAGE_SIZE/2] = {0};   // 固件缓冲区 2048bit
-uint8_t firmware_page_cut = 0;
-int8_t STMFLASH_WriteMultipleBytes(uint32_t WriteAddr,uint16_t  *pBuffer,uint16_t  NumToWrite);
+
+uint8_t firmware_buff_8[FLASH_MAX_PAGE_SIZE_8] = {0};   // 固件缓冲区 
+uint16_t firmware_buff_16[FLASH_MAX_PAGE_SIZE_16] = {0};   // 固件缓冲区 
+
+uint8_t firmware_page_cut = 0;  // flash第几页
+
+uint8_t is_update_success = 0;
 
 void uart1_dataBuffReset(void)
 {
@@ -202,28 +220,31 @@ void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
             firmware_split_number,firmware_split_max,
             uart_firmware_block_size
         );
-        for(int i = 0;i<64;i++)
-        {
-             // 比如flash[2] = {0x58,0x0D} 则读取出来的值就是 uint16 = 0x0D58
-            // firmware_size_cut - 128 就是让数组指向0从0写入
-            // /2 uint8_t 转了 uint16 就只需要写入一半的次数
-            // +1 。。
-            firmware_buff[ ((firmware_size_cut - 128) / 2)+ i ] = COMBINE_BYTES_TO_UINT16(firmware_block[(i*2)+1], firmware_block[(i*2)]);
-            //SEGGER_RTT_printf(0,"%04x",COMBINE_BYTES_TO_UINT16(firmware_block[(i*2)+1], firmware_block[(i*2)]));
+        // 将数据包存到buff区
+        memcpy( (uint8_t*)(firmware_buff_8 + (firmware_size_cut - uart_firmware_block_size)) , firmware_block, uart_firmware_block_size) ;
+        
+//        SEGGER_RTT_printf(0,"data: ");
+//        for(int i = 0 ; i<FLASH_MAX_PAGE_SIZE_8; i++)
+//        {
+//            SEGGER_RTT_printf(0,"%02x ",firmware_buff_8[i]);
+//        }
+//        SEGGER_RTT_printf(0,"\r\n ");
 
-        }            
-        SEGGER_RTT_printf(0,"\r\n");
-
+        
+        uint32_t worte_address = 0;
+        
         // 每收到FLASH_MAX_PAGE_SIZE个固件包就去写入一次flash
-        if (firmware_size_cut % FLASH_MAX_PAGE_SIZE == 0) {
-           
-//            for(int i =0;i<(FLASH_MAX_PAGE_SIZE/2);i++)
-//            {
-//                SEGGER_RTT_printf(0,"%04x ",firmware_buff[i]);
-//            }
-            SEGGER_RTT_printf(0,"\r\nread 2048 firmware %d  %08x\r\n",firmware_size_cut,0x8003000 + (firmware_page_cut * FLASH_MAX_PAGE_SIZE));
+        if (firmware_size_cut % FLASH_MAX_PAGE_SIZE_8 == 0) 
+        {
+            convertUint8ToUint16(firmware_buff_8, firmware_buff_16, FLASH_MAX_PAGE_SIZE_8, FLASH_MAX_PAGE_SIZE_16);
+            worte_address = FLASH_APP_ADDR + (firmware_page_cut * (FLASH_MAX_PAGE_SIZE_8));
+            STMFLASH_WriteMultipleBytes(worte_address, firmware_buff_16,FLASH_MAX_PAGE_SIZE_16);
+            SEGGER_RTT_printf(0,"write address:%7X , write size:%d  \n", worte_address, FLASH_MAX_PAGE_SIZE_16);
+
+
             
-            STMFLASH_WriteMultipleBytes(0x8003000 + (firmware_page_cut * FLASH_MAX_PAGE_SIZE),firmware_buff,sizeof(firmware_buff));
+            memset(firmware_buff_8,0xff,sizeof(firmware_buff_8));
+            memset(firmware_buff_16,0xff,sizeof(firmware_buff_16));
             firmware_size_cut = 0;
             firmware_page_cut++;
         }
@@ -231,16 +252,22 @@ void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
         // 当前分包号 = 最大分包号的时候 代表接受完成
         // 接收完了也得去写一次固件包
         if(firmware_split_number == firmware_split_max )
-        {
-            for(int i =0;i<(FLASH_MAX_PAGE_SIZE/2);i++)
-            {
-                SEGGER_RTT_printf(0,"%04x ",firmware_buff[i]);
-            }
-            SEGGER_RTT_printf(0,"\r\nread 2048 firmware %d  \r\n",firmware_size_cut);
-            firmware_page_cut++;
-            STMFLASH_WriteMultipleBytes(0x8003000 + (firmware_page_cut * FLASH_MAX_PAGE_SIZE),firmware_buff,sizeof(firmware_buff));
+        {           
+
+            convertUint8ToUint16(firmware_buff_8, firmware_buff_16, FLASH_MAX_PAGE_SIZE_8, FLASH_MAX_PAGE_SIZE_16);
+            worte_address = FLASH_APP_ADDR + (firmware_page_cut * (FLASH_MAX_PAGE_SIZE_8));
+            
+
+            STMFLASH_WriteMultipleBytes(worte_address, firmware_buff_16,FLASH_MAX_PAGE_SIZE_16);
+            
+            SEGGER_RTT_printf(0,"write address:%7X , write size:%d \n", worte_address, FLASH_MAX_PAGE_SIZE_16);
+
+            
+            memset(firmware_buff_8,0xff,sizeof(firmware_buff_8));
+            memset(firmware_buff_16,0xff,sizeof(firmware_buff_16));
             firmware_size_cut = 0;
-            SEGGER_RTT_printf(0,"read firmware finish ! %08x \r\n",0x8003000 + (firmware_page_cut * FLASH_MAX_PAGE_SIZE));
+            // 到此完整接受到了固件
+            is_update_success = 1;
         }
      
       
@@ -265,164 +292,6 @@ void USER_UART_IRQHandler(UART_HandleTypeDef *huart)
     }
 }
 
-// flash 操作函数 begin
-// stm32 flash采用小端存储方式 即 低位在前 高位在后
-// 比如flash[2] = {0x58,0x0D} 则读取出来的值就是 uint16 = 0x0D58
-/* 用户根据自己所选的芯片设置 */
-#define STM32_FLASH_SIZE 256            //所选STM32的FLASH容量大小(单位为K)
- 
-/* FLASH起始地址 */
-#define STM32_FLASH_BASE 0x08000000     //STM32 FLASH的起始地址
- 
-/* 小容量和中容量产品每页1K字节（1024 Byte）、大容量每页2K字节（2048 Byte）*/
-#if STM32_FLASH_SIZE < 256
-#define STM_SECTOR_SIZE 1024
-#else 
-#define STM_SECTOR_SIZE 2048
-#endif
- 
-/* 最多是2K字节 这里除以2是因为STM_SECTOR_SIZE是字节数，STMFLASH_BUF数组是半字数组 */
-uint16_t  STMFLASH_BUF[STM_SECTOR_SIZE/2];  
-
-/**
-*@brief		读取指定地址的半字(16位数据)
-*@param		faddr:读地址(此地址必须为2的倍数!!)
-*@return	读取的数据.
-*/
-uint16_t STMFLASH_ReadHalfWord(uint32_t faddr)
-{
-	return *(uint16_t*)faddr; 
-}
-/**
-*@brief     从指定地址开始读出指定长度的数据
-*@param     ReadAddr  : 起始地址
-*           pBuffer   : 数据指针
-*           NumToWrite: 半字(16位)数
-*@return    无
-*/
-void STMFLASH_ReadMultipleBytes(uint32_t ReadAddr,uint16_t  *pBuffer,uint16_t  NumToRead)      
-{
-    uint16_t  i;
-    for(i = 0;i < NumToRead;i++)
-    {
-        pBuffer[i] = STMFLASH_ReadHalfWord(ReadAddr);         // 读取2个字节.
-        ReadAddr += 2;                                        // 偏移2个字节. 
-    }
-}
-/**
-*@brief   无校验写入（该函数不校验Flash地址是否可写，是否需要擦除，所以不能直接用于写操作）
-*@param   WriteAddr : 起始地址
-*         pBuffer   : 数据指针
-*         NumToWrite: 半字(16位)数   
-*@return  无
-*/
-void STMFLASH_Write_NoCheck(uint32_t WriteAddr,uint16_t  *pBuffer,uint16_t  NumToWrite)   
-{                    
-    uint16_t  i;
-    for(i = 0;i < NumToWrite;i++)
-    {
-        HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,WriteAddr,pBuffer[i]);  // 写入flash FLASH_TYPEPROGRAM_HALFWORD是按照16bit写入的
-
-        WriteAddr += 2;                              // 地址增加2.
-    }  
-} 
-/**
-*@brief     从指定地址开始写入指定长度的数据
-*@param     WriteAddr : 起始地址(此地址必须为2的倍数!!)
-*           pBuffer   : 数据指针
-*           NumToWrite: 半字(16位)数(就是要写入的16位数据的个数.)
-*@return    无
-*/
-int8_t STMFLASH_WriteMultipleBytes(uint32_t WriteAddr,uint16_t  *pBuffer,uint16_t  NumToWrite)
-{
-    uint32_t  PageAddr;                                                                                            // Flash页地址
-    uint16_t  WordAddr;                                                                                            // 要写入的地址在Flash页中的位置(16位字计算)
-    uint16_t  WordRemainder;                                                                                       // Flash页中的剩余地址(16位字计算)
-    uint32_t  ShiftingAddr;                                                                                        // 去掉0X08000000后的地址
-    uint16_t  i;    
-    __disable_irq();
-    // 验证是否能被2整除
-    if (WriteAddr % 2 != 0) 
-    {
-        return -1;
-    } 
-
-    /* 当指定起始地址小于STM32_FLASH_BASE (0x0800000) 或者大于芯片本身的Flash容量时，写入地址无效，跳出函数 */
-    if(WriteAddr < STM32_FLASH_BASE || (WriteAddr >= (STM32_FLASH_BASE + 1024 * STM32_FLASH_SIZE)))
-    {
-        return -2;                                                                                                    // 非法地址
-    }
-    HAL_FLASH_Unlock(); 
-    ShiftingAddr  = WriteAddr - STM32_FLASH_BASE;                                                                  // 实际偏移地址.要写入数据起始地址的位置
-    PageAddr      =  ShiftingAddr / FLASH_PAGE_SIZE;                                                               // 要写入的地址所在的Flash页（0~256）
-    WordAddr      = (ShiftingAddr % FLASH_PAGE_SIZE) / 2;                                                          // 在Flash页内的偏移(2个字节为基本单位.)
-    WordRemainder = FLASH_PAGE_SIZE/2 - WordAddr;                                                                  // Flash页剩余空间大小
-    if(NumToWrite <= WordRemainder)
-    {
-        WordRemainder = NumToWrite;                                                                                // 不大于该Flash页范围
-    }
- 
-    while(1) 
-    {
-        STMFLASH_ReadMultipleBytes(PageAddr*FLASH_PAGE_SIZE + STM32_FLASH_BASE,STMFLASH_BUF,FLASH_PAGE_SIZE/2);    // 读出整个Flash页的内容存放到STMFLASH_BUF中
-        
-        /* 查验数据，看flash页是否需要擦除 */
-        for(i = 0;i < WordRemainder;i++)                                                                           // 校验数据
-        {
-            if(STMFLASH_BUF[WordAddr + i] != 0XFFFF)
-            {
-                break;                                                                                             // 需要擦除
-            }     
-        }
-        /* 如果要写入数据的Flash页面上，所有的字都等于0XFFFF，那么在上面的循环之后，i = WordRemainder*/
-        if(i < WordRemainder)                                                                                      // 需要擦除
-        {
-            //FLASH_ErasePage(PageAddr*FLASH_PAGE_SIZE + STM32_FLASH_BASE);                                      // 擦除这个Flash页
-            FLASH_EraseInitTypeDef FLASH_EraseInitType;
-            FLASH_EraseInitType.TypeErase 	= FLASH_TYPEERASE_PAGES;
-            FLASH_EraseInitType.PageAddress = PageAddr*FLASH_PAGE_SIZE + STM32_FLASH_BASE;
-            FLASH_EraseInitType.NbPages 		= 1;
-            uint32_t PageError = HAL_FLASH_GetError();
-            HAL_FLASHEx_Erase(&FLASH_EraseInitType, &PageError);
-
-            for(i = 0;i < WordRemainder;i++)                                                                       // 复制
-            {
-                STMFLASH_BUF[i + WordAddr] = pBuffer[i];
-            }
-            STMFLASH_Write_NoCheck(PageAddr*FLASH_PAGE_SIZE + STM32_FLASH_BASE,STMFLASH_BUF,FLASH_PAGE_SIZE/2);    // 写入整个页
-        }
-        /* i = WordRemainder */
-        else
-        {
-            STMFLASH_Write_NoCheck(WriteAddr,pBuffer,WordRemainder);                                               // 写已经擦除了的,直接写入扇区剩余区间. 
-        }
- 
-        if(NumToWrite == WordRemainder)
-        {
-            break;                                                                                                 // 写入结束了
-        }
-        else                                                                                                       // 写入未结束
-        {
-            PageAddr++;                                                                                            // 页地址增加1
-            WordAddr    = 0;                                                                                       // 偏移位置为0     
-            pBuffer    += WordRemainder;                                                                           // 指针偏移
-            WriteAddr  += WordRemainder*2;                                                                         // 写地址偏移(16位数据址,需要*2)
-            NumToWrite -= WordRemainder;                                                                           // 字节(16位)数递减
-            if(NumToWrite > (FLASH_PAGE_SIZE/2))
-            {
-                WordRemainder = FLASH_PAGE_SIZE/2;                                                                 // 下一个Flash页还是写不完
-            }
-            else WordRemainder = NumToWrite;                                                                       // 下一个Flash页可以写完了
-        }    
-    };  
-    
-
-	HAL_FLASH_Lock();
-    __enable_irq();
-    return 0;
-    
-}
-// flash 操作函数 end
 
 
 /* USER CODE END 0 */
@@ -456,6 +325,9 @@ int main(void)
     /* USER CODE END SysInit */
 
     /* Initialize all configured peripherals */
+    memset(firmware_buff_8,0xff,sizeof(firmware_buff_8));
+    memset(firmware_buff_16,0xff,sizeof(firmware_buff_16));
+
     MX_GPIO_Init();
     MX_DMA_Init();
     MX_USART1_UART_Init();
@@ -471,11 +343,12 @@ int main(void)
 //    uint16_t data_[] = {0x6666,0x7777,0x8888};
 //    STMFLASH_WriteMultipleBytes(0x8003002,data_,sizeof(data_));
 //    
-    IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
 
     SEGGER_RTT_printf(0, "Init RTT Log \r\n");  
-    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
-
+    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n"); 
+    
+    HAL_Delay(1111);
+    
 //    uint16_t temp[5] = {0};
 //    
 //    flash_read(0x8000000, temp, sizeof(temp));
@@ -491,11 +364,16 @@ int main(void)
 
         /* USER CODE BEGIN 3 */
          //   SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
+        HAL_Delay(1111);
+        if(is_update_success == 1)
+        {
             HAL_Delay(1111);
+            IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
+        }
         //    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
         //   
         //    //HAL_Delay(1111);
-         //IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
+         
     }
     /* USER CODE END 3 */
 }
