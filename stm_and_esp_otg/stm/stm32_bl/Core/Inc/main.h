@@ -69,7 +69,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
 void USER_UART_IRQHandler(UART_HandleTypeDef *huart);
-
+void convertUint8ToUint16(uint8_t *inputArray, uint16_t *outputArray, size_t arraySize, size_t outputArraySize);
 
 /* USER CODE END Private defines */
 

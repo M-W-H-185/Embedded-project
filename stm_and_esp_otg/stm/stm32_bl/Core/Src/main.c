@@ -22,9 +22,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdlib.h>
+
 #include "string.h"
 #include "SEGGER_RTT.h"
 #include "user_flash.h"
+#include "bsp_eeprom.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -149,6 +152,46 @@ uint16_t firmware_buff_16[FLASH_MAX_PAGE_SIZE_16] = {0};   // 固件缓冲区
 uint8_t firmware_page_cut = 0;  // flash第几页
 
 uint8_t is_update_success = 0;
+#define UART_DATA_HEAD_1 0xED
+#define UART_DATA_HEAD_2 0x90
+// uart_data 传入一个空指针进来
+// cmd_id 命令id
+// isack 是否应答
+// data 数据区
+// data_length 数据区的长度
+int uart_send_cmdid_data_handle(char **uart_rx_data, uint8_t cmd_id, uint8_t isack, char* data, int data_length)
+{
+    
+    int uart_rx_data_length = data_length + 8;
+    *uart_rx_data = malloc(uart_rx_data_length * sizeof(char));
+
+    (*uart_rx_data)[0] = UART_DATA_HEAD_1;
+    (*uart_rx_data)[1] = UART_DATA_HEAD_2;
+    (*uart_rx_data)[2] = cmd_id;
+    (*uart_rx_data)[3] = isack;
+
+    (*uart_rx_data)[4] =  (data_length >> 8) & 0xFF; // 数据长度 高位
+    (*uart_rx_data)[5] = data_length & 0xFF;       // 数据长度 低位
+
+    char *uart_data_ = &((*uart_rx_data)[6]);
+    memcpy(uart_data_, data, data_length * sizeof(char));
+
+    // -2 是要把校验位剪了
+    uint16_t crc = calculateCRC(*uart_rx_data, uart_rx_data_length - 2);
+    (*uart_rx_data)[uart_rx_data_length - 2] = crc & 0xFF;       // 校验和 低位
+    (*uart_rx_data)[uart_rx_data_length - 1] = (crc >> 8) & 0xFF; // 校验和 高位
+
+    return uart_rx_data_length;
+}
+// 发送ack命令
+void uart_send_ack_data(void)
+{
+    char *uart_rx_data = NULL;
+    static char data[] = {255};
+    int uart_rx_data_length = uart_send_cmdid_data_handle(&uart_rx_data, 0x00, 0x00, data, 1);
+    HAL_UART_Transmit(&huart1,(uint8_t *)uart_rx_data,uart_rx_data_length,100);
+    free(uart_rx_data);
+}
 
 void uart1_dataBuffReset(void)
 {
@@ -166,7 +209,7 @@ void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
     /** 处理 串口数据 **/
     
     SEGGER_RTT_printf(0, "Receive Data(length = %d): ",data_length);
-    HAL_UART_Transmit(&huart1,uart1_rx_buff,data_length,USRT1_RX_BUFF_SIZE);            //测试函数：将接收到的数据打印出去
+    //HAL_UART_Transmit(&huart1,uart1_rx_buff,data_length,USRT1_RX_BUFF_SIZE);            //测试函数：将接收到的数据打印出去
     // 校验帧头
     if(uart1_rx_buff[0] != UART_DATA_HEAD_1 || uart1_rx_buff[1] != UART_DATA_HEAD_2)
     {
@@ -274,8 +317,10 @@ void USAR1_UART_IDLECallback(UART_HandleTypeDef *huart)
     }
             
     /** 处理 串口数据 **/
-       
- 
+    if(isack == 0x01)
+    {
+        uart_send_ack_data();
+    }
     uart1_dataBuffReset();
 }
 
@@ -334,25 +379,30 @@ int main(void)
     /* USER CODE BEGIN 2 */
 
     SEGGER_RTT_Init();
-
-//    // stm32 flash 只能写 0 不能写 1 所以再次写入需要擦除
-//    HAL_FLASH_Unlock();     //解锁Flash
-//    uint16_t Write_Flash_Data = 0x6666;
-//    HAL_FLASH_Program(FLASH_TYPEPROGRAM_HALFWORD,FLASH_APP_ADDR,Write_Flash_Data);  // 写入flash FLASH_TYPEPROGRAM_HALFWORD是按照16bit写入的
-//    HAL_FLASH_Lock();       //锁住Flash
-//    uint16_t data_[] = {0x6666,0x7777,0x8888};
-//    STMFLASH_WriteMultipleBytes(0x8003002,data_,sizeof(data_));
 //    
+    EEPROM_WriteByte(0, 0x1122);
+////    
+    uint16_t temp[] = {0x3344,0x5566,0x7788};
+    EEPROM_WriteBytes(2, temp, sizeof(temp) / sizeof(temp[0]));
+    
+    SEGGER_RTT_printf(0, "%d \r\n",sizeof(temp) / sizeof(temp[0]) ); 
 
-    SEGGER_RTT_printf(0, "Init RTT Log \r\n");  
-    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n"); 
-    
-    HAL_Delay(1111);
-    
-//    uint16_t temp[5] = {0};
 //    
-//    flash_read(0x8000000, temp, sizeof(temp));
-//    SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
+    uint16_t temp1[] = {0};
+    uint16_t temp2[] = {0,0,0};
+    EEPROM_ReadWords(0, temp1, 1);
+    EEPROM_ReadWords(2, temp2, sizeof(temp) / sizeof(temp[0]));
+ 
+    SEGGER_RTT_printf(0, "%04x %04x %04x %04x \r\n",
+    temp1[0],temp2[0],temp2[1],temp2[2]
+    ); 
+
+    
+    SEGGER_RTT_printf(0, "Init RTT Log %08x  %08x \r\n",  EEPROM_FLASH_START_ADDRESS + 0 ,EEPROM_FLASH_START_ADDRESS + 2 );  
+    SEGGER_RTT_printf(0, "2Hello i is bootLoader !\r\n"); 
+
+    // HAL_Delay(1111);
+    
 
     /* USER CODE END 2 */
 
@@ -363,10 +413,11 @@ int main(void)
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
-         //   SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
+        //SEGGER_RTT_printf(0, "Hello i is bootLoader !\r\n");  
         HAL_Delay(1111);
         if(is_update_success == 1)
         {
+            is_update_success = 0;
             HAL_Delay(1111);
             IAP_LoadApp(FLASH_APP_ADDR); //程序跳转
         }

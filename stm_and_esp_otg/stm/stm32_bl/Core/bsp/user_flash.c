@@ -20,13 +20,13 @@ uint16_t STMFLASH_ReadHalfWord(uint32_t faddr)
 *@brief     从指定地址开始读出指定长度的数据
 *@param     ReadAddr  : 起始地址
 *           pBuffer   : 数据指针
-*           NumToWrite: 半字(16位)数
+*           NumToWrite: 半字(16位)数 有多少个uint16_t
 *@return    无
 */
-void STMFLASH_ReadMultipleBytes(uint32_t ReadAddr,uint16_t  *pBuffer,uint16_t  NumToRead)      
+void STMFLASH_ReadMultipleBytes(uint32_t ReadAddr,uint16_t  *pBuffer, uint16_t  u16_size)      
 {
     uint16_t  i;
-    for(i = 0;i < NumToRead;i++)
+    for(i = 0;i < u16_size;i++)
     {
         pBuffer[i] = STMFLASH_ReadHalfWord(ReadAddr);         // 读取2个字节.
         ReadAddr += 2;                                        // 偏移2个字节. 
@@ -70,8 +70,8 @@ int8_t STMFLASH_WriteMultipleBytes(uint32_t WriteAddr,uint16_t  *pBuffer,uint16_
         return -1;
     } 
 
-    /* 当指定起始地址小于STM32_FLASH_BASE (0x0800000) 或者大于芯片本身的Flash容量时，写入地址无效，跳出函数 */
-    if(WriteAddr < STM32_FLASH_BASE || (WriteAddr >= (STM32_FLASH_BASE + 1024 * STM32_FLASH_SIZE)))
+    /* 大于芯片本身的Flash容量时，写入地址无效，跳出函数 */
+    if((WriteAddr >= (STM32_FLASH_BASE + 1024 * STM32_FLASH_SIZE)))
     {
         return -2;                                                                                                    // 非法地址
     }

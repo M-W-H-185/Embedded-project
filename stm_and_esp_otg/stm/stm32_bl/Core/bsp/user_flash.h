@@ -13,7 +13,9 @@
 #else 
 #define STM_SECTOR_SIZE 2048
 #endif
-
+// 指定地址读取数据
+void STMFLASH_ReadMultipleBytes(uint32_t ReadAddr,uint16_t  *pBuffer,uint16_t  NumToRead);
+// 指定地址写入数据
 int8_t STMFLASH_WriteMultipleBytes(uint32_t WriteAddr,uint16_t  *pBuffer,uint16_t  NumToWrite);
 
 #endif
