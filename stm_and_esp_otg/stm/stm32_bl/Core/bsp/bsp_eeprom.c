@@ -24,6 +24,22 @@ void EEPROM_ReadWords(uint16_t StartAddr, uint16_t *buffer, uint16_t buff_size)
 
 } 
 
+int16_t EEPROM_ReadWord(uint16_t StartAddr)  
+{  
+    if((StartAddr%2) != 0)
+    {
+        return -1;
+    }
+    
+    if(StartAddr > EEPROM_FLASH_START_ADDRESS + StartAddr)
+    {
+        return -2;
+    }
+    uint16_t temp[] = { 0x0000 }; 
+    STMFLASH_ReadMultipleBytes(EEPROM_FLASH_START_ADDRESS + StartAddr, temp, 1);
+    return temp[0];
+
+} 
 
 
 

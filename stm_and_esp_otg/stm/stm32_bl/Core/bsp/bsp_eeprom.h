@@ -13,6 +13,7 @@
 #define EEPROM_FLASH_END_ADDRESS    (EEPROM_FLASH_START_ADDRESS+FLASH_PAGE_SIZE)
 
 void EEPROM_ReadWords(uint16_t StartAddr, uint16_t *buffer, uint16_t buff_size)  ;
+int16_t EEPROM_ReadWord(uint16_t StartAddr)  ;
 
 void EEPROM_WriteByte(uint16_t StartAddr, uint16_t data)  ;
 

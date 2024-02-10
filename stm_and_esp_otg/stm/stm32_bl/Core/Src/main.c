@@ -28,6 +28,7 @@
 #include "SEGGER_RTT.h"
 #include "user_flash.h"
 #include "bsp_eeprom.h"
+#include "app_otaConfig.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -131,8 +132,28 @@ void convertUint8ToUint16(uint8_t *inputArray, uint16_t *outputArray, size_t arr
 	}
 	// 如果数组大小是奇数，补0xff
 	if (arraySize % 2 != 0) {
-		outputArray[outputArraySize-1] = COMBINE_BYTES_TO_UINT16(0x66 ,inputArray[arraySize-1]);
+		outputArray[outputArraySize-1] = COMBINE_BYTES_TO_UINT16(0xff   ,inputArray[arraySize-1]);
 	}
+}
+#define HIGH_BYTE(value) ((uint8_t)(((value) >> 8) & 0xFF))
+#define LOW_BYTE(value) ((uint8_t)((value) & 0xFF))
+// 将uint16转换为uint8数组
+void convertUint16ToUint8(uint16_t *uint16Array, uint8_t *uint8Array, size_t uint16ArraySize,size_t uint8ArraySize) {
+    
+
+    size_t i;
+    volatile uint16_t temp_debug =  0 ;
+    // 将uint16_t数组转换为uint8_t数组
+    for (i = 0; i < uint16ArraySize; ++i) {
+        temp_debug = uint16Array[i];
+        uint8Array[2 * i] = LOW_BYTE(temp_debug);       // 低字节
+        uint8Array[2 * i + 1] = HIGH_BYTE(temp_debug);  // 高字节
+    }
+
+    // 处理uint16ArraySize数组大小为奇数的情况, 那就代表存的时候最后那一位是无效的 
+    if (uint16ArraySize % 2 != 0) {
+        uint8Array[2 * i - 1] = 0x00;  // 高字节
+    }
 }
 
 #define FLASH_MAX_PAGE_SIZE_8      (STM_SECTOR_SIZE)  // stm32f103每一页的大小
@@ -379,26 +400,26 @@ int main(void)
     /* USER CODE BEGIN 2 */
 
     SEGGER_RTT_Init();
-//    
-    EEPROM_WriteByte(0, 0x1122);
 ////    
-    uint16_t temp[] = {0x3344,0x5566,0x7788};
-    EEPROM_WriteBytes(2, temp, sizeof(temp) / sizeof(temp[0]));
-    
-    SEGGER_RTT_printf(0, "%d \r\n",sizeof(temp) / sizeof(temp[0]) ); 
-
+//    EEPROM_WriteByte(0, 0x1122);
+//////    
+//    uint16_t temp[] = {0x3344,0x5566,0x7788};
+//    EEPROM_WriteBytes(2, temp, sizeof(temp) / sizeof(temp[0]));
 //    
-    uint16_t temp1[] = {0};
-    uint16_t temp2[] = {0,0,0};
-    EEPROM_ReadWords(0, temp1, 1);
-    EEPROM_ReadWords(2, temp2, sizeof(temp) / sizeof(temp[0]));
- 
-    SEGGER_RTT_printf(0, "%04x %04x %04x %04x \r\n",
-    temp1[0],temp2[0],temp2[1],temp2[2]
-    ); 
+//    SEGGER_RTT_printf(0, "%d \r\n",sizeof(temp) / sizeof(temp[0]) ); 
 
+////    
+//    uint16_t temp1[] = {0};
+//    uint16_t temp2[] = {0,0,0};
+//    EEPROM_ReadWords(0, temp1, 1);
+//    EEPROM_ReadWords(2, temp2, sizeof(temp) / sizeof(temp[0]));
+// 
+//    SEGGER_RTT_printf(0, "%04x %04x %04x %04x \r\n",
+//    temp1[0],temp2[0],temp2[1],temp2[2]
+//    ); 
     
-    SEGGER_RTT_printf(0, "Init RTT Log %08x  %08x \r\n",  EEPROM_FLASH_START_ADDRESS + 0 ,EEPROM_FLASH_START_ADDRESS + 2 );  
+    
+    SEGGER_RTT_printf(0, "Init RTT Log\r\n" );  
     SEGGER_RTT_printf(0, "2Hello i is bootLoader !\r\n"); 
 
     // HAL_Delay(1111);

@@ -331,7 +331,7 @@
             <uGnu>0</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
-            <v6LangP>3</v6LangP>
+            <v6LangP>5</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB,USE_FULL_LL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\Core\RTT;..\Core\bsp</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\Core\RTT;..\Core\bsp;..\Core\app</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -559,6 +559,21 @@
               <FileName>user_flash.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Core\bsp\user_flash.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Application/User/Core/APP</GroupName>
+          <Files>
+            <File>
+              <FileName>app_otaConfig.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\app\app_otaConfig.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_otaConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\app\app_otaConfig.h</FilePath>
             </File>
           </Files>
         </Group>
