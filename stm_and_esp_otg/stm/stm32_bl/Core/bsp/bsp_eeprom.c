@@ -71,5 +71,23 @@ void EEPROM_WriteByte(uint16_t StartAddr, uint16_t data)
     STMFLASH_WriteMultipleBytes( EEPROM_FLASH_START_ADDRESS + StartAddr , buffer, 1);
 
 }
+/** ≤‚ ‘¥˙¬Î
+////    
+//    EEPROM_WriteByte(0, 0x1122);
+//////    
+//    uint16_t temp[] = {0x3344,0x5566,0x7788};
+//    EEPROM_WriteBytes(2, temp, sizeof(temp) / sizeof(temp[0]));
+//    
+//    SEGGER_RTT_printf(0, "%d \r\n",sizeof(temp) / sizeof(temp[0]) ); 
 
+////    
+//    uint16_t temp1[] = {0};
+//    uint16_t temp2[] = {0,0,0};
+//    EEPROM_ReadWords(0, temp1, 1);
+//    EEPROM_ReadWords(2, temp2, sizeof(temp) / sizeof(temp[0]));
+// 
+//    SEGGER_RTT_printf(0, "%04x %04x %04x %04x \r\n",
+//    temp1[0],temp2[0],temp2[1],temp2[2]
+//    ); 
+**/
     

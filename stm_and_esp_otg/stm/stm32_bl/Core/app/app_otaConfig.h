@@ -5,21 +5,25 @@
 #include "stdint.h"
 #include "string.h"
 
-// 固件大小
-#define APP_FIRMWARE_SIZE_EEPROM_ADDRESS_START   0
-#define APP_FIRMWARE_SIZE_EEPROM_ADDRESS_END     3
+// App固件状态
+#define APP_FIRMWARE_STATE_EEPROM_ADDRESS_START 0
+#define APP_FIRMWARE_STATE_EEPROM_ADDRESS_END   1
 
-// 固件crc校验和
-#define APP_FIRMWARE_CRC_CHECKSUM_EEPROM_ADDRESS_START  4
-#define APP_APP_FIRMWARE_CRC_CHECKSUM_EEPROM_ADDRESS_END    7
+// App固件大小
+#define APP_FIRMWARE_SIZE_EEPROM_ADDRESS_START   2
+#define APP_FIRMWARE_SIZE_EEPROM_ADDRESS_END     5
 
-// 版本地址长度
-#define APP_VERSION_STR_LENGTH_EEPROM_ADDRESS_START 8
-#define APP_VERSION_STR_LENGTH_EEPROM_ADDRESS_END 9
+// App固件crc校验和
+#define APP_FIRMWARE_CRC_CHECKSUM_EEPROM_ADDRESS_START      6
+#define APP_APP_FIRMWARE_CRC_CHECKSUM_EEPROM_ADDRESS_END    9
 
-// 版本地址字符串
-#define APP_VERSION_STR_EEPROM_ADDRESS_START 10
-#define APP_VERSION_STR_EEPROM_ADDRESS_END 259
+// App版本地址长度
+#define APP_VERSION_STR_LENGTH_EEPROM_ADDRESS_START 10
+#define APP_VERSION_STR_LENGTH_EEPROM_ADDRESS_END 11
+
+// App版本地址字符串
+#define APP_VERSION_STR_EEPROM_ADDRESS_START 12
+#define APP_VERSION_STR_EEPROM_ADDRESS_END 253
 
 // 下一个eeprom起始地址就是260
 
@@ -40,6 +44,10 @@ void app_otaSetFirmwareCrcChecksum(uint32_t firmwareCrcChecksum);
 uint32_t app_otaGetFirmwareCrcChecksum(void);
 
 
+// 保存App固件状态
+void app_otaSetFirmwareState(uint16_t firmwareState);
+// 获取App固件状态
+uint32_t app_otaGetFirmwareState(void);
 
 #endif
 

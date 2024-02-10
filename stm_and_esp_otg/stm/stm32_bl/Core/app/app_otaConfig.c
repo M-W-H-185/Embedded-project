@@ -13,6 +13,19 @@ int user_ceil(float num) {
     }
     return inum + 1;
 }
+uint16_t combineUint8ArrayToUint16(uint8_t *inputArray) {
+    // 合并数组元素为 uint32_t
+    uint16_t result = 0;
+    result |= ((uint16_t)inputArray[0] << 8);
+    result |= inputArray[1];
+    return result;
+}
+
+void splitUint16ToUint8Array(uint16_t input, uint8_t *outputArray) {
+    // 拆分并存储到数组
+    outputArray[0] = (uint8_t)((input >> 8) & 0xFF);
+    outputArray[1] = (uint8_t)(input & 0xFF);
+}
 
 uint32_t combineUint8ArrayToUint32( uint8_t *inputArray) {
     // 合并数组元素为 uint32_t
@@ -33,7 +46,7 @@ void splitUint32ToArray(uint32_t input, uint8_t *outputArray) {
 }
 // 上面是util
 
-// app 版本 begin
+
 // 设置app版本
 void app_otaSetVersion(char *version_str, uint8_t version_length)
 {
@@ -79,10 +92,7 @@ uint8_t app_otaGetVersion(char *version_str)
     return version_length;
 
 }
-// app 版本 end
 
-
-// app固件大小 以及 crc校验和 begin
 
 // 保存App固件大小
 void app_otaSetFirmwareSize(uint32_t firmwareSize)
@@ -142,38 +152,67 @@ uint32_t app_otaGetFirmwareCrcChecksum(void)
     return combineUint8ArrayToUint32(u16Tou8_data);
 }
 
+// 保存App固件状态
+void app_otaSetFirmwareState(uint16_t firmwareState)
+{
+    uint8_t uint16_byte_array[2] = {0x00};
+    memset(uint16_byte_array, 0x00, 2);
+    splitUint16ToUint8Array(firmwareState, uint16_byte_array); // 将uint16 拆分并存储到uint8数组
+    
+    // 将uint8转换为uint16
+    uint16_t wirteEEPROM_data[1] = {0};
+    memset(wirteEEPROM_data, 0x00, 1);
+    convertUint8ToUint16(uint16_byte_array, wirteEEPROM_data, 2, 1);
+
+    EEPROM_WriteBytes(APP_FIRMWARE_CRC_CHECKSUM_EEPROM_ADDRESS_START, wirteEEPROM_data,1);
+}
 
 
-// app固件大小 以及 crc校验和 end
+// 获取App固件状态
+uint32_t app_otaGetFirmwareState(void)
+{
+    uint16_t read_eeprom_data[1] = {0};
+    memset(read_eeprom_data, 0x00, 1);
+    EEPROM_ReadWords(APP_FIRMWARE_CRC_CHECKSUM_EEPROM_ADDRESS_START, read_eeprom_data, 1);
 
-/** App固件 版本字符串、大小、crc校验和测试代码
+    uint8_t u16Tou8_data[2] = {0,0};
+    convertUint16ToUint8(read_eeprom_data, u16Tou8_data, 1, 2);
+
+    return combineUint8ArrayToUint16(u16Tou8_data);
+}
+
+/** App固件 状态、 版本字符串、大小、crc校验和测试代码
+
+// 保存App固件版本
+char tempStr[] = "0.0.1234567890-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-261234567890-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-261234567890-11-12-13-14-15-16-17-18-19-20-21-22-23-24-25-26";
+app_otaSetVersion(tempStr,strlen(tempStr));
+SEGGER_RTT_printf(0, "ota set app of version :%s %d\r\n", tempStr, strlen(tempStr)); 
+// 获取App固件版本
+char tempReadStr[254] = { 0 };
+memset(tempReadStr,0x00,254);
+app_otaGetVersion(tempReadStr);
+SEGGER_RTT_printf(0, "ota get app of version: %s--->%d \r\n", tempReadStr,strlen(tempReadStr)); 
 
 
-//// 获取App固件版本
-//char tempStr[] = "0.0.1";
-//app_otaSetVersion(tempStr,strlen(tempStr));
-//SEGGER_RTT_printf(0, "ota set app of version :%s %d\r\n", tempStr, strlen(tempStr)); 
+// 保存App固件大小 0xFFFFFFA1
+app_otaSetFirmwareSize(0xAAFFFFBB);
+// 获取App固件大小
+SEGGER_RTT_printf(0, "app_otaGetFirmwareSize:%08x \r\n",app_otaGetFirmwareSize());  
+HAL_Delay(1);
 
 
-//// 获取App固件版本
-//char tempReadStr[10] = { 0 };
-//memset(tempReadStr,0x00,10);
-//app_otaGetVersion(tempReadStr);
-//SEGGER_RTT_printf(0, "ota get app of version: %s--->%d \r\n", tempReadStr,strlen(tempReadStr)); 
+// 保存App固件crc校验和
+app_otaSetFirmwareCrcChecksum(0x66FFFF88);
+// 获取App固件crc校验和
+SEGGER_RTT_printf(0, "app_otaGetFirmwareCrcChecksum:%08x \r\n",app_otaGetFirmwareCrcChecksum());  
+HAL_Delay(1);
+    
 
+// 保存App固件状态
+app_otaSetFirmwareState(0x1122);
+// 获取App固件状态
+SEGGER_RTT_printf(0, "app_otaGetFirmwareState:%04x\r\n", app_otaGetFirmwareState());  
 
-//// 保存App固件大小 0xFFFFFFA1
-//app_otaSetFirmwareSize(0xFFFFFFA1);
-//// 获取App固件大小
-//SEGGER_RTT_printf(0, "app_otaGetFirmwareSize:%08x \r\n",app_otaGetFirmwareSize());  
-//HAL_Delay(1);
-
-
-//// 保存App固件crc校验和
-//app_otaSetFirmwareCrcChecksum(0x88FFFF66);
-//// 获取App固件crc校验和
-//SEGGER_RTT_printf(0, "app_otaGetFirmwareCrcChecksum:%08x \r\n",app_otaGetFirmwareCrcChecksum());  
-//HAL_Delay(1);
 
 **/
 

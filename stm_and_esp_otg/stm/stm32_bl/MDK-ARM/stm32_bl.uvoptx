@@ -120,7 +120,7 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>DLGUARM</Key>
-          <Name>???</Name>
+          <Name></Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
@@ -157,9 +157,9 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>434</LineNumber>
+          <LineNumber>411</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226522</Address>
+          <Address>134225846</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -168,14 +168,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/Src/main.c\434</Expression>
+          <Expression>\\stm32_bl\../Core/Src/main.c\411</Expression>
         </Bp>
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>437</LineNumber>
+          <LineNumber>407</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226530</Address>
+          <Address>134225824</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -184,14 +184,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/Src/main.c\437</Expression>
+          <Expression>\\stm32_bl\../Core/Src/main.c\407</Expression>
         </Bp>
         <Bp>
           <Number>2</Number>
           <Type>0</Type>
-          <LineNumber>441</LineNumber>
+          <LineNumber>405</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226552</Address>
+          <Address>134225816</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -200,14 +200,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>../Core/Src/main.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/Src/main.c\441</Expression>
+          <Expression>\\stm32_bl\../Core/Src/main.c\405</Expression>
         </Bp>
         <Bp>
           <Number>3</Number>
           <Type>0</Type>
-          <LineNumber>110</LineNumber>
+          <LineNumber>170</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225748</Address>
+          <Address>134225476</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -216,14 +216,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Core\app\app_otaConfig.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\110</Expression>
+          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\170</Expression>
         </Bp>
         <Bp>
           <Number>4</Number>
           <Type>0</Type>
-          <LineNumber>99</LineNumber>
+          <LineNumber>168</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226018</Address>
+          <Address>134225464</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -232,14 +232,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Core\app\app_otaConfig.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\99</Expression>
+          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\168</Expression>
         </Bp>
         <Bp>
           <Number>5</Number>
           <Type>0</Type>
-          <LineNumber>90</LineNumber>
+          <LineNumber>167</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225990</Address>
+          <Address>134225458</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -248,14 +248,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Core\app\app_otaConfig.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\90</Expression>
+          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\167</Expression>
         </Bp>
         <Bp>
           <Number>6</Number>
           <Type>0</Type>
-          <LineNumber>97</LineNumber>
+          <LineNumber>163</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134226006</Address>
+          <Address>134225450</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -264,14 +264,14 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Core\app\app_otaConfig.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\97</Expression>
+          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\163</Expression>
         </Bp>
         <Bp>
           <Number>7</Number>
           <Type>0</Type>
-          <LineNumber>112</LineNumber>
+          <LineNumber>161</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134225762</Address>
+          <Address>134225448</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -280,7 +280,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\Core\app\app_otaConfig.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\112</Expression>
+          <Expression>\\stm32_bl\../Core/app/app_otaConfig.c\161</Expression>
         </Bp>
         <Bp>
           <Number>8</Number>
@@ -333,7 +333,7 @@
         <Bp>
           <Number>11</Number>
           <Type>0</Type>
-          <LineNumber>420</LineNumber>
+          <LineNumber>433</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -349,7 +349,7 @@
         <Bp>
           <Number>12</Number>
           <Type>0</Type>
-          <LineNumber>423</LineNumber>
+          <LineNumber>436</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -365,7 +365,7 @@
         <Bp>
           <Number>13</Number>
           <Type>0</Type>
-          <LineNumber>91</LineNumber>
+          <LineNumber>104</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -381,7 +381,7 @@
         <Bp>
           <Number>14</Number>
           <Type>0</Type>
-          <LineNumber>98</LineNumber>
+          <LineNumber>111</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -397,7 +397,7 @@
         <Bp>
           <Number>15</Number>
           <Type>0</Type>
-          <LineNumber>100</LineNumber>
+          <LineNumber>113</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -413,7 +413,7 @@
         <Bp>
           <Number>16</Number>
           <Type>0</Type>
-          <LineNumber>111</LineNumber>
+          <LineNumber>124</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -429,7 +429,39 @@
         <Bp>
           <Number>17</Number>
           <Type>0</Type>
-          <LineNumber>113</LineNumber>
+          <LineNumber>126</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\Core\app\app_otaConfig.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>18</Number>
+          <Type>0</Type>
+          <LineNumber>162</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>0</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>..\Core\app\app_otaConfig.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression></Expression>
+        </Bp>
+        <Bp>
+          <Number>19</Number>
+          <Type>0</Type>
+          <LineNumber>166</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
