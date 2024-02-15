@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB,USE_FULL_LL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\Core\RTT;..\Core\bsp;..\Core\app</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\Core\RTT;..\Core\bsp;..\Core\app;..\Core\utility</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -563,7 +563,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Application/User/Core/APP</GroupName>
+          <GroupName>Application/User/Core/App</GroupName>
           <Files>
             <File>
               <FileName>app_otaConfig.c</FileName>
@@ -574,6 +574,21 @@
               <FileName>app_otaConfig.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Core\app\app_otaConfig.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>utility</GroupName>
+          <Files>
+            <File>
+              <FileName>utility_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\utility\utility_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>utility_common.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\utility\utility_common.h</FilePath>
             </File>
           </Files>
         </Group>

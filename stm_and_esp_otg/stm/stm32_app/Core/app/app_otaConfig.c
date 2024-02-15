@@ -1,3 +1,7 @@
+/**
+* App固件升级相关配置
+*
+**/
 #include "app_otaConfig.h"
 #include <stdlib.h>
 #include "stdint.h"

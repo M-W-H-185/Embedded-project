@@ -315,7 +315,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc;../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F1xx/Include;../Drivers/CMSIS/Include;..\Core\RTT</IncludePath>
+              <IncludePath>../Core/Inc; ../Drivers/STM32F1xx_HAL_Driver/Inc; ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy; ../Drivers/CMSIS/Device/ST/STM32F1xx/Include; ../Drivers/CMSIS/Include; ..\Core\RTT; ..\Core\bsp; ..\Core\app; ..\Core\utility</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -503,7 +503,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>New Group</GroupName>
+          <GroupName>rtt_log</GroupName>
           <Files>
             <File>
               <FileName>SEGGER_RTT.c</FileName>
@@ -514,6 +514,81 @@
               <FileName>SEGGER_RTT_printf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Core\RTT\SEGGER_RTT_printf.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Application/User/Core/BSP</GroupName>
+          <Files>
+            <File>
+              <FileName>bsp_eeprom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\bsp\bsp_eeprom.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_eeprom.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\bsp\bsp_eeprom.h</FilePath>
+            </File>
+            <File>
+              <FileName>user_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\bsp\user_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\bsp\user_flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\bsp\bsp_uart1.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_uart1.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\bsp\bsp_uart1.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Application/User/Core/App</GroupName>
+          <Files>
+            <File>
+              <FileName>app_otaConfig.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\app\app_otaConfig.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_otaConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\app\app_otaConfig.h</FilePath>
+            </File>
+            <File>
+              <FileName>app_dataTransferProtocol.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\app\app_dataTransferProtocol.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_dataTransferProtocol.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\app\app_dataTransferProtocol.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>utility</GroupName>
+          <Files>
+            <File>
+              <FileName>utility_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\utility\utility_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>utility_common.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\utility\utility_common.h</FilePath>
             </File>
           </Files>
         </Group>

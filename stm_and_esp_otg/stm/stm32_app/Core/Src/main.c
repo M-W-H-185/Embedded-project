@@ -22,7 +22,14 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "string.h"
 #include "SEGGER_RTT.h"
+#include "user_flash.h"
+#include "bsp_eeprom.h"
+#include "app_otaConfig.h"
+#include "utility_common.h"
+#include "bsp_uart1.h"
+#include "app_dataTransferProtocol.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -41,9 +48,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
-
 UART_HandleTypeDef huart1;
-UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart1_rx;
 
 /* USER CODE BEGIN PV */
 
@@ -52,9 +58,9 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
-static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -63,6 +69,24 @@ static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN 0 */
 #define INFLASH_START_ADDR      ((uint32_t)0x8000000)  // STM32 内部FLASH的起始地址
 #define INFLASH_VTOR_OFFSET     ((uint32_t)0x8003000)  // APP向量表的偏移地址，与APP的起始地址保持一致
+#define APP_VERSION "0.0.0"
+
+#define BOOTLOADER_ADDRESS 0x8003000  //你的APP存放起始地址
+typedef void (*pFunction)(void);
+// Bootloader跳转至APP
+void IAP_LoadApp(uint32_t appxaddr)
+{
+    pFunction JumpApp;
+    
+	if(((*(__IO uint32_t*)appxaddr)&0x2FFE0000)==0x20000000)	//检查栈顶地址是否合法.
+	{ 
+        __disable_irq();
+        JumpApp=(pFunction)*(__IO uint32_t*)(appxaddr+4);   //用户代码区第二个字为程序开始地址(复位地址)		
+        __set_MSP(*(__IO uint32_t*)appxaddr);               //初始化APP堆栈指针(用户代码区的第一个字用于存放栈顶地址)
+        JumpApp();              //跳转到APP.
+	}
+}
+
 
 /* USER CODE END 0 */
 
@@ -75,7 +99,9 @@ int main(void)
   /* USER CODE BEGIN 1 */
   SCB->VTOR = INFLASH_START_ADDR | INFLASH_VTOR_OFFSET;     // 设置向量表的起始地址
   __enable_irq();    	// 开启总中断
-  uint8_t rx_buff[] = "Hello i is app v0.0.2!\r\n";
+  uint8_t rx_buff[200] = "Hello i is app v";
+  strcat((char*)rx_buff, APP_VERSION);//字符串追加（连接）
+  strcat((char*)rx_buff, "\r\n");//字符串追加（连接）
 
   /* USER CODE END 1 */
 
@@ -97,28 +123,49 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  SEGGER_RTT_Init();
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-  SEGGER_RTT_printf(0, "Hello i is app v0.0.2 !\r\n");  
+    SEGGER_RTT_Init();
+    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+
+    // 固件一开始烧录后 是 0xffff 的 进入App后写入标志+版本号
+    if(app_otaGetFirmwareState() == 0xffff)
+    {
+        app_otaSetVersion(APP_VERSION,strlen(APP_VERSION));
+        app_otaSetFirmwareState(0x0001);
+       
+    }
+    // 升级成功后 bl会写入 标志0x0002并且写入版本号
+    if(app_otaGetFirmwareState() == 0x0002)
+    {
+        app_otaSetVersion(APP_VERSION,strlen(APP_VERSION));
+        app_otaSetFirmwareState(0x0001);
+      
+    }
+    // App运行每次都需要发送当前的版本号出去
+    protocol_dev_version_data();
+    HAL_Delay(500);
+    protocol_dev_version_data();
+    HAL_Delay(500);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+    while (1)
+    {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_Delay(1111);
-    SEGGER_RTT_printf(0, "Hello i is app v0.0.2 !\r\n");  
-    HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
-    HAL_UART_Transmit(&huart1,rx_buff,sizeof(rx_buff),100);
+        /*char v_buff[200] = {0};
+        app_otaGetVersion(v_buff);
+        SEGGER_RTT_printf(0,"vvvvv:%s  %d\r\n",v_buff,strlen(v_buff));*/
+        HAL_Delay(1000);
+        HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
+        //HAL_UART_Transmit(&huart1,rx_buff,sizeof(rx_buff),100);
 
-  }
+    }
   /* USER CODE END 3 */
 }
 
@@ -219,41 +266,25 @@ static void MX_USART1_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART1_Init 2 */
-
+    __HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);                    // 空闲中断 串口中断
+    uart1_empty_data_buffer();  
   /* USER CODE END USART1_Init 2 */
 
 }
 
 /**
-  * @brief USART2 Initialization Function
-  * @param None
-  * @retval None
+  * Enable DMA controller clock
   */
-static void MX_USART2_UART_Init(void)
+static void MX_DMA_Init(void)
 {
 
-  /* USER CODE BEGIN USART2_Init 0 */
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
 
-  /* USER CODE END USART2_Init 0 */
-
-  /* USER CODE BEGIN USART2_Init 1 */
-
-  /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_HalfDuplex_Init(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART2_Init 2 */
-
-  /* USER CODE END USART2_Init 2 */
+  /* DMA interrupt init */
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
 }
 
@@ -267,8 +298,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);

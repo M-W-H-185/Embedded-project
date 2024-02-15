@@ -69,8 +69,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
 void USER_UART_IRQHandler(UART_HandleTypeDef *huart);
-void convertUint8ToUint16(uint8_t *inputArray, uint16_t *outputArray, size_t arraySize, size_t outputArraySize);
-void convertUint16ToUint8(uint16_t *inputArray, uint8_t *outputArray, size_t inputArraySize,size_t outputArraySize);
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

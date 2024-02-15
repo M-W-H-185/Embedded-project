@@ -42,6 +42,8 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
+extern UART_HandleTypeDef huart1;
+extern DMA_HandleTypeDef hdma_usart1_rx;
 
 /* USER CODE END EC */
 
@@ -59,6 +61,8 @@ void Error_Handler(void);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN Private defines */
+void USER_UART_IRQHandler(UART_HandleTypeDef *huart);
+void IAP_LoadApp(uint32_t appxaddr);
 
 /* USER CODE END Private defines */
 
