@@ -4,11 +4,15 @@
 #include "stdint.h"
 #include "string.h"
 
+#define APP_VERSION "0.0.0"
+
+
 // 两个帧头
 #define UART_DATA_HEAD_1 0xED
 #define UART_DATA_HEAD_2 0x90
 // 两个帧头
 
+void protocol_init(void);
 
 void USAR1_UART_IDLECallback(uint8_t *dataBuffer,uint16_t dataBuffer_size);
 void protocol_dev_version_data(void);

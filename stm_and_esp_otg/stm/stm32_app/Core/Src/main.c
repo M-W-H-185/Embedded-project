@@ -69,7 +69,7 @@ static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN 0 */
 #define INFLASH_START_ADDR      ((uint32_t)0x8000000)  // STM32 内部FLASH的起始地址
 #define INFLASH_VTOR_OFFSET     ((uint32_t)0x8003000)  // APP向量表的偏移地址，与APP的起始地址保持一致
-#define APP_VERSION "0.0.0"
+
 
 #define BOOTLOADER_ADDRESS 0x8003000  //你的APP存放起始地址
 typedef void (*pFunction)(void);
@@ -96,77 +96,60 @@ void IAP_LoadApp(uint32_t appxaddr)
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-  SCB->VTOR = INFLASH_START_ADDR | INFLASH_VTOR_OFFSET;     // 设置向量表的起始地址
-  __enable_irq();    	// 开启总中断
-  uint8_t rx_buff[200] = "Hello i is app v";
-  strcat((char*)rx_buff, APP_VERSION);//字符串追加（连接）
-  strcat((char*)rx_buff, "\r\n");//字符串追加（连接）
+    /* USER CODE BEGIN 1 */
+    SCB->VTOR = INFLASH_START_ADDR | INFLASH_VTOR_OFFSET;     // 设置向量表的起始地址
+    __enable_irq();    	// 开启总中断
+    uint8_t rx_buff[200] = "Hello i is app v";
+    strcat((char*)rx_buff, APP_VERSION);//字符串追加（连接）
+    strcat((char*)rx_buff, "\r\n");//字符串追加（连接）
 
-  /* USER CODE END 1 */
+    /* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+    /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+    /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+    HAL_Init();
 
-  /* USER CODE BEGIN Init */
+    /* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+    /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+    /* Configure the system clock */
+    SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+    /* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+    /* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_I2C1_Init();
-  MX_USART1_UART_Init();
-  /* USER CODE BEGIN 2 */
+    /* Initialize all configured peripherals */
+    MX_GPIO_Init();
+    MX_DMA_Init();
+    MX_I2C1_Init();
+    MX_USART1_UART_Init();
+    /* USER CODE BEGIN 2 */
     SEGGER_RTT_Init();
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+    protocol_init();
 
-    // 固件一开始烧录后 是 0xffff 的 进入App后写入标志+版本号
-    if(app_otaGetFirmwareState() == 0xffff)
-    {
-        app_otaSetVersion(APP_VERSION,strlen(APP_VERSION));
-        app_otaSetFirmwareState(0x0001);
-       
-    }
-    // 升级成功后 bl会写入 标志0x0002并且写入版本号
-    if(app_otaGetFirmwareState() == 0x0002)
-    {
-        app_otaSetVersion(APP_VERSION,strlen(APP_VERSION));
-        app_otaSetFirmwareState(0x0001);
-      
-    }
-    // App运行每次都需要发送当前的版本号出去
-    protocol_dev_version_data();
-    HAL_Delay(500);
-    protocol_dev_version_data();
-    HAL_Delay(500);
-  /* USER CODE END 2 */
+    /* USER CODE END 2 */
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
+    /* Infinite loop */
+    /* USER CODE BEGIN WHILE */
     while (1)
     {
-    /* USER CODE END WHILE */
+        /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
+        /* USER CODE BEGIN 3 */
+        
         /*char v_buff[200] = {0};
         app_otaGetVersion(v_buff);
         SEGGER_RTT_printf(0,"vvvvv:%s  %d\r\n",v_buff,strlen(v_buff));*/
         HAL_Delay(1000);
         HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_12);
         //HAL_UART_Transmit(&huart1,rx_buff,sizeof(rx_buff),100);
-
+        
     }
-  /* USER CODE END 3 */
+    /* USER CODE END 3 */
 }
 
 /**

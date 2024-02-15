@@ -10,6 +10,35 @@
 #include "SEGGER_RTT.h"
 
 
+void protocol_init(void)
+{
+    // 固件一开始烧录后 是 0xffff 的 进入App后写入标志+版本号
+    if(app_otaGetFirmwareState() == 0xffff)
+    {
+        app_otaSetVersion(APP_VERSION,strlen(APP_VERSION));
+        app_otaSetFirmwareState(0x0001);
+    }
+    // 升级成功后 bl会写入 标志0x0002并且写入版本号
+    if(app_otaGetFirmwareState() == 0x0002)
+    {
+        app_otaSetVersion(APP_VERSION,strlen(APP_VERSION));
+        app_otaSetFirmwareState(0x0001);
+    }
+    // App运行每次都需要发送当前的版本号出去
+    protocol_dev_version_data();
+    HAL_Delay(500);
+    protocol_dev_version_data();
+    HAL_Delay(500);
+}
+// 处理ota跳转bl命令处理函数
+void ota_to_BootLoader_cmd_hanlde(uint8_t *data_block, uint16_t data_block_size)
+{
+    protocol_dev_version_data();    // 发送版本信息
+    SEGGER_RTT_printf(0,"DataProtocol cmd_id 0x02 App to BootLoader...\r\n");
+    app_otaSetFirmwareState(0x0003);
+    NVIC_SystemReset(); 
+}
+
 void USAR1_UART_IDLECallback(uint8_t *data_buffer, uint16_t data_buffer_length)
 {
 
@@ -51,14 +80,13 @@ void USAR1_UART_IDLECallback(uint8_t *data_buffer, uint16_t data_buffer_length)
         return;
     }
     // 到了这里整条数据就是完整正确的
+    
+    // App跳转bl命令处理
     if(cmd_id == 0x02)
     {
-        protocol_dev_version_data();
-        SEGGER_RTT_printf(0,"DataProtocol cmd_id 0x02 App to BootLoader...\r\n");
-        app_otaSetFirmwareState(0x0003);
-        NVIC_SystemReset();
-
+        ota_to_BootLoader_cmd_hanlde(data_block, data_block_size);
     }
+    
     uart1_empty_data_buffer();
 }
 
